@@ -1,0 +1,4 @@
+<project name="phyio.rt" default="build">
+    <property name="build-libraries.dir" location="../build-libraries"/>
+    <import file="${build-libraries.dir}/auto-plugin-build.xml"/>
+</project>

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %bundle-name
+Bundle-SymbolicName: com.testingtech.ttworkbench.phyio.rt;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Vendor: %bundle-vendor
+Bundle-Localization: plugin
+Require-Bundle: com.testingtech.ttworkbench.core,
+ com.testingtech.ttworkbench.ttthree.aux,
+ com.testingtech.ttworkbench.rs232.rt
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: tt3plugins/phyioRuntimePlugin/lib/phyioRuntimePlugin.jar

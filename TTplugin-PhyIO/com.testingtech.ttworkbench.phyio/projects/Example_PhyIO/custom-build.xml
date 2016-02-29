@@ -1,0 +1,4 @@
+<project name="Example_PhyIO" default="build">
+    <property name="build-libraries.dir" location="../build-libraries"/>
+    <import file="${build-libraries.dir}/auto-solution-build.xml"/>
+</project>

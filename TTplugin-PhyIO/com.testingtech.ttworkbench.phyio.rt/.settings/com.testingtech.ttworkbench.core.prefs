@@ -1,0 +1,13 @@
+clf.output_folder=//PROJECT_NAME//clf
+clf.output_same_as_binary=true
+eclipse.preferences.version=1
+tt3-plugins-path=//PROJECT_NAME//tt3plugins
+ttcn3.continue_on_fail=false
+ttcn3.gen_debug_code_record_init=false
+ttcn3.generate_mlf=false
+ttcn3.java_compile_all_at_once=true
+ttcn3.output_folder=//PROJECT_NAME//tt3plugins/phyioBuiltinPlugin/lib
+ttcn3.output_same_as_src=false
+ttcn3.source_folders=//PROJECT_NAME//phyioBuiltinPlugin
+ttcn3.use_bigint=true
+ttcn3.use_destination_path_for_ttcn3view=false

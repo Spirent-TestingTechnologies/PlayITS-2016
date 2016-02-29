@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension point="org.eclipse.help.toc">
+      <toc file="toc.xml" primary="true"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="$nl$/intro/welcomePageOverview.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="$nl$/intro/welcomePageWhatsnew.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="$nl$/intro/welcomePageSamples.xml"/>
+   </extension>
+   <extension
+         point="com.testingtech.ttworkbench.core.projectPackets">
+      <projectPacket
+            category="example"
+            id="com.testingtech.ttworkbench.phyio.examples.packet1"
+            name="%projectpacket.phyioexample.name"
+            perspectiveId="com.testingtech.ttworkbench.core.developmentperspective"
+            targetViewId="org.eclipse.jdt.ui.PackageExplorer">
+         <project
+               archive="Example_PhyIO.zip"
+               fileToOpen="doc/index.html"
+               name="Example_PhyIO"
+               selectReveal="."/>
+         <description>
+            %projectpacket.phyioexample.desc
+         </description>
+      </projectPacket>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="com.testingtech.ttworkbench.cleditor.newexamples"
+            class="com.testingtech.ttworkbench.core.wizards.projectpackets.ProjectPacketsWizard:com.testingtech.ttworkbench.phyio.examples.packet1"
+            finalPerspective="com.testingtech.ttworkbench.core.developmentperspective"
+            icon="icons/etools16/new_ttcn3_prjpacket_obj_wiz.gif"
+            id="com.testingtech.ttworkbench.phyio.examples.newwizard"
+            name="%projectpacket.phyioexample.name"
+            preferredPerspectives="com.testingtech.ttworkbench.core.developmentperspective"
+            project="true">
+         <description>
+            %newwizard.phyioexample.shortdesc
+         </description>
+      </wizard>
+   </extension>
+</plugin>

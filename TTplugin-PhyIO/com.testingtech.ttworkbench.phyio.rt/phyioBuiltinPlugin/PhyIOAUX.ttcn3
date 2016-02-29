@@ -1,0 +1,153 @@
+/*
+ * ----------------------------------------------------------------------------
+ *  (C) Copyright Testing Technologies 2015-2016.  All Rights Reserved.
+ *
+ *  All copies of this program, whether in whole or in part, and whether
+ *  modified or not, must display this and all other embedded copyright
+ *  and ownership notices in full.
+ *
+ *  See the file COPYRIGHT for details of redistribution and use.
+ *
+ *  You should have received a copy of the COPYRIGHT file along with
+ *  this file; if not, write to the Testing Technologies,
+ *  Michaelkirchstrasse 17/18 10179 Berlin, Germany
+ *
+ *  TESTING TECHNOLOGIES DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+ *  SOFTWARE. IN NO EVENT SHALL TESTING TECHNOLOGIES BE LIABLE FOR ANY
+ *  SPECIAL, DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ *  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+ *  AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ *  ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+ *  THIS SOFTWARE.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+ *  EITHER EXPRESSED OR IMPLIED, INCLUDING ANY KIND OF IMPLIED OR
+ *  EXPRESSED WARRANTY OF NON-INFRINGEMENT OR THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+ * ----------------------------------------------------------------------------
+ */
+/**
+ * @desc PhyIO Configuration module
+ */
+module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
+  import from TTCN3AUX all;
+  
+  const integer SensorID_Configuration := 0;
+  const integer SensorID_1 := 1;
+  const integer SensorID_2 := 2;
+  const integer SensorID_3 := 3;
+  const integer SensorID_4 := 4;
+  const integer SensorID_5 := 5;
+  const integer SensorID_6 := 6;
+  const integer SensorID_7 := 7;
+  const integer SensorID_8 := 8;
+  const integer SensorID_9 := 9;
+
+  group PhyIO {
+    //** @desc Configuration related types and ports
+    group Config {
+      //** @desc Sensor ID as defined by the HW spec
+      type integer SensorID;
+
+      //** @desc Reads Sensor data and sends it's to the port each UpdateFrequency seconds
+      type float UpdateFrequency;
+
+      // TODO Sync time on first map.
+      type port PhyConfig message {
+        inout all;
+      }
+    }
+    
+    group LED {
+      type boolean SwitchLED;
+      template SwitchLED switchLED_ON := true;
+      template SwitchLED switchLED_OFF := false;
+
+      //** @desc Read the LED state and switch LED on/off
+      type port PhyLED message {
+        out SwitchLED;
+        map param (SensorID sensorID);
+      }
+    }
+    
+    group Echo {
+      //** @desc Current distance measured in meters
+      type float Distance;
+
+      //** @desc Reads Distance sensor data and sends it's immediately to the port
+      type record ReadDistance {};
+      
+      //** @desc Read the current distance (in meters) measured by the Ultrasonic sensor
+      type port PhyEcho message {
+        in Distance;
+        out ReadDistance;
+        map param (SensorID sensorID, UpdateFrequency updateFrequency);
+      }
+    }
+    
+    group Motor {
+      //** @desc Percentage of voltage set to the motor. 0 means stop, 100 means drive forward at maximum speed, -100 means drive backwards at maximum speed
+      type integer Velocity(-100..100);
+      
+      type port PhyMotor message {
+        out Velocity;
+        map param (SensorID sensorID);
+      }
+    }
+    
+    group PushButton {
+      //** @desc The state of the push button
+      type boolean PushButtonState;
+
+      //** @desc Reads Button state and sends it's immediately to the port
+      type record ReadButtonState {};
+
+      //** @desc Read the state of the push button
+      type port PhyPushButton message {
+        in PushButtonState;
+        out ReadButtonState;
+        map param (SensorID sensorID);
+      }
+    }
+    
+    group ColorSensor {
+
+      /**
+       * @desc RGB value having red, green, blue values between 0..255
+       * @member red values between 0..255
+       * @member green values between 0..255
+       * @member blue values between 0..255
+       */
+      type record RGB {
+        unsignedbyte red,
+        unsignedbyte green,
+        unsignedbyte blue
+      }
+
+      //** @desc Reads RGB Sensor data and sends it's immediately to the port
+      type record ReadRGB {};
+      
+      //** @desc Read the current color detected by the color sensor
+      type port PhyColorSensor message {
+        in RGB;
+        out ReadRGB;
+        map param (SensorID sensorID, UpdateFrequency updateFrequency);
+      }
+    }
+        
+    group Relay {
+      type boolean RelaySwith;
+      template RelaySwith switchRelay_ON := true;
+      template RelaySwith switchRelay_OFF := false;
+      
+      //** @desc Drive the relay to switch a contact on and off
+      type port PhyRelay message {
+        out RelaySwith;
+        map param (SensorID sensorID);
+      }
+    }
+    
+  }
+} with {
+  encode "PhyIO"
+}

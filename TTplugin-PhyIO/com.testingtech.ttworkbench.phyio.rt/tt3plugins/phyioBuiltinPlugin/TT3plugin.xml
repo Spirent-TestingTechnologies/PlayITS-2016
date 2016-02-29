@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE plugin PUBLIC "-//TESTING TECH//DTD TT3plugin//2.0" "TT3plugin.dtd"> 
+<plugin id="com.testingtech.tt3rt.phyio.PhyIOBuiltinPlugin" name="PhyIOBuiltinPlugin" provider-name="Testing Technologies IST GmbH" version="1.0.0">
+  <runtime>
+    <library name="lib/PhyIOAUX.jar"/>
+  </runtime>
+  <dependency/>
+  <extension point="com.testingtech.ttcn.extension.LanguageBuiltin">
+    <parameter id="module" value="PhyIOAUX"/>
+    <parameter id="description" value="PhyIO Configuration and types module"/>
+  </extension>
+</plugin>

@@ -1,0 +1,239 @@
+Serial Configuration Interface
+------------------------------
+Interface Name: PhyIO - Interface
+
+Motivation 
+Theo goal is to connect the TTworkbench to the PhyIO board. While the assumption is that
+the sensors and actuators of the board have implemented their RT dependencies directly in
+the microcontroller, there are operations to be configured, observed values to be communicated
+to the TTworkbench  and actions to be trigger. 
+
+In order to get a flexible but still expressive API a set of 
+ - configuration and
+ - communication commands
+ are required
+
+The basic idea is that each available PhyIO can/should be configured. A PhyIO can be a sensor or a actuator, or both. We call a sensor the rPhyIO and the actuator wPhyIO
+
+For example the color sensor TCS 34725 can deliver the sensor data tuple as well it has an LED that can be switched ON/OFF. So the TCS 34725 PhyIO has two components rPhyIO1 and wPhyIO1
+
+Configuration Commands for the PhyIO include but is not limited to sampling time. Communication commands include for a rPhyIO requesting/getting data, and for a wPhyIO the value to be written.
+ 
+Generic Command Structure
+––––––––––––––––––––––––––
+
+* Commands are ASCII encoded and parameters are ASCII encoded values and comma separated.
+* If a command has multiple optional parameters, all optional parameters have be provided up to the last one NOT provided. In other words you can omit the last optional parameters but not the ones before the one you are providing
+* Commands are terminated by „\n“ (linefeed, ASCII 10). In PhyIO this is achieved by using the  Serial.println() command.
+
+Examples
+CON ()
+CON_ACK ()
+
+
+Communication Establishment
+–––––––––––––––––––––––––––
+For the establishment of the communication channel the PhyIO will initiate the communication by sending a „CON“ command, TTworkbench has to answer with „CON_ACK“. All commands are „\n“ (linefeed, ASCII 10) terminated.
+
+
+PHYIO		TTWB
+–––––		–––––
+	 CON *0,0,0,0*
+	––––––>
+	CON_ACK *0,500*
+	<––––––	
+
+
+PhyIO Setup
+–––––––––––
+
+Each PhyIO has two numeric ID. The ID is used in configuration commands, in reading commands and writing command to uniquely identify the PhyIO device.
+The PhyID has the format ID, FunctionType. 
+
+The ID denotes the unique identifier for each PhyIO in this PhyIO setup with ID is 0 < ID < 255
+The FunctionType identifies the type of function a PhyIO can perform. 
+  
+Reading and writing commands have a <timestamp>.
+
+Each PhyIO has the following representation: 
+
+ID, FunctionyType, COMMAND, ListOf parameters
+
+For example
+
+01, CV01, SETUP, 50
+
+denotes the 01 sensor of this setup. The sensor performs the color view function, and the command is SETUP. The first parameter of SETUP is set to 50ms. All optional parameters are ommitted.
+
+
+FUNCTIONS
+
+PhyIO Color View Module; ID: CV01
+–––––––––––––––––––––––––––––––––––
+The color view function can be used to „view“ colors. To support this task a build in LED can be used. A sample value is taken every <timeBetweenSamples> msec and transmitted asynchronously to TTworkbench. Per default the built-in LED is switched ON, and can be default switched OFF with <LED OFF = 0>. 
+
+TTworkbench —> PhyIO
+
+ID,CV01,SETUP,<timeBetweenSamples:unit16>[,<LED ON/OFF = 1>]
+Configures the Color View Module
+<timeBetweenSamples:unit16>		- Time between two measurements in milliseconds
+<LED OFF = 1>				- 0 to switch LED DEFAULT OFF, default=1 ON, other values ignored. optional
+
+ID,CV01,START
+Starts transmission of measured values
+
+ID,CV01,STOP
+Stops transmission of measured values
+
+ID,CV01,READ
+Request the transmission of one measured value
+
+
+PhyIO —> TTworkbench
+ID,CV01,R1,<timestamp:unit16>,<r:unit16>, <g:unit16>, <b:unit16>, <c:unit16>, <colorTemp:unit16>, <lux:unit16>
+
+Transmits the measured values to TTworkbench.  
+<timestamp:unit16> 	- The timestamp of the measurement
+<r:unit16>		- RED value
+<g:unit16>		- GREEN value
+<b:unit16>		- BLUE value
+<c:unit16> 		- CLEAR/Unfiltered value
+<colorTemp:unit16>	- Color Temperature in K(elvin) 
+<lux:unit16> 		- Lux/Lumen per SquareMeter
+
+PhyIO Ping Echo Module; ID: PE01
+–––––––––––––––––––––––––––––––––––
+The Ping Echo function can be used to measure distances in cm. A sample value is taken every <timeBetweenSamples> msec and transmitted asynchronously to TTworkbench. 
+Ping Echo Function measures consistently and reliably at up to 30 times per second configured via <timeBetweenSamples>. Optional median filtering for easy error correction <medianIterations>. Allows setting of a maximum distance where pings beyond that distance are read as no ping "clear" <maxDistance>. Accurate distance calculation in cm, inches or microseconds.
+
+
+TTworkbench —> PhyIO
+
+ID, PE01,SETUP,<timeBetweenSamples:unit16>[,<medianIterations:uint16 = 1>][,<maxDistance:uint16 = 200>][,<unit:string = cm>]
+
+Configures the Ping Echo Function
+<timeBetweenSamples:unit16>		- Time between two measurements in milliseconds
+<medianIteration.uint16 = 1>		- defines the number of iteration in order to calculate a median. Default only one ping
+<maxDistance:uint16 = 200>		- maximum distance in cm before CLEAR is indicated. Maximum sensor distance is rated at 400-500cm.   
+<unit:uint16 = cm>			- measured value is shown as cm (1), inch (2) or uS (microseconds) (3), default cm (1)
+
+Configuration of the Ping Echo function stops the function if running. 
+
+ID, PE01,START
+Starts transmission of measured value
+
+ID, PE01,STOP
+Stops transmission of measured value
+
+ID,PE01,READ
+Request the transmission of one measured value
+
+PhyIO —> TTworkbench
+ID, PE01,R1,<timestamp:unit16>,<distance:uint16>
+
+Reads and transmits the measured values to TTworkbench.  
+<timestamp:unit16> 	- The timestamp of the measurement
+<distance:unit16>	- distance in the selected unit as integer
+
+
+PhyIO LED Module; ID: LED01
+–––––––––––––––––––––––––––––––––––
+The LED function can be used to light an monochromatic LED.
+
+TTworkbench —> PhyIO
+
+ID, LED01, SET, <LED ON/OFF> 
+
+Configures the LED function
+<LED ON/OFF> 	- 0 to switch the LED OFF, 1 to switch the LED ON.
+The effect is immediate
+
+ID, LED01, BLINK, <LED ON/OFF> ,<frequency:uint16 = 0> [, <repeat:uint16 = 0>]
+
+Let's the LED blink repeat
+<LED ON/OFF> 	- 0 to switch the LED OFF, 1 to switch the LED ON.
+
+<frequency:uint16 = 0> 	- Frequency of the LED if switched on. Default value is 0 (0 changes per second), which is a synonym for steady light.
+A frequency of 10 means 10 ON/OFF cyclyes per second. The effect is immediate
+
+<repeat:uint16 = 0>		- How often should the LED blink with the given frequency. Default of 0 is infinte
+
+PhyIO Relais Module; ID: REL01
+–––––––––––––––––––––––––––––––––––
+The Relay function can be used to switch a relay ON/OFF.
+
+TTworkbench —> PhyIO
+
+ID, REL01, SET, FALSE = 0 / LOW
+ID, REL01, SET, TRUE = 1 / HIGH 
+
+ID, REL01, SETUP, <REL ON/OFF>
+
+Configures the REL function
+<REL ON/OFF> 	- 0 to switch the REL OFF, 1 to switch the REL ON.
+The effect is immediate 
+
+ID, REL01, BLINK, <REL ON/OFF> ,<frequency:uint16 = 0> [, <repeat:uint16 = 0>]
+
+Let's the REL blink repeat
+<REL ON/OFF> 	- 0 to switch the REL OFF, 1 to switch the REL ON.
+
+<frequency:uint16 = 0> 	- Frequency of the REL if switched on. Default value is 0 (0 changes per second), which is a synonym for steady light.
+A frequency of 10 means 10 ON/OFF cyclyes per second. The effect is immediate
+
+<repeat:uint16 = 0>		- How often should the REL blink with the given frequency. Default of 0 is infinte
+ 
+
+PhyIO Motor Module; ID: MM01
+–––––––––––––––––––––––––––––––––––
+The Motor Function can be used to control a motor. Parameters are direction of rotation and speed in percent.
+
+TTworkbench —> PhyIO
+ID, MM01, SET, <velocity:signed uint16>
+
+Configures the Motor function
+<velocity:signed uint16>				-   Speed of the motor in percent of full speed (-100 ... 100), negativ means reverse direction, 0 means stop.
+
+Configuration of the motor stops the motor, if running. 
+
+
+
+List of PhyIO Functions and their Functions
+===========================================
+Note: * = implemeted on Arduino
+
+PhyIO Color View Module
+*CV01: 	010 (ColorView01)
+*	-> SETUP: 001
+	-> START: 002
+	-> STOP: 003
+*	-> READ: 004
+*	<- R1: 101
+
+PhyIO Ping Echo Module
+*PE01: 	020 (PingEcho01)
+*	-> SETUP: 001
+	-> START: 002
+	-> STOP: 003
+*	-> READ: 004
+*	<- R1: 101
+
+PhyIO LED Module
+*LED01: 	030 (LED01)
+*	-> SET: 001
+	-> BLINK: 005
+
+PhyIO Relais Module
+REL01:	040 (Relay01)
+*	-> SET: 001
+	-> BLINK: 005	
+
+PhyIO Motor Module
+*MM01: 	050 (Motor01)
+*	-> SET: 001
+
+PhyIO Push Button Module
+PB01: 060 (PushButton01)
+	-> SETUP: 001
+	-> READ: 004
+	<- R1: 101

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="build/scpRuntimePlugin" path="phyioRuntimePlugin"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="con" path="com.testingtech.ttworkbench.core.TT3PLUGIN_DEPENDENCIES"/>
+	<classpathentry kind="output" path="build/default"/>
+</classpath>
