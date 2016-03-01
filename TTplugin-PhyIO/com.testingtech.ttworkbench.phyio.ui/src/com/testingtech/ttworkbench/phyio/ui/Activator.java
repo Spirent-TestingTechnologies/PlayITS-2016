@@ -1,4 +1,4 @@
-package arduinocontrol;
+package com.testingtech.ttworkbench.phyio.ui;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

@@ -1,4 +1,4 @@
-package parts;
+package com.testingtech.ttworkbench.phyio.ui.parts;
  
 
 import java.io.IOException;
@@ -18,8 +18,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import arduinocontrol.ArduinoControl;
-
+import com.testingtech.ttworkbench.phyio.ui.ArduinoCampaignExecutionHandler;
 import com.testingtech.tworkbench.ttman.server.api.AuthenticationException;
 import com.testingtech.tworkbench.ttman.server.api.Credentials;
 import com.testingtech.tworkbench.ttman.server.api.ExecutionServerFactory;
@@ -84,7 +83,7 @@ public class Test {
 
 			      // connect to the server and define a callback handler
 			      System.out.println(MessageFormat.format("Client connects to the Execution Server running at {0}:{1}", host, port));
-			      client.connect(host, port, credentials, new ArduinoControl());
+			      client.connect(host, port, credentials, new ArduinoCampaignExecutionHandler());
 			      
 			    } catch(Exception ex) {
 			    	lblConnectionStatus.setText(ex.getMessage());

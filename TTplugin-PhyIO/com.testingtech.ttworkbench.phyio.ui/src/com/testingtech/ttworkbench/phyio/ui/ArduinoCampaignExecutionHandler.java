@@ -1,4 +1,4 @@
-package arduinocontrol;
+package com.testingtech.ttworkbench.phyio.ui;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +13,7 @@ import com.testingtech.tworkbench.ttman.server.api.TestCampaign;
 import com.testingtech.tworkbench.ttman.server.api.TestCase;
 import com.testingtech.tworkbench.ttman.server.api.TestCaseStatus;
 
-public class ArduinoControl implements ICampaignExecutionHandler {
+public class ArduinoCampaignExecutionHandler implements ICampaignExecutionHandler {
 
 	@Override
 	public ITEResponse teRequest(ITERequest arg0) throws IOException {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_Vuwa4N-lEeW0h-Nxwh514A" elementId="org.eclipse.e4.ide.application" bindingContexts="_VuxB8N-lEeW0h-Nxwh514A">
   <children xsi:type="basic:TrimmedWindow" xmi:id="_Vuwa4d-lEeW0h-Nxwh514A" label="ArduinoControl" width="500" height="400">
-    <children xsi:type="basic:Part" xmi:id="_s6_mEN-nEeWG1aveESmC4A" elementId="arduinocontrol.part.0" contributionURI="bundleclass://ArduinoControl/parts.Test"/>
+    <children xsi:type="basic:Part" xmi:id="_s6_mEN-nEeWG1aveESmC4A" elementId="com.testingtech.ttworkbench.phyio.ui.part.0" contributionURI="bundleclass://com.testingtech.ttworkbench.phyio.ui/com.testingtech.ttworkbench.phyio.ui.parts.Test"/>
   </children>
   <rootContext xmi:id="_VuxB8N-lEeW0h-Nxwh514A" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
     <children xmi:id="_VuxB8d-lEeW0h-Nxwh514A" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>

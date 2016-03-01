@@ -5,15 +5,15 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            name="ArduinoControl"
+            name="com.testingtech.ttworkbench.phyio.ui"
             application="org.eclipse.e4.ui.workbench.swt.E4Application">
          <property
                name="applicationCSS"
-               value="platform:/plugin/ArduinoControl/css/default.css">
+               value="platform:/plugin/com.testingtech.ttworkbench.phyio.ui/css/default.css">
          </property>
          <property
                name="appName"
-               value="ArduinoControl">
+               value="com.testingtech.ttworkbench.phyio.ui">
          </property>
       </product>
    </extension>

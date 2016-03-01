@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ArduinoControl
+Bundle-Name: com.testingtech.ttworkbench.phyio.ui
 Bundle-SymbolicName: com.testingtech.ttworkbench.phyio.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: arduinocontrol.Activator
+Bundle-Activator: com.testingtech.ttworkbench.phyio.ui.Activator
 Require-Bundle: javax.inject;bundle-version="1.0.0",
  org.eclipse.core.runtime;bundle-version="3.9.100",
  org.eclipse.swt;bundle-version="3.102.1",
