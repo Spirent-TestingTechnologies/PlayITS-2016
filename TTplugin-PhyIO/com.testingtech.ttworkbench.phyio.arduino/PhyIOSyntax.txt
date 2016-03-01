@@ -196,7 +196,12 @@ Configures the Motor function
 
 Configuration of the motor stops the motor, if running. 
 
+PhyIO Light Sensor Module; ID: LS01
+–––––––––––––––––––––––––––––––––––
+The Light Sensor module reads brightness. 
 
+TTworkbench —> PhyIO
+ID, LS01, READ //TODO this needs an additional parameter to differentiate between brightness read and switch on/off reading
 
 List of PhyIO Functions and their Functions
 ===========================================
@@ -237,3 +242,11 @@ PB01: 060 (PushButton01)
 	-> SETUP: 001
 	-> READ: 004
 	<- R1: 101
+	
+PhyIO Light Sensor Module
+LS01: 070 (LightSensor01)
+*   -> READ: 004
+*   <- RS: 101
+or
+    -> READ: 004
+    <- RS: 101 (async)
