@@ -5,7 +5,8 @@ module Components {
 		port PhyConfig config;
 		port PhyLED leds[2];
 		port PhyRelay relays[2];
-		port PhyColorSensor rgbSensor;
+		port PhyLightSensor lightSensor;
+		port PhyColorSensor rgbSensor; //TODO remove when possible
 	}
 	type component Evaluation {
 		port PhyConfig config;
@@ -14,8 +15,8 @@ module Components {
 		port PhyColorSensor rgbSensor;
 	}
 	type component PhyIO extends Evaluation {
-		port PhyLED leds[2];
 		port PhyRelay relays[2];
+		port PhyLED led;
 	}
 	
 }

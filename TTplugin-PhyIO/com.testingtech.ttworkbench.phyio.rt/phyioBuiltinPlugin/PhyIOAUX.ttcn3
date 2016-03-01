@@ -147,6 +147,21 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
       }
     }
     
+	group LightSensor {
+		type integer Brightness(0..1023);
+      
+		//** @desc Reads Light Sensor data and sends it's immediately to the port
+		type record ReadBrightness {};
+    	
+		//** @desc Drive the relay to switch a contact on and off
+		type port PhyLightSensor message {
+        	in Brightness;
+        	out ReadBrightness;
+        	
+        	map param (SensorID sensorID);
+    	}
+    }
+    
   }
 } with {
   encode "PhyIO"
