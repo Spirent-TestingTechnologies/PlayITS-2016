@@ -15,13 +15,14 @@
 #define LED01  30
 #define REL01  40
 #define MM01   50
+#define LS01   70
 
 #define SETUP 1
 #define SET 1
 #define START 2
 #define STOP 3
 #define READ 4
-#define R1 101
+#define R1 101 //Result
 
 #define DEBUG 1
 
@@ -65,6 +66,9 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and
 // #define BT_PRESENT 1
 #define BT_RX 2
 #define BT_TX 3
+
+//#define LS_PRESENT 1
+#define LS1PIN A1
 
 //#ifdef BT_PRESENT
 SoftwareSerial mySerial(BT_RX, BT_TX); // RX, TX
@@ -159,6 +163,9 @@ void loop() {
           break;
         case MM01:
           MotorFunction(id, command);
+          break;
+        case LS01:
+          LightSensorFunction(id, command);
           break;
       }
       processCleanUp();
@@ -629,6 +636,20 @@ void MotorFunctionSet() {
   DEBUG_PRINTLN(vel);
   DEBUG_PRINT("#Into the direction of ");
   DEBUG_PRINTLN(reverse);
+}
+
+// -------- LightSensor ------------
+void LightSensorFunction( int id, int command){
+  //TODO Debug output
+  
+  int value = analogRead(LS1PIN);
+  
+  // ID, LS01, R1, <brightness:uint16>
+  XSERIAL.print(id); XSERIAL.print(", ");
+  XSERIAL.print(LS01);  XSERIAL.print(", ");
+  XSERIAL.print(R1);  XSERIAL.print(", ");
+  XSERIAL.println(value);
+  XSERIAL.flush();
 }
 
 // ----------------- GENERAL CONFIG ------------

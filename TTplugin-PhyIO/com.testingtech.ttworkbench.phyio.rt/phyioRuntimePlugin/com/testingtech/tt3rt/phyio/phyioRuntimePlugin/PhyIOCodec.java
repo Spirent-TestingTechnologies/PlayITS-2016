@@ -73,6 +73,9 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				rv.setField("green", greenField);
 				rv.setField("blue", blueField);
 				return value;
+			} else if (module == PhyModule.LightSensor01 && "Brightness".equals(typeName)) {
+				int distance = Integer.parseInt(elements[idx++].trim());
+				((IntegerValue)value).setInt(distance);
 			}
 			break;
 
@@ -112,6 +115,9 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 
 		} else if ("ReadRGB".equals(typeName)) {
 			outStr = value(PhyModule.ColorView01, READ);
+			
+		} else if ("ReadBrightness".equals(typeName)) {
+			outStr = value(PhyModule.LightSensor01, READ);
 			
 		// map parameters
 		} else if (
