@@ -28,8 +28,7 @@
  */
 module Lights {
 
-	import from PhyIOAUX all;
-	import from Components all;
+	import from Header all;
 	
 	const integer RED := 0;
 	const integer YELLOW := 1;
