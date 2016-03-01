@@ -3,6 +3,7 @@
 	<name>Example_PhyIO</name>
 	<comment></comment>
 	<projects>
+		<project>com.testingtech.ttworkbench.phyio.rt</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
