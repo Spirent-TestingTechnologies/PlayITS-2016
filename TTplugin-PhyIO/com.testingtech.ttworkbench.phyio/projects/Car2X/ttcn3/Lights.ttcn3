@@ -1,0 +1,184 @@
+/*
+ * ----------------------------------------------------------------------------
+ *  (C) Copyright Testing Technologies 2015-2016.  All Rights Reserved.
+ *
+ *  All copies of this program, whether in whole or in part, and whether
+ *  modified or not, must display this and all other embedded copyright
+ *  and ownership notices in full.
+ *
+ *  See the file COPYRIGHT for details of redistribution and use.
+ *
+ *  You should have received a copy of the COPYRIGHT file along with
+ *  this file; if not, write to the Testing Technologies,
+ *  Michaelkirchstrasse 17/18 10179 Berlin, Germany
+ *
+ *  TESTING TECHNOLOGIES DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+ *  SOFTWARE. IN NO EVENT SHALL TESTING TECHNOLOGIES BE LIABLE FOR ANY
+ *  SPECIAL, DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ *  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+ *  AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ *  ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+ *  THIS SOFTWARE.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+ *  EITHER EXPRESSED OR IMPLIED, INCLUDING ANY KIND OF IMPLIED OR
+ *  EXPRESSED WARRANTY OF NON-INFRINGEMENT OR THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+ * ----------------------------------------------------------------------------
+ */
+module Lights {
+
+	import from PhyIOAUX all;
+	import from Components all;
+	
+	const integer RED := 0;
+	const integer YELLOW := 1;
+	const integer A := 0;
+	const integer B := 1;
+	
+	const float LED_REFRESH_RATE := 1.0; // seconds
+	const float RGB_REFRESH_RATE := 1.0; // seconds
+
+	testcase SetupTest1() runs on me system PhyIO {
+		timer t;
+
+		map(self:config, system:config);
+		
+		map(self:leds[RED], system:leds[RED]) param (SensorID_1);
+		map(self:leds[YELLOW], system:leds[YELLOW]) param (SensorID_2);
+		map(self:relays[A], system:relays[A]) param (SensorID_5);
+		map(self:relays[B], system:relays[B]) param (SensorID_6);
+		
+		var Evaluation eval := Evaluation.create alive;
+		map(eval:motor, system:motor) param (SensorID_3);
+		map(eval:rgbSensor, system:rgbSensor) param (SensorID_4, RGB_REFRESH_RATE);
+		map(eval:echoSensor, system:echoSensor) param (SensorID_8, LED_REFRESH_RATE);
+		
+		var default cfgUpdates := activate(configUpdates());
+
+		switchLamp(false);
+		t.start(1.0); t.timeout;
+		leds[RED].send(switchLED_OFF);
+		t.start(1.0); t.timeout;
+		leds[YELLOW].send(switchLED_ON);
+		
+		eval.start(f_SetupTest1());
+		eval.done;
+		
+		if (getverdict() == pass) {
+			switchLamp(true);
+			t.start(5.0); t.timeout;
+			switchLamp(false);
+		} else {
+			switchLamp(true);
+			t.start(1.0); t.timeout;
+			switchLamp(false);
+			t.start(1.0); t.timeout;
+			switchLamp(true);
+			t.start(1.0); t.timeout;
+			switchLamp(false);
+		}
+
+		t.start(1.0); t.timeout;
+		leds[RED].send(switchLED_ON);
+		t.start(1.0); t.timeout;
+		leds[YELLOW].send(switchLED_OFF);
+		setverdict(pass);
+	}
+	testcase SetupTestLEDs() runs on me system PhyIO {
+		timer t;
+		map(self:config, system:config);
+		
+		map(self:leds[RED], system:leds[RED]) param (SensorID_1);
+		map(self:leds[YELLOW], system:leds[YELLOW]) param (SensorID_2);
+
+		leds[RED].send(switchLED_ON);
+		
+		t.start(1.0); t.timeout;
+
+		leds[YELLOW].send(switchLED_OFF);
+		
+		t.start(1.0); t.timeout;
+
+		leds[RED].send(switchLED_OFF);
+		
+		t.start(1.0); t.timeout;
+
+		leds[YELLOW].send(switchLED_ON);
+
+		t.start(1.0); t.timeout;
+
+		leds[RED].send(switchLED_ON);
+		
+		t.start(1.0); t.timeout;
+
+		leds[YELLOW].send(switchLED_ON);
+
+		t.start(2.0); t.timeout; // wait for arduino output
+		
+		setverdict(pass);
+	}
+	testcase SetupTestRGB() runs on me system PhyIO {
+		var RGB rgb;
+		timer t;
+
+		map(self:config, system:config);
+		
+		map(self:rgbSensor, system:rgbSensor) param (SensorID_4, RGB_REFRESH_RATE);
+		
+		var default cfgUpdates := activate(configUpdates());
+		rgbSensor.send(ReadRGB:{});
+		t.start(5.0);
+		alt {
+			[]rgbSensor.receive(RGB:{?, ?, ?}) -> value rgb {
+				// TODO test color
+				log("Color detected ", rgb);
+				setverdict(pass);
+			}
+			[]t.timeout {
+				setverdict(inconc);
+			}
+		}
+	}
+
+	function switchLamp(boolean switchOn) runs on me {
+		relays[A].send(RelaySwith:switchOn);
+		timer t := 2.0;
+		t.start; t.timeout;
+		relays[B].send(RelaySwith:not(switchOn));
+		t.start; t.timeout;
+	}
+
+	function f_SetupTest1() runs on Evaluation system PhyIO {
+		var RGB rgb;
+		timer t;
+		motor.send(Velocity:50);
+		t.start(3.0); t.timeout;
+		motor.send(Velocity:0);
+		t.start(1.0); t.timeout;
+		motor.send(Velocity:-50);
+		t.start(3.0); t.timeout;
+		motor.send(Velocity:0);
+		t.start(3.0); t.timeout;
+		
+		rgbSensor.send(ReadRGB:{});
+		t.start(5.0);
+		alt {
+			[]rgbSensor.receive(RGB:{?, ?, ?}) -> value rgb {
+				// TODO test color
+				log("Color detected ", rgb);
+				setverdict(pass);
+			}
+			[]t.timeout {
+				setverdict(inconc);
+			}
+		}
+	}
+	
+	altstep configUpdates() runs on me {
+		[]config.receive {
+			repeat;
+		}
+	}
+
+}

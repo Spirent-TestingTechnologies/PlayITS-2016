@@ -1,0 +1,21 @@
+module Components {
+	import from PhyIOAUX all;
+	
+	type component me {
+		port PhyConfig config;
+		port PhyLED leds[2];
+		port PhyRelay relays[2];
+		port PhyColorSensor rgbSensor;
+	}
+	type component Evaluation {
+		port PhyConfig config;
+		port PhyEcho echoSensor;
+		port PhyMotor motor;
+		port PhyColorSensor rgbSensor;
+	}
+	type component PhyIO extends Evaluation {
+		port PhyLED leds[2];
+		port PhyRelay relays[2];
+	}
+	
+}
