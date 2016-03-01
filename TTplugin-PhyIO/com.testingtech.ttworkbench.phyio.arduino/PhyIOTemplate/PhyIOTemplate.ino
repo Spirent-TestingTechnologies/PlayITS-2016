@@ -36,29 +36,29 @@
 unsigned long readTimer; // holds the next read time;
 unsigned int readSpeed = 500; // How frequently are we going to read the serial line
 
-#define CVF_PRESENT 1
+//#define CVF_PRESENT 1
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 #define cvf_ledpin 4
 
-#define PE_PRESENT 1
+//#define PE_PRESENT 1
 #define TRIGGER_PIN 12
 #define ECHO_PIN 11
 #define MAX_DISTANCE 100
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
-#define MOTOR_PRESENT 1
+//#define MOTOR_PRESENT 1
 #define enablePin 5
 #define in1Pin 6
 #define in2Pin 7
 
-#define LEDS_PRESENT 1
+//#define LEDS_PRESENT 1
 //D8+A3 LED bicolor
 #define LED1PIN1  8 // HIGH = red
 #define LED1PIN2  A3 // HIGH = green
 #define LED2PIN   10 // blue
 
-#define RELAYS_PRESENT 1
+//#define RELAYS_PRESENT 1
 #define RELAY1PIN  A1
 #define RELAY2PIN  A2
 
@@ -66,11 +66,11 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and
 #define BT_RX 2
 #define BT_TX 3
 
-#ifdef BT_PRESENT
+//#ifdef BT_PRESENT
 SoftwareSerial mySerial(BT_RX, BT_TX); // RX, TX
-#endif
+//#endif
 
-#define IR_PRESENT 1
+//#define IR_PRESENT 1
 #ifdef IR_PRESENT
 
 // IR LED DATA on D9 (PWM)
