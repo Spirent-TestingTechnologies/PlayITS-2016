@@ -37,6 +37,30 @@ module Lights {
 	
 	const float LED_REFRESH_RATE := 1.0; // seconds
 	const float RGB_REFRESH_RATE := 1.0; // seconds
+	
+	modulepar integer BRIGHTNESS_THRESHOLD := 512;
+	
+	testcase HeadLightsOn() runs on me system PhyIO{
+		timer t;
+		map(self:config, system:config);
+		map(self:lightSensor, system:lightSensor);
+		
+		lightSensor.send(ReadBrightness:{});
+		alt{
+			[]lightSensor.receive(Brightness < BRIGHTNESS_THRESHOLD){
+				log("LED aus.");
+				setverdict(fail);
+			}
+			[]lightSensor.receive(Brightness) {
+				log("LED an.");
+				setverdict(pass);
+			
+			}
+			[]t.timeout{
+				setverdict(inconc);
+			}
+		}
+	}
 
 	testcase SetupTest1() runs on me system PhyIO {
 		timer t;

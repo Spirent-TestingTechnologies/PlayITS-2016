@@ -11,6 +11,7 @@ module Components {
 	type component Evaluation {
 		port PhyConfig config;
 		port PhyEcho echoSensor;
+		port PhyLightSensor lightSensor;
 		port PhyMotor motor;
 		port PhyColorSensor rgbSensor;
 	}
