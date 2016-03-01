@@ -38,7 +38,7 @@ module Lights {
 	const float LED_REFRESH_RATE := 1.0; // seconds
 	const float RGB_REFRESH_RATE := 1.0; // seconds
 	
-	modulepar integer BRIGHTNESS_THRESHOLD := 512;
+	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
 	
 	testcase HeadLightsOn() runs on me system PhyIO{
 		timer t;
@@ -47,11 +47,11 @@ module Lights {
 		
 		lightSensor.send(ReadBrightness:{});
 		alt{
-			[]lightSensor.receive(Brightness < BRIGHTNESS_THRESHOLD){
+			[]lightSensor.receive(Brightness: (0..BRIGHTNESS_THRESHOLD)){
 				log("LED aus.");
 				setverdict(fail);
 			}
-			[]lightSensor.receive(Brightness) {
+			[]lightSensor.receive(Brightness: *) {
 				log("LED an.");
 				setverdict(pass);
 			

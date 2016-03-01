@@ -22,7 +22,7 @@ module Components {
 	}
 	type component PhyIO extends Evaluation {
 		port PhyRelay relays[2];
-		port PhyLED led;
+		port PhyLED leds[2];
 	}
 	
 }
