@@ -3,16 +3,21 @@ module Components {
 	
 	type component me {
 		port PhyConfig config;
-		port PhyLED leds[2];
-		port PhyRelay relays[2];
+		port PhyLED leds[2]; // TODO remove
+		port PhyRelay relays[2]; // TODO remove 
 		port PhyLightSensor lightSensor;
-		port PhyColorSensor rgbSensor; //TODO remove when possible
+		port PhyColorSensor rgbSensor; // TODO remove
+		port PhyPushButton buttonSensor;
+		
+		// TODO add speed sensor
+		// TODO add RFID sensor
 	}
 	type component Evaluation {
 		port PhyConfig config;
 		port PhyEcho echoSensor;
 		port PhyMotor motor;
 		port PhyColorSensor rgbSensor;
+		port PhyPushButton buttonSensor;
 	}
 	type component PhyIO extends Evaluation {
 		port PhyRelay relays[2];
