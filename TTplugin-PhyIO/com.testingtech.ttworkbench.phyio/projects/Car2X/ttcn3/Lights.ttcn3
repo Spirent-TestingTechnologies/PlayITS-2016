@@ -41,7 +41,7 @@ module Lights {
 	
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
 	
-	testcase HeadLightsOn() runs on me system PhyIO{
+	testcase HeadLightsOn() runs on me system SUT{
 		timer t;
 		map(self:config, system:config);
 		map(self:lightSensor, system:lightSensor);
@@ -64,7 +64,7 @@ module Lights {
 		}
 	}
 
-	testcase HeadLightsOff() runs on me system PhyIO{
+	testcase HeadLightsOff() runs on me system SUT{
 			timer t;
 			
 			map(self:config, system:config);
@@ -92,7 +92,7 @@ module Lights {
 	//  +- 100ms Abweichung
 	//  bei receive compare zeit jetzt und von letztemal
 	 	
-	testcase EmergencyLights() runs on me system PhyIO{
+	testcase EmergencyLights() runs on me system SUT{
 		timer t;
 		timer intervall;
 		
