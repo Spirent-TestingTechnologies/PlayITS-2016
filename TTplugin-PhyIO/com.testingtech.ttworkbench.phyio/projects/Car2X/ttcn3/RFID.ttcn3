@@ -9,17 +9,7 @@ module RFID {
 		var default alts := activate(alt_default());
 			
 		rfidSensor.send(ReadRFID:{});
-		t.start(10.0);
 			
-		alt{
-			[]rfidSensor.receive(RFID: OWNER_RFID){
-				log("RFID valid.");
-				setverdict(pass);
-			}
-			[]rfidSensor.receive(RFID: *) {
-				log("RFID invalid.");
-				setverdict(fail);
-			}
-		}
+		setverdict(f_checkRFID(OWNER_RFID, 10.0));
 	}
 }

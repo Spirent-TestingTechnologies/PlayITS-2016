@@ -30,6 +30,8 @@
 module Lights {
 
 
+	import from Functions {function f_abs, f_checkEmergencyLights;}
+
 	import from Header all;
 	
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
@@ -56,76 +58,31 @@ module Lights {
 	}
 
 	testcase HeadLightsOff() runs on me system SUT{
-			map(self:lightSensor, system:lightSensor);
+		map(self:lightSensor, system:lightSensor);
 			
-			var default alts := activate(alt_default());
+		var default alts := activate(alt_default());
 			
-			lightSensor.send(ReadBrightness:{});
-			t.start(5.0);
-			alt{
-				[]lightSensor.receive(Brightness: (0..BRIGHTNESS_THRESHOLD)){
-					log("LED aus.");
-					setverdict(pass);
-				}
-				[]lightSensor.receive(Brightness: *) {
-					log("LED an.");
-					setverdict(fail);
-				}
+		lightSensor.send(ReadBrightness:{});
+		t.start(5.0);
+		alt{
+			[]lightSensor.receive(Brightness: (0..BRIGHTNESS_THRESHOLD)){
+				log("LED aus.");
+				setverdict(pass);
+			}
+			[]lightSensor.receive(Brightness: *) {
+				log("LED an.");
+				setverdict(fail);
 			}
 		}
+	}
 	//** @desc Testet Warnblinker
 	//  Sollwert ms von Abständen Zustandsänderung
 	//  +- 100ms Abweichung
 	//  bei receive compare zeit jetzt und von letztemal
 	 	
 	testcase EmergencyLights() runs on me system SUT{
-		timer intervall;
-		
 		map(self:lightSensor, system:lightSensor);
 		
-		var integer ts := null;
-		var integer lts := null;
-		var boolean time;
-		
-		lightSensor.send(ReadLightSwitchStart:{});
-		t.start(10.0);
-		while(getverdict == none){
-			alt{
-				//Statewechsel timestampvergleich
-				[]lightSensor.receive(TimeStamp:{}) -> value ts{
-					/*TODO finish this*/
-					if(lts == null){
-						lts := ts;
-					}
-					else{
-						if(f_abs(ts-lts-SWITCH_TIME_TARGET) > ALLOWED_SWITCH_TIME_DEVIATION){
-							setverdict(fail);
-						}
-						else{
-							lts := ts;
-						}
-					}
-					}
-				[]t.timeout{
-					time := true;
-					setverdict(inconc);
-				}
-			}
-		}
-		lightSensor.send(ReadLightSwitchStop:{});
-		if(time){
-			lightSensor.receive(TimeStamp:{}) -> value ts;
-			if(ts-lts <= SWITCH_TIME_TARGET + ALLOWED_SWITCH_TIME_DEVIATION){
-				setverdict(pass);			
-			}
-			else{
-				setverdict(fail);
-			}
-		}
-	}
-	
-	function f_abs(integer a){
-			if(a < 0){ return -a;}
-			else{return a;}
+		setverdict(f_checkEmergencyLights(SWITCH_TIME_TARGET,ALLOWED_SWITCH_TIME_DEVIATION, 10.0));
 	}
 }

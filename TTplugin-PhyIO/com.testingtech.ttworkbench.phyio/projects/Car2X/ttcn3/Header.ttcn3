@@ -1,6 +1,7 @@
 module Header {
 	public import from PhyIOAUX all;
 	public import from Components all;
+	public import from Functions all;
 
 	//** default altstep
 	altstep alt_default() runs on me{

@@ -1,0 +1,78 @@
+module Functions {
+	import from PhyIOAUX all;
+	import from Components all;
+	
+	function f_checkRFID(RFID rfid, float time) runs on me system SUT return verdicttype {
+			
+		rfidSensor.send(ReadRFID:{});
+		
+		t.start(time);
+		
+		alt{
+			[]rfidSensor.receive(RFID: rfid){
+				return pass;
+			}
+			[]rfidSensor.receive(RFID: ?) {
+				return fail;
+			}
+			[]t.timeout {
+				return inconc;
+			}
+		}
+		
+		return inconc;
+	}
+	
+	function f_checkEmergencyLights(integer switchTimeTarget, integer allowedSwitchTimeDeviation, float time)
+			runs on me system SUT return verdicttype{
+		var verdicttype result := none;
+		
+		var integer ts := null;
+		var integer lts := null;
+		var boolean isTimeout;
+		
+		lightSensor.send(ReadLightSwitchStart:{});
+		
+		t.start(time);
+
+		while(result == none){
+			alt{
+				[]lightSensor.receive(TimeStamp: ?) -> value ts{
+					if(lts == null){
+						lts := ts;
+					} else {
+						if(f_abs(ts - lts - switchTimeTarget) > allowedSwitchTimeDeviation){
+							result := fail;
+						} else {
+							lts := ts;
+						}
+					}
+				}
+				[]t.timeout {
+					isTimeout := true;
+					result := inconc;
+				}
+			}
+		}
+		
+		lightSensor.send(ReadLightSwitchStop:{});
+		
+		if(isTimeout){
+			lightSensor.receive(TimeStamp: ?) -> value ts;
+			
+			if(ts-lts <= switchTimeTarget + allowedSwitchTimeDeviation){
+				return pass;
+			}
+			else{
+				return fail;
+			}
+		}
+		
+		return inconc;
+	}
+	
+	function f_abs(integer a) return integer{
+		if(a < 0){return -a;}
+		else{return a;}
+	}
+}
