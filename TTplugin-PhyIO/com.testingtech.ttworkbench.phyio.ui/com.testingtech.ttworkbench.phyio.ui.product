@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="ArduinoControl" id="ArduinoControl.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="com.testingtech.ttworkbench.phyio.ui" id="com.testingtech.ttworkbench.phyio.ui.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -14,7 +14,6 @@
    <windowImages/>
 
    <plugins>
-      <plugin id="ArduinoControl"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="com.lowagie.text"/>
       <plugin id="com.testingtech.auth.core"/>
@@ -35,6 +34,7 @@
       <plugin id="com.testingtech.ttworkbench.metamodel.core"/>
       <plugin id="com.testingtech.ttworkbench.metamodel.muttcn"/>
       <plugin id="com.testingtech.ttworkbench.metamodel.ui"/>
+      <plugin id="com.testingtech.ttworkbench.phyio.ui"/>
       <plugin id="com.testingtech.ttworkbench.rest"/>
       <plugin id="com.testingtech.ttworkbench.ttcn.rt"/>
       <plugin id="com.testingtech.ttworkbench.ttcn.tt3"/>
