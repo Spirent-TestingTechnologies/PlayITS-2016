@@ -73,9 +73,14 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				rv.setField("green", greenField);
 				rv.setField("blue", blueField);
 				return value;
-			} else if (module == PhyModule.LightSensor01 && "Brightness".equals(typeName)) {
-				int distance = Integer.parseInt(elements[idx++].trim());
-				((IntegerValue)value).setInt(distance);
+			} else if (module == PhyModule.LightSensor01 && "State".equals(typeName)) {
+				int brightness = Integer.parseInt(elements[idx++].trim());
+				IntegerValue brightnessV = (IntegerValue)((RecordValue)value).getField("brightness");
+				brightnessV.setInt(brightness);
+				
+				int timestamp = Integer.parseInt(elements[idx++].trim());
+				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("timestamp");
+				timestampV.setInt(timestamp);
 			}
 			break;
 

@@ -27,8 +27,8 @@ module Functions {
 			runs on me system SUT return verdicttype{
 		var verdicttype result := none;
 		
-		var integer ts := null;
-		var integer lts := null;
+		var State state;
+		var Timestamp lastTimestamp := null;
 		var boolean isTimeout;
 		
 		lightSensor.send(ReadLightSwitchStart:{});
@@ -37,14 +37,14 @@ module Functions {
 
 		while(result == none){
 			alt{
-				[]lightSensor.receive(TimeStamp: ?) -> value ts{
-					if(lts == null){
-						lts := ts;
+				[]lightSensor.receive(State: {?, ?}) -> value state {
+					if(lastTimestamp == null){
+						lastTimestamp := state.time;
 					} else {
-						if(f_abs(ts - lts - switchTimeTarget) > allowedSwitchTimeDeviation){
+						if(f_abs(state.time - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
 							result := fail;
 						} else {
-							lts := ts;
+							lastTimestamp := state.time;
 						}
 					}
 				}
@@ -58,9 +58,9 @@ module Functions {
 		lightSensor.send(ReadLightSwitchStop:{});
 		
 		if(isTimeout){
-			lightSensor.receive(TimeStamp: ?) -> value ts;
+			lightSensor.receive(State: {?, ?}) -> value state;
 			
-			if(ts-lts <= switchTimeTarget + allowedSwitchTimeDeviation){
+			if(state.time - lastTimestamp <= switchTimeTarget + allowedSwitchTimeDeviation){
 				return pass;
 			}
 			else{

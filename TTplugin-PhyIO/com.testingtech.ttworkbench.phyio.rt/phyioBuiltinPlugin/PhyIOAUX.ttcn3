@@ -149,7 +149,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
     
 		group LightSensor {
 			type integer Brightness(0..1023);
-			type integer TimeStamp;
+			type integer Timestamp;
+			type record State {Brightness brightness, Timestamp time};
       
 			//** @desc Reads Light Sensor data and sends it's immediately to the port
 			type record ReadBrightness {};
@@ -162,7 +163,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			
 			//** @desc Drive the relay to switch a contact on and off
 			type port PhyLightSensor message {
-				in Brightness, TimeStamp;
+				in State;
 				out ReadBrightness, ReadLightSwitchStart, ReadLightSwitchStop;
         	
 				map param (SensorID sensorID);
