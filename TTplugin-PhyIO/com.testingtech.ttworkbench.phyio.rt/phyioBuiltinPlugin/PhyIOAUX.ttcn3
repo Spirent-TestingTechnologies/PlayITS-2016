@@ -101,11 +101,13 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 
 			//** @desc Reads Button state and sends it's immediately to the port
 			type record ReadButtonState {};
+			type record ReadButtonStateStart {};
+			type record ReadButtonStateStop {};
 
 			//** @desc Read the state of the push button
 			type port PhyPushButton message {
 				in PushButtonState;
-				out ReadButtonState;
+				out ReadButtonState, ReadButtonStateStart, ReadButtonStateStop;
 				map param (SensorID sensorID);
 			}
 		}
