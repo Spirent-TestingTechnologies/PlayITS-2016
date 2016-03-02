@@ -1,7 +1,7 @@
 module RFID {
 	import from Header all;
 	
-	modulepar Brightness OWNER_RFID := "LOL42WTF1011";
+	modulepar RFID OWNER_RFID := "LOL42WTF1011";
 	
 	testcase RFIDTest() runs on me system SUT{
 		map(self:rfidSensor, system:rfidSensor);
