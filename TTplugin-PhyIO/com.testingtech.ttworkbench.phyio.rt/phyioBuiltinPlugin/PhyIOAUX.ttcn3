@@ -149,7 +149,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
     
 		group LightSensor {
 			type integer Brightness(0..1023);
-			type long TimeStamp;
+			type integer TimeStamp;
       
 			//** @desc Reads Light Sensor data and sends it's immediately to the port
 			type record ReadBrightness {};
