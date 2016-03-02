@@ -5,10 +5,7 @@ module Components {
 		timer t;
 		
 		port PhyConfig config;
-		port PhyLED leds[2]; // TODO remove
-		port PhyRelay relays[2]; // TODO remove 
 		port PhyLightSensor lightSensor;
-		port PhyColorSensor rgbSensor; // TODO remove
 		port PhyPushButton buttonSensor;
 		
 		// TODO add speed sensor
