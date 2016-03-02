@@ -1,9 +1,9 @@
-module RFID {
+module RFIDModule {
 	import from Header all;
 	
 	modulepar RFID OWNER_RFID := "LOL42WTF1011";
 	
-	testcase RFIDTest() runs on me system SUT{
+	testcase CorrectRFIDTest() runs on me system SUT {
 		map(self:rfidSensor, system:rfidSensor);
 		
 		var default alts := activate(alt_default());
@@ -11,5 +11,23 @@ module RFID {
 		rfidSensor.send(ReadRFID:{});
 			
 		setverdict(f_checkRFID(OWNER_RFID, 10.0));
+	}
+	
+	testcase FalseRFIDTest() runs on me system SUT {
+		map(self:rfidSensor, system:rfidSensor);
+		
+		var default alts := activate(alt_default());
+			
+		rfidSensor.send(ReadRFID:{});
+		
+		var verdicttype result := f_checkRFID(OWNER_RFID, 10.0);
+		
+		if(result == pass){
+			setverdict(fail);
+		} else if(result == fail){
+			setverdict(pass);
+		} else {
+			setverdict(inconc);
+		}
 	}
 }
