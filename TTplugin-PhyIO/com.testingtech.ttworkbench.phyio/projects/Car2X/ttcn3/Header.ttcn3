@@ -1,4 +1,14 @@
 module Header {
 	public import from PhyIOAUX all;
 	public import from Components all;
+
+	//** default altstep
+	altstep alt_default() runs on me{
+		[] any port.receive {
+			setverdict(inconc);
+		}
+		[] t.timeout {
+			setverdict(inconc);
+		}
+	}
 }

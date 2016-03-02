@@ -42,9 +42,10 @@ module Lights {
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
 	
 	testcase HeadLightsOn() runs on me system SUT{
-		timer t;
 		map(self:config, system:config);
 		map(self:lightSensor, system:lightSensor);
+		
+		var default alts := activate(alt_default);
 		
 		lightSensor.send(ReadBrightness:{});
 		t.start(5.0);
@@ -56,20 +57,16 @@ module Lights {
 			[]lightSensor.receive(Brightness: *) {
 				log("LED an.");
 				setverdict(pass);
-			
-			}
-			[]t.timeout{
-				setverdict(inconc);
 			}
 		}
 	}
 
 	testcase HeadLightsOff() runs on me system SUT{
-			timer t;
-			
 			map(self:config, system:config);
 			map(self:lightSensor, system:lightSensor);
-		
+			
+			var default alts := activate(alt_default);
+			
 			lightSensor.send(ReadBrightness:{});
 			t.start(5.0);
 			alt{
@@ -80,10 +77,6 @@ module Lights {
 				[]lightSensor.receive(Brightness: *) {
 					log("LED an.");
 					setverdict(fail);
-			
-				}
-				[]t.timeout{
-					setverdict(inconc);
 				}
 			}
 		}
@@ -93,22 +86,19 @@ module Lights {
 	//  bei receive compare zeit jetzt und von letztemal
 	 	
 	testcase EmergencyLights() runs on me system SUT{
-		timer t;
 		timer intervall;
 		
 		map(self:config, system:config);
 		map(self:lightSensor, system:lightSensor);
 		
+		var default alts := activate(alt_default);
+		
 		lightSensor.send(ReadState:{});
 		t.start(10.0);
-		while(true){
+		while(getverdict == none){
 			alt{
-				[]t.timeout{
-				setverdict(inconc);//verdict muss noch angepasst werden
-				break;
-				}
 				//Statewechsel timestampvergleich
-				[]lightSensor.receive{}
+				[]lightSensor.receive{/*TODO finish this*/}
 			}
 		}
 	}

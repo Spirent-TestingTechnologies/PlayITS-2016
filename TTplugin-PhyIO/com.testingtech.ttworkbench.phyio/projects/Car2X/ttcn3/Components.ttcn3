@@ -2,6 +2,8 @@ module Components {
 	import from PhyIOAUX all;
 	
 	type component me {
+		timer t;
+		
 		port PhyConfig config;
 		port PhyLED leds[2]; // TODO remove
 		port PhyRelay relays[2]; // TODO remove 
