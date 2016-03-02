@@ -167,6 +167,19 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 				map param (SensorID sensorID);
 			}
 		}
+		
+		group RFIDSensor {
+			type charstring RFID;
+			
+			type record ReadRFID {};
+			
+			type port PhyRFIDSensor message {
+				in RFID;
+				out ReadRFID;
+        	
+				map param (SensorID sensorID);
+			}
+		}
     
 	}
 } with {
