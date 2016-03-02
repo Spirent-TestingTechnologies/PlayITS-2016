@@ -88,7 +88,7 @@ module Lights {
 		var integer abweichung := ;
 		var boolean time;
 		
-		lightSensor.send(ReadTimeStamp:{});
+		lightSensor.send(ReadLightSwitchStart:{});
 		t.start(10.0);
 		while(getverdict == none){
 			alt{

@@ -154,15 +154,16 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			//** @desc Reads Light Sensor data and sends it's immediately to the port
 			type record ReadBrightness {};
 		
-			//** @desc Reads state of LED (on/off) and sends it to the port
-			type record ReadTimeStamp {};
+			//** @desc start reading timestamps of LED on/off switching
+			type record ReadLightSwitchStart {};
+			
+			//** @desc stop reading timestamps of LED on/off switching
+			type record ReadLightSwitchStop {};
+			
 			//** @desc Drive the relay to switch a contact on and off
 			type port PhyLightSensor message {
-				in Brightness;
-				out ReadBrightness;
-        	
-				in TimeStamp;
-				out ReadTimeStamp;
+				in Brightness, TimeStamp;
+				out ReadBrightness, ReadLightSwitchStart, ReadLightSwitchStop;
         	
 				map param (SensorID sensorID);
 			}
