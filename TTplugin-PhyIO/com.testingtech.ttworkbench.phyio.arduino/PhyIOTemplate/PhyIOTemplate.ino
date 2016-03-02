@@ -643,12 +643,14 @@ void LightSensorFunction( int id, int command){
   //TODO Debug output
   
   int value = analogRead(LS1PIN);
+  unsigned long time = millis();
   
-  // ID, LS01, R1, <brightness:uint16>
+  // ID, LS01, R1, <brightness:int>, <timestamp:long>
   XSERIAL.print(id); XSERIAL.print(", ");
   XSERIAL.print(LS01);  XSERIAL.print(", ");
   XSERIAL.print(R1);  XSERIAL.print(", ");
-  XSERIAL.println(value);
+  XSERIAL.print(value);  XSERIAL.print(", ");
+  XSERIAL.println(time);
   XSERIAL.flush();
 }
 
