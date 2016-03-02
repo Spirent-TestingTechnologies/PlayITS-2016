@@ -30,4 +30,23 @@ module RFIDModule {
 			setverdict(inconc);
 		}
 	}
+	
+	testcase TheftDetect() runs on me system SUT{
+		map(self:rfidSensor, system:rfidSensor);
+		map(self:buttonSensor, system:buttonSensor);
+		map(self:lightSensor, system:lightSensor);
+		
+		var default alts := activate(alt_default());
+		var verdicttype v_rfid := null;
+		var verdicttype v_door := null;
+		var verdicttype v_elights := null;
+		var charstring rfid := null;
+		
+		rfidSensor.send(ReadRFID:{});
+		buttonSensor.send(ReadButtonStateStart:{});
+		lightSensor.send(ReadLightSwitchStart:{});
+		
+		
+		}
+	}
 }
