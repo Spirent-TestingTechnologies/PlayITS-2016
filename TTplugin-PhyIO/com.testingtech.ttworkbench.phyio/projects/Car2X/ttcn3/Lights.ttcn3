@@ -28,9 +28,6 @@
  */
 
 module Lights {
-
-	import from Functions {function f_abs, f_checkEmergencyLights;}
-
 	import from Header all;
 	
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
@@ -45,11 +42,11 @@ module Lights {
 		lightSensor.send(ReadBrightness:{});
 		t.start(5.0);
 		alt{
-			[]lightSensor.receive(State: {(0..BRIGHTNESS_THRESHOLD), *}){
+			[]lightSensor.receive(State: {(0..BRIGHTNESS_THRESHOLD), ?}){
 				log("LED aus.");
 				setverdict(fail);
 			}
-			[]lightSensor.receive(State: {*, *}) {
+			[]lightSensor.receive(State: {?, ?}) {
 				log("LED an.");
 				setverdict(pass);
 			}
@@ -64,11 +61,11 @@ module Lights {
 		lightSensor.send(ReadBrightness:{});
 		t.start(5.0);
 		alt{
-			[]lightSensor.receive(State: {(0..BRIGHTNESS_THRESHOLD), *}){
+			[]lightSensor.receive(State: {(0..BRIGHTNESS_THRESHOLD), ?}){
 				log("LED aus.");
 				setverdict(pass);
 			}
-			[]lightSensor.receive(State: {*, *}) {
+			[]lightSensor.receive(State: {?, ?}) {
 				log("LED an.");
 				setverdict(fail);
 			}
