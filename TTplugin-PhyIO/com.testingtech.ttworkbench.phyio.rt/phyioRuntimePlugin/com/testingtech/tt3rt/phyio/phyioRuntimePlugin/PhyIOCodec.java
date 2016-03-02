@@ -1,8 +1,6 @@
 package com.testingtech.tt3rt.phyio.phyioRuntimePlugin;
 
-import static com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOConstants.RESULT;
-import static com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOConstants.READ;
-import static com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOConstants.SET;
+import static com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOConstants.*;
 
 import java.nio.charset.Charset;
 
@@ -81,6 +79,9 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				int timestamp = Integer.parseInt(elements[idx++].trim());
 				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("timestamp");
 				timestampV.setInt(timestamp);
+			} else if (module == PhyModule.PushButton01 && "PushButtonState".equals(typeName)) {
+				int state = Integer.parseInt(elements[idx++].trim());
+				((BooleanValue)value).setBoolean(state != 0);
 			}
 			break;
 
@@ -117,6 +118,12 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		
 		} else if ("ReadButtonState".equals(typeName)) {
 			outStr = value(PhyModule.PushButton01, READ);
+			
+		} else if ("ReadButtonStateStart".equals(typeName)) {
+			outStr = value(PhyModule.PushButton01, START);
+			
+		} else if ("ReadButtonStateStop".equals(typeName)) {
+			outStr = value(PhyModule.PushButton01, STOP);
 
 		} else if ("ReadRGB".equals(typeName)) {
 			outStr = value(PhyModule.ColorView01, READ);
