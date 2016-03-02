@@ -29,11 +29,12 @@
 
 module Lights {
 
-	import from PhyIOAUX {type Brightness, ReadTimeStamp;}
 
 	import from Header all;
 	
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
+	modulepar integer ALLOWED_SWITCH_TIME_DEVIATION := 100;
+	modulepar integer SWITCH_TIME_TARGET := 500;
 	
 	testcase HeadLightsOn() runs on me system SUT{
 		map(self:lightSensor, system:lightSensor);
@@ -84,8 +85,6 @@ module Lights {
 		
 		var integer ts := null;
 		var integer lts := null;
-		var integer soll := ;
-		var integer abweichung := ;
 		var boolean time;
 		
 		lightSensor.send(ReadLightSwitchStart:{});
@@ -96,26 +95,27 @@ module Lights {
 				[]lightSensor.receive(TimeStamp:{}) -> value ts{
 					/*TODO finish this*/
 					if(lts == null){
-						lts = ts;
+						lts := ts;
 					}
 					else{
-						if(f_abs(ts-lts-soll) > abweichung){
+						if(f_abs(ts-lts-SWITCH_TIME_TARGET) > ALLOWED_SWITCH_TIME_DEVIATION){
 							setverdict(fail);
 						}
 						else{
-							lts = ts;
+							lts := ts;
 						}
 					}
 					}
 				[]t.timeout{
-					time = true;
+					time := true;
 					setverdict(inconc);
 				}
 			}
 		}
+		lightSensor.send(ReadLightSwitchStop:{});
 		if(time){
 			lightSensor.receive(TimeStamp:{}) -> value ts;
-			if(ts-lts <= soll + abweichung){
+			if(ts-lts <= SWITCH_TIME_TARGET + ALLOWED_SWITCH_TIME_DEVIATION){
 				setverdict(pass);			
 			}
 			else{
