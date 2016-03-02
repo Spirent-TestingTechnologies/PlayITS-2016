@@ -31,14 +31,6 @@ module Lights {
 
 	import from Header all;
 	
-	const integer RED := 0;
-	const integer YELLOW := 1;
-	const integer A := 0;
-	const integer B := 1;
-	
-	const float LED_REFRESH_RATE := 1.0; // seconds
-	const float RGB_REFRESH_RATE := 1.0; // seconds
-	
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
 	
 	testcase HeadLightsOn() runs on me system SUT{
