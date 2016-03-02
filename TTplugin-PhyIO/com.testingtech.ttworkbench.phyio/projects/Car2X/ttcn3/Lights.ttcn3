@@ -93,7 +93,7 @@ module Lights {
 		
 		var default alts := activate(alt_default);
 		
-		lightSensor.send(ReadState:{});
+		lightSensor.send(ReadTimeStamp:{});
 		t.start(10.0);
 		while(getverdict == none){
 			alt{
