@@ -1,0 +1,25 @@
+module RFID {
+	import from Header all;
+	
+	modulepar Brightness OWNER_RFID := "LOL42WTF1011";
+	
+	testcase RFIDTest() runs on me system SUT{
+		map(self:rfidSensor, system:rfidSensor);
+		
+		var default alts := activate(alt_default());
+			
+		rfidSensor.send(ReadRFID:{});
+		t.start(10.0);
+			
+		alt{
+			[]rfidSensor.receive(RFID: OWNER_RFID){
+				log("RFID valid.");
+				setverdict(pass);
+			}
+			[]rfidSensor.receive(RFID: *) {
+				log("RFID invalid.");
+				setverdict(fail);
+			}
+		}
+	}
+}
