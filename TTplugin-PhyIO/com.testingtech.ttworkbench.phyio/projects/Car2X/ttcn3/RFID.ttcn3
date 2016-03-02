@@ -30,21 +30,116 @@ module RFIDModule {
 	}
 	
 	testcase TheftDetect() runs on me system SUT{
+		var verdicttype v_rfid := none;
+		var verdicttype v_elights := none;
+		var boolean doorOpened := false;
+		
 		map(self:rfidSensor, system:rfidSensor);
 		map(self:buttonSensor, system:buttonSensor);
 		map(self:lightSensor, system:lightSensor);
 		
-		var default alts := activate(alt_default());
-		var verdicttype v_rfid := null;
-		var verdicttype v_door := null;
-		var verdicttype v_elights := null;
-		var charstring rfid := null;
+		//TODO how do we start these??
+		//execute(executeRFIDDetection(OWNER_RFID, THEFT_RFID_CHECK_RATE));
+		//execute(executeEmergencyLightDetection(SWITCH_TIME_TARGET, ALLOWED_SWITCH_TIME_DEVIATION, 5.0));
 		
-		rfidSensor.send(ReadRFID:{});
-		buttonSensor.send(ReadButtonStateStart:{});
-		lightSensor.send(ReadLightSwitchStart:{});
+		t.start(30.0);
 		
+		while(doorOpened == false and getverdict == none){
+			alt {
+				[]rfidPort.receive(verdicttype: ?) -> value v_rfid {
+				}
+				[]emergencyLightPort.receive(verdicttype: ?) -> value v_elights {
+				}
+				[]buttonSensor.receive(PushButtonState: true){
+					doorOpened := true;
+				}
+				[]t.timeout {
+					setverdict(inconc);
+				}
+			}
+		}
 		
+		buttonSensor.send(ReadButtonStateStop:{});
+		if(v_rfid != pass) {
+			rfidPort.send(StopThread: {});
+		}
+		
+		if(v_elights == pass){
+			setverdict(pass);
+			stop;
+		}		
+		
+		// wait for emergency
+		t.start(10.0);
+		
+		alt {
+			[]emergencyLightPort.receive(verdicttype: ?) -> value v_elights {
+			}
+			[]t.timeout {
+				setverdict(inconc);
+			}
+		}
+		
+		emergencyLightPort.send(StopThread: {});
+		
+		if(v_elights == pass){
+			setverdict(pass);
+		} else {
+			setverdict(fail);
+		}
+	}
+	
+	testcase executeRFIDDetection(RFID rfid, float checkRate) runs on me system SUT {
+		
+		var verdicttype result;
+		timer loopTimer;
+		
+		while(true) {
+			loopTimer.start(checkRate);
+			
+			result := f_checkRFID(rfid, checkRate);
+			
+			rfidPort.send(result);
+			
+			if(result == pass) {
+				stop;
+			}
+			
+			alt {
+				[]rfidPort.receive(StopThread: {}) {
+					stop;
+				}
+				[]loopTimer.timeout {
+				// do nothing
+				}
+			}
+		}
+	}
+	
+	testcase executeEmergencyLightDetection(integer switchTime, integer allowedDeviation, float checkRate) runs on me system SUT {
+		
+		var verdicttype result;
+		timer loopTimer;
+		
+		while(true) {
+			loopTimer.start(checkRate);
+			
+			result := f_checkEmergencyLights(switchTime, allowedDeviation, checkRate);
+			
+			emergencyLightPort.send(result);
+			
+			if(result == pass) {
+				stop;
+			}
+			
+			alt {
+				[]emergencyLightPort.receive(StopThread: {}) {
+					stop;
+				}
+				[]loopTimer.timeout {
+				// do nothing
+				}
+			}
 		}
 	}
 }
