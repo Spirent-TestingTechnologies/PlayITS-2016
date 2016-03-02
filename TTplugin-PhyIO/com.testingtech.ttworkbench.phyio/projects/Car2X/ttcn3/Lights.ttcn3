@@ -30,10 +30,6 @@
 module Lights {
 	import from Header all;
 	
-	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
-	modulepar integer ALLOWED_SWITCH_TIME_DEVIATION := 100;
-	modulepar integer SWITCH_TIME_TARGET := 500;
-	
 	testcase HeadLightsOn() runs on me system SUT{
 		map(self:lightSensor, system:lightSensor);
 		
