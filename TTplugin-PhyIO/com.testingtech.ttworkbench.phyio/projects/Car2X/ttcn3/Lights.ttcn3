@@ -29,6 +29,8 @@
 
 module Lights {
 
+	import from PhyIOAUX {type Brightness, ReadTimeStamp;}
+
 	import from Header all;
 	
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
@@ -80,15 +82,50 @@ module Lights {
 		
 		map(self:lightSensor, system:lightSensor);
 		
-		var default alts := activate(alt_default());
+		var integer ts := null;
+		var integer lts := null;
+		var integer soll := ;
+		var integer abweichung := ;
+		var boolean time;
 		
 		lightSensor.send(ReadTimeStamp:{});
 		t.start(10.0);
 		while(getverdict == none){
 			alt{
 				//Statewechsel timestampvergleich
-				[]lightSensor.receive{/*TODO finish this*/}
+				[]lightSensor.receive(TimeStamp:{}) -> value ts{
+					/*TODO finish this*/
+					if(lts == null){
+						lts = ts;
+					}
+					else{
+						if(f_abs(ts-lts-soll) > abweichung){
+							setverdict(fail);
+						}
+						else{
+							lts = ts;
+						}
+					}
+					}
+				[]t.timeout{
+					time = true;
+					setverdict(inconc);
+				}
 			}
 		}
+		if(time){
+			lightSensor.receive(TimeStamp:{}) -> value ts;
+			if(ts-lts <= soll + abweichung){
+				setverdict(pass);			
+			}
+			else{
+				setverdict(fail);
+			}
+		}
+	}
+	
+	function f_abs(integer a){
+			if(a < 0){ return -a;}
+			else{return a;}
 	}
 }
