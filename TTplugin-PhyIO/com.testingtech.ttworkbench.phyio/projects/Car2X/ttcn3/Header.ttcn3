@@ -4,10 +4,10 @@ module Header {
 
 	//** default altstep
 	altstep alt_default() runs on me{
-		[] any port.receive {
+		[] t.timeout {
 			setverdict(inconc);
 		}
-		[] t.timeout {
+		[] any port.receive {
 			setverdict(inconc);
 		}
 	}

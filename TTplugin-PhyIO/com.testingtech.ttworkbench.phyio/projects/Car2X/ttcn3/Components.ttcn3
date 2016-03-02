@@ -1,24 +1,25 @@
 module Components {
 	import from PhyIOAUX all;
 	
-	type component me {
-		timer t;
-		
-		port PhyConfig config;
+	type component SUTPorts {
+		port PhyEcho distanceSensor;
 		port PhyLightSensor lightSensor;
 		port PhyPushButton buttonSensor;
-		
-		// TODO add speed sensor
-		// TODO add RFID sensor
+		port PhyRFIDSensor rfidSensor;
+	// TODO add speed sensor
 	}
-	type component SUT {
-		port PhyConfig config;
-		port PhyEcho echoSensor;
-		port PhyLightSensor lightSensor;
-		port PhyPushButton buttonSensor;
-	}
-	type component Simulator {	
+	
+	type component SimulatorPorts {
 		port PhyLED led;
-		//TODO add sound
+	}
+	
+	type component me extends SUTPorts, SimulatorPorts {
+		timer t;
+	}
+	
+	type component SUT extends SUTPorts {
+	}
+	
+	type component Simulator extends SimulatorPorts {
 	}
 }
