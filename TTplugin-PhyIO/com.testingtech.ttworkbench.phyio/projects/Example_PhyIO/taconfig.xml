@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testadapter>
   <codec encode="PhyIO">
-    <plugin id="com.testingtech.tt3rt.phyio.phyioRuntimePlugin">
+    <plugin id="com.testingtech.tt3rt.phyio.PhyIORuntimePlugin">
       <parameter id="class" value="com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOCodec"/>
     </plugin>
     <parameter id="default" value="true"/>
   </codec>
   <port>
-    <plugin id="com.testingtech.tt3rt.phyio.phyioRuntimePlugin">
+    <plugin id="com.testingtech.tt3rt.phyio.PhyIORuntimePlugin">
       <parameter id="class" value="com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOPort"/>
     </plugin>
     <parameter id="taParams">
