@@ -105,6 +105,12 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			int on = ((BooleanValue)value).getBoolean() ? 1 : 0;
 			outStr = value(PhyModule.LED01, SET, on);
 		
+		} else if ("BlinkLEDStart".equals(typeName)) {
+			outStr = value(PhyModule.LED01, BLINK);
+			
+		} else if ("BlinkLEDStop".equals(typeName)) {
+			outStr = value(PhyModule.LED01, STOP);
+		
 		} else if ("RelaySwith".equals(typeName)) {
 			int on = ((BooleanValue)value).getBoolean() ? 1 : 0;
 			outStr = value(PhyModule.Relay01, SET, on);

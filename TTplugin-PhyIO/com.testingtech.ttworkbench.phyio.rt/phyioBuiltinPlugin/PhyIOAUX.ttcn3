@@ -62,10 +62,13 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			type boolean SwitchLED;
 			template SwitchLED switchLED_ON := true;
 			template SwitchLED switchLED_OFF := false;
+			
+			type float BlinkLEDStart;
+			type record BlinkLEDStop {};
 
 			//** @desc Read the LED state and switch LED on/off
 			type port PhyLED message {
-				out SwitchLED;
+				out SwitchLED, BlinkLEDStart, BlinkLEDStop;
 				map param (SensorID sensorID);
 			}
 		}
