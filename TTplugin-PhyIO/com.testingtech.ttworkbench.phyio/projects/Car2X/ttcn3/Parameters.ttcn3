@@ -1,7 +1,7 @@
 module Parameters {
 	import from PhyIOAUX all;
 	
-	modulepar RFID OWNER_RFID := "LOL42WTF1011";
+	modulepar RFID OWNER_RFID := {5, 8, 13, 21};
 	modulepar float THEFT_RFID_CHECK_RATE := 0.1;
 	
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;

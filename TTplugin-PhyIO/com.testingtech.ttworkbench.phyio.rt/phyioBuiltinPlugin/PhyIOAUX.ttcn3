@@ -194,7 +194,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		}
 		
 		group RFIDSensor {
-			type charstring RFID;
+			type record RFID {unsignedbyte id1, unsignedbyte id2, unsignedbyte id3, unsignedbyte id4};
 			
 			type record ReadRFID {};
 			
