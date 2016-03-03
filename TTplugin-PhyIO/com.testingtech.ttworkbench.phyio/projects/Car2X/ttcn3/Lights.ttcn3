@@ -26,10 +26,11 @@
  *  OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
  * ----------------------------------------------------------------------------
  */
-
+//** @desc Testing Lightsensor data
 module Lights {
 	import from Header all;
 	
+	//** @desc Testcase to check wether Headlights are on or not
 	testcase HeadLightsOn() runs on me system SUT{
 		map(self:lightSensor, system:lightSensor);
 		
@@ -49,6 +50,7 @@ module Lights {
 		}
 	}
 
+	//** @desc Testcase to check wether Headlights are off or not
 	testcase HeadLightsOff() runs on me system SUT{
 		map(self:lightSensor, system:lightSensor);
 			
@@ -68,10 +70,8 @@ module Lights {
 		}
 	}
 	//** @desc Testet Warnblinker
-	//  Sollwert ms von Abständen Zustandsänderung
-	//  +- 100ms Abweichung
-	//  bei receive compare zeit jetzt und von letztemal
-	 	
+	// Reads Timestamps of LED status change and compares it to predefined values
+	    
 	testcase EmergencyLights() runs on me system SUT{
 		map(self:lightSensor, system:lightSensor);
 		
