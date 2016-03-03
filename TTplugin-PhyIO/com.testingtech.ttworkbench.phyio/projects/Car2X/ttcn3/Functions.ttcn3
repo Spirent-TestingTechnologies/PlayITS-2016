@@ -2,6 +2,10 @@ module Functions {
 	import from PhyIOAUX all;
 	import from Components all;
 	
+	/**
+	 * @desc Test to check for valid rfid
+	 * @param RFID in question, time until timeout
+	 */
 	function f_checkRFID(RFID rfid, float time) runs on me system SUT return verdicttype {
 			
 		rfidSensor.send(ReadRFID:{});
@@ -22,7 +26,11 @@ module Functions {
 		
 		return inconc;
 	}
-	
+	/** @desc checks if EmergencyLights are working correctly
+	 *  @param 	switchTimetarget: time to next status change
+	 *  		allowedSwitchTimeDeviation: allowed delay between status changes
+	 *  		time: time until timeout
+	 */
 	function f_checkEmergencyLights(integer switchTimeTarget, integer allowedSwitchTimeDeviation, float time)
 			runs on me system SUT return verdicttype{
 		var verdicttype result := none;
