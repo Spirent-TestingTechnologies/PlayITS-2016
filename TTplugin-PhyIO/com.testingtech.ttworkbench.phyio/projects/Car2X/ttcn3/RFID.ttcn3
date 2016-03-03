@@ -123,7 +123,7 @@ module RFIDModule {
 		}
 	}
 	
-	function executeEmergencyLightDetection(integer switchTime, integer allowedDeviation, float checkRate) runs on me system SUT {
+	function executeEmergencyLightDetection(float switchTime, float allowedDeviation, float checkRate) runs on me system SUT {
 		
 		var verdicttype result;
 		timer loopTimer;
@@ -131,7 +131,7 @@ module RFIDModule {
 		while(true) {
 			loopTimer.start(checkRate);
 			
-			result := f_checkEmergencyLights(switchTime, allowedDeviation, checkRate / switchTime / 2);
+			result := f_checkEmergencyLights(switchTime, allowedDeviation, float2int(checkRate / switchTime / 2.0), checkRate);
 			
 			emergencyLightPort.send(result);
 			
