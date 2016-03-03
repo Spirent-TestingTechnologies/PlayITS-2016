@@ -75,6 +75,6 @@ module Lights {
 	testcase EmergencyLights() runs on me system SUT{
 		map(self:lightSensor, system:lightSensor);
 		
-		setverdict(f_checkEmergencyLights(SWITCH_TIME_TARGET,ALLOWED_SWITCH_TIME_DEVIATION, 10.0, 5));
+		setverdict(f_checkEmergencyLights(SWITCH_TIME_TARGET,ALLOWED_SWITCH_TIME_DEVIATION, 5, 10.0));
 	}
 }

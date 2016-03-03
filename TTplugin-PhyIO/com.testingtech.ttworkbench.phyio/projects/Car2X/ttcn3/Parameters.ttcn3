@@ -5,6 +5,6 @@ module Parameters {
 	modulepar float THEFT_RFID_CHECK_RATE := 0.1;
 	
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
-	modulepar integer ALLOWED_SWITCH_TIME_DEVIATION := float2int(0.1);
-	modulepar integer SWITCH_TIME_TARGET := float2int(0.5);
+	modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.1;
+	modulepar float SWITCH_TIME_TARGET := 0.5;
 }
