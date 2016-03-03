@@ -29,9 +29,7 @@ module RFIDModule {
 		}
 	}
 	
-	function TheftDetect(verdicttype expectRFID, boolean expectDoor, verdicttype expectEmergency) runs on me system SUT return verdicttype {
-		var verdicttype result;
-		
+	testcase TheftDetect(verdicttype expectRFID, boolean expectDoor, verdicttype expectEmergency) runs on me system SUT{
 		var verdicttype v_rfid := none;
 		var verdicttype v_elights := none;
 		var boolean doorOpened := false;
@@ -84,20 +82,18 @@ module RFIDModule {
 			emergencyLightPort.send(StopThread: {});
 		}
 		
-		if(result != none) {
-			// we're done
+		if(getverdict != none) {
+		// we're done
 		} else if(	expectDoor != doorOpened or
-					(v_rfid != inconc and v_rfid != expectRFID) or
-					v_elights != expectEmergency and not (v_elights == inconc and expectEmergency == fail)) {
-			result := fail;
+			v_rfid != expectRFID or
+			v_elights != expectEmergency and not (v_elights == inconc and expectEmergency == fail)) {
+			setverdict(fail);
 		} else {
-			result := pass;
+			setverdict(pass);
 		}
 		
 		rfidComponent.done;
 		elightsComponent.done;
-		
-		return result;	
 	}
 	
 	function executeRFIDDetection(RFID rfid, float checkRate) runs on me system SUT {
@@ -152,5 +148,17 @@ module RFIDModule {
 				}
 			}
 		}
+	}
+	
+	control {
+		execute(CorrectRFIDTest());
+		execute(FalseRFIDTest());
+		
+		execute(TheftDetect(pass, true, fail));
+		execute(TheftDetect(pass, false, fail));
+		execute(TheftDetect(fail, true, pass));
+		execute(TheftDetect(fail, false, fail));
+		execute(TheftDetect(inconc, true, pass));
+		execute(TheftDetect(inconc, false, fail));
 	}
 }
