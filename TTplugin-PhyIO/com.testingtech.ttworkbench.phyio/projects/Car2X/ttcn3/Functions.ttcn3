@@ -31,13 +31,14 @@ module Functions {
 	 *  		allowedSwitchTimeDeviation: allowed delay between status changes
 	 *  		time: time until timeout
 	 */
-	function f_checkEmergencyLights(integer switchTimeTarget, integer allowedSwitchTimeDeviation, float time)
-			runs on me system SUT return verdicttype{
+	function f_checkEmergencyLights(integer switchTimeTarget, integer allowedSwitchTimeDeviation, integer minSwitches, float time)
+	runs on me system SUT return verdicttype{
 		var verdicttype result := none;
 		
 		var State state;
 		var Timestamp lastTimestamp := null;
 		var boolean isTimeout;
+		var integer switchCount := 0;
 		
 		lightSensor.send(ReadLightSwitchStart:{});
 		
@@ -46,6 +47,8 @@ module Functions {
 		while(result == none){
 			alt{
 				[]lightSensor.receive(State: {?, ?}) -> value state {
+					switchCount := switchCount + 1;
+					
 					if(lastTimestamp == null){
 						lastTimestamp := state.time;
 					} else {
@@ -63,20 +66,22 @@ module Functions {
 			}
 		}
 		
-		lightSensor.send(ReadLightSwitchStop:{});
-		
-		if(isTimeout){
-			lightSensor.receive(State: {?, ?}) -> value state;
-			
-			if(state.time - lastTimestamp <= switchTimeTarget + allowedSwitchTimeDeviation){
-				return pass;
-			}
-			else{
-				return fail;
-			}
+		if(result != none){
+			lightSensor.send(ReadLightSwitchStop:{});
+			return result;
 		}
 		
-		return inconc;
+		lightSensor.receive(State: {?, ?}) -> value state;
+		lightSensor.send(ReadLightSwitchStop:{});
+			
+		if(state.time - lastTimestamp <= switchTimeTarget + allowedSwitchTimeDeviation
+			and switchCount >= minSwitches){
+			return pass;
+		}
+		else{
+			return fail;
+		}
+		
 	}
 	
 	function f_abs(integer a) return integer{
