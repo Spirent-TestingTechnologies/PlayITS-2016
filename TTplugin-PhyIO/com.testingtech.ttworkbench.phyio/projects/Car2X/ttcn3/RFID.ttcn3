@@ -3,8 +3,6 @@ module RFIDModule {
 	
 	testcase CorrectRFIDTest() runs on me system SUT {
 		map(self:rfidSensor, system:rfidSensor);
-		
-		var default alts := activate(alt_default());
 			
 		rfidSensor.send(ReadRFID:{});
 			
@@ -13,8 +11,6 @@ module RFIDModule {
 	
 	testcase FalseRFIDTest() runs on me system SUT {
 		map(self:rfidSensor, system:rfidSensor);
-		
-		var default alts := activate(alt_default());
 			
 		rfidSensor.send(ReadRFID:{});
 		
