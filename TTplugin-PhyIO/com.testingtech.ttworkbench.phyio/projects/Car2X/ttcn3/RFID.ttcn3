@@ -37,6 +37,8 @@ module RFIDModule {
 		map(self:doorSensor, system:doorSensor);
 		map(self:lightSensor, system:lightSensor);
 		
+		rfidSensor.send(OWNER_RFID);
+		
 		rfidComponent.start(executeRFIDDetection(OWNER_RFID, THEFT_RFID_CHECK_RATE));
 		elightsComponent.start(executeEmergencyLightDetection(SWITCH_TIME_TARGET, ALLOWED_SWITCH_TIME_DEVIATION, 5.0));
 		

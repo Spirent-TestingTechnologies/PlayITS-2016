@@ -200,7 +200,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			
 			type port PhyRFIDSensor message {
 				in RFID;
-				out ReadRFID;
+				out RFID, ReadRFID;
         	
 				map param (SensorID sensorID);
 			}
