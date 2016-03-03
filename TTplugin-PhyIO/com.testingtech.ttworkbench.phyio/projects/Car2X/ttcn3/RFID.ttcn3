@@ -127,7 +127,7 @@ module RFIDModule {
 		while(true) {
 			loopTimer.start(checkRate);
 			
-			result := f_checkEmergencyLights(switchTime, allowedDeviation, checkRate);
+			result := f_checkEmergencyLights(switchTime*1000, allowedDeviation*1000, checkRate);
 			
 			emergencyLightPort.send(result);
 			
