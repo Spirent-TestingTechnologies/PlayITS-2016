@@ -8,6 +8,7 @@ public enum PhyModule {
 	Relay01(40),
 	Motor01(50),
 	PushButton01(60),
+	Door01(60),
 	LightSensor01(70);
 	
 	private int id;

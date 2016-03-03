@@ -114,6 +114,24 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 				map param (SensorID sensorID);
 			}
 		}
+		
+		//** this is practically the same thing as a PushButton but since we changed the
+		//** functionality we thought changing the name would be a wise thing to do
+		group Door {
+			//** @desc The state of the push button
+			type boolean DoorState;
+
+			//** @desc Reads Button state and sends it's immediately to the port
+			type record ReadDoorStart {};
+			type record ReadDoorStop {};
+
+			//** @desc Read the state of the push button
+			type port PhyDoor message {
+				in DoorState;
+				out ReadDoorStart, ReadDoorStop;
+				map param (SensorID sensorID);
+			}
+		}
     
 		group ColorSensor {
 

@@ -11,7 +11,7 @@ module Components {
 	type component SUTPorts {
 		port PhyEcho distanceSensor;
 		port PhyLightSensor lightSensor;
-		port PhyPushButton buttonSensor;
+		port PhyDoor doorSensor;
 		port PhyRFIDSensor rfidSensor;
 	// TODO add speed sensor
 	}

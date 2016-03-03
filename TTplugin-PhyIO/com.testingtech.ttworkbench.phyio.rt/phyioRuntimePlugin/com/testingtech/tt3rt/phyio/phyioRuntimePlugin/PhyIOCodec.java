@@ -82,6 +82,9 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			} else if (module == PhyModule.PushButton01 && "PushButtonState".equals(typeName)) {
 				int state = Integer.parseInt(elements[idx++].trim());
 				((BooleanValue)value).setBoolean(state != 0);
+			} else if (module == PhyModule.Door01 && "DoorState".equals(typeName)) {
+				int state = Integer.parseInt(elements[idx++].trim());
+				((BooleanValue)value).setBoolean(state != 0);
 			}
 			break;
 
@@ -125,10 +128,12 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		} else if ("ReadButtonState".equals(typeName)) {
 			outStr = value(PhyModule.PushButton01, READ);
 			
-		} else if ("ReadButtonStateStart".equals(typeName)) {
+		} else if ("ReadButtonStateStart".equals(typeName)
+				|| "ReadDoorStart".equals(typeName)) {
 			outStr = value(PhyModule.PushButton01, START);
 			
-		} else if ("ReadButtonStateStop".equals(typeName)) {
+		} else if ("ReadButtonStateStop".equals(typeName)
+				|| "ReadDoorStop".equals(typeName)) {
 			outStr = value(PhyModule.PushButton01, STOP);
 
 		} else if ("ReadRGB".equals(typeName)) {

@@ -34,11 +34,13 @@ module RFIDModule {
 		var me elightsComponent := me.create;
 		
 		map(self:rfidSensor, system:rfidSensor);
-		map(self:buttonSensor, system:buttonSensor);
+		map(self:doorSensor, system:doorSensor);
 		map(self:lightSensor, system:lightSensor);
 		
 		rfidComponent.start(executeRFIDDetection(OWNER_RFID, THEFT_RFID_CHECK_RATE));
 		elightsComponent.start(executeEmergencyLightDetection(SWITCH_TIME_TARGET, ALLOWED_SWITCH_TIME_DEVIATION, 5.0));
+		
+		doorSensor.send(ReadDoorStart:{});
 		
 		t.start(30.0);
 		
@@ -48,7 +50,7 @@ module RFIDModule {
 				}
 				[]emergencyLightPort.receive(verdicttype: ?) -> value v_elights {
 				}
-				[]buttonSensor.receive(PushButtonState: true){
+				[]doorSensor.receive(DoorState: true){
 					doorOpened := true;
 				}
 				[]t.timeout {
@@ -57,7 +59,7 @@ module RFIDModule {
 			}
 		}
 		
-		buttonSensor.send(ReadButtonStateStop:{});
+		doorSensor.send(ReadDoorStop:{});
 		if(v_rfid != pass) {
 			rfidPort.send(StopThread: {});
 		}
