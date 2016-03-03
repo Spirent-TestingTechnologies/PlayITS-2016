@@ -34,13 +34,15 @@ module RFIDModule {
 		var verdicttype v_elights := none;
 		var boolean doorOpened := false;
 		
+		var me rfidComponent := me.create;
+		var me elightsComponent := me.create;
+		
 		map(self:rfidSensor, system:rfidSensor);
 		map(self:buttonSensor, system:buttonSensor);
 		map(self:lightSensor, system:lightSensor);
 		
-		//TODO how do we start these??
-		//execute(executeRFIDDetection(OWNER_RFID, THEFT_RFID_CHECK_RATE));
-		//execute(executeEmergencyLightDetection(SWITCH_TIME_TARGET, ALLOWED_SWITCH_TIME_DEVIATION, 5.0));
+		rfidComponent.start(executeRFIDDetection(OWNER_RFID, THEFT_RFID_CHECK_RATE));
+		elightsComponent.start(executeEmergencyLightDetection(SWITCH_TIME_TARGET, ALLOWED_SWITCH_TIME_DEVIATION, 5.0));
 		
 		t.start(30.0);
 		
@@ -87,9 +89,13 @@ module RFIDModule {
 		} else {
 			setverdict(fail);
 		}
+		
+		rfidComponent.done;
+		elightsComponent.done;
+		
 	}
 	
-	testcase executeRFIDDetection(RFID rfid, float checkRate) runs on me system SUT {
+	function executeRFIDDetection(RFID rfid, float checkRate) runs on me system SUT {
 		
 		var verdicttype result;
 		timer loopTimer;
@@ -116,7 +122,7 @@ module RFIDModule {
 		}
 	}
 	
-	testcase executeEmergencyLightDetection(integer switchTime, integer allowedDeviation, float checkRate) runs on me system SUT {
+	function executeEmergencyLightDetection(integer switchTime, integer allowedDeviation, float checkRate) runs on me system SUT {
 		
 		var verdicttype result;
 		timer loopTimer;
