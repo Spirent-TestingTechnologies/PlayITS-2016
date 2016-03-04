@@ -1,34 +1,24 @@
 module RFIDModule {
 	import from Header all;
 	
-	testcase CorrectRFIDTest() runs on me system SUT {
-		map(self:rfidSensor, system:rfidSensor);
-		
-		rfidSensor.send(ReadRFID:{});
-			
-		setverdict(f_checkRFID(OWNER_RFID, 10.0));
-	}
-	
-	testcase FalseRFIDTest() runs on me system SUT {
+	testcase RFIDTest(RFID rfid, boolean expectPass) runs on me system SUT {
 		var verdicttype result;
 		
 		map(self:rfidSensor, system:rfidSensor);
 			
-		rfidSensor.send(ReadRFID:{});
+		result := f_checkRFID(rfid, 10.0);
 		
-		result := f_checkRFID(FALSE_RFID, 10.0);
-		
-		if(result == pass){
-			setverdict(fail);
-		} else if(result == fail){
+		if((result == pass and expectPass) or (result == fail and not expectPass)){
 			setverdict(pass);
+		} else if((result == fail and expectPass) or (result == pass and not expectPass)){
+			setverdict(fail);
 		} else {
 			setverdict(inconc);
 		}
 	}
 	
 	function executeRFIDTestcases() {
-		execute(CorrectRFIDTest());
-		execute(FalseRFIDTest());
+		execute(RFIDTest(OWNER_RFID, true));
+		execute(RFIDTest(FALSE_RFID, false));
 	}
 }

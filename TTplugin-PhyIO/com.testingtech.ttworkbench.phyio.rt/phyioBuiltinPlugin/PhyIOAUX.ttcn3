@@ -214,11 +214,12 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		group RFIDSensor {
 			type record RFID {unsignedbyte id1, unsignedbyte id2, unsignedbyte id3, unsignedbyte id4};
 			
-			type record ReadRFID {};
+			type record ReadRFIDStart {};
+			type record ReadRFIDStop {};
 			
 			type port PhyRFIDSensor message {
 				in RFID;
-				out RFID, ReadRFID;
+				out RFID, ReadRFIDStart, ReadRFIDStop;
         	
 				map param (SensorID sensorID);
 			}

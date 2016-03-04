@@ -7,21 +7,27 @@ module Functions {
 	 * @param RFID in question, time until timeout
 	 */
 	function f_checkRFID(RFID rfid, float time) runs on me system SUT return verdicttype {
-			
-		rfidSensor.send(ReadRFID:{});
+		var verdicttype result := none;
 		
+		rfidSensor.send(ReadRFIDStart:{});
 		t.start(time);
 		
 		alt{
 			[]rfidSensor.receive(RFID: rfid){
-				return pass;
+				result := pass;
 			}
 			[]rfidSensor.receive(RFID: ?) {
-				return fail;
+				result := fail;
 			}
 			[]t.timeout {
-				return inconc;
+				result := inconc;
 			}
+		}
+		
+		rfidSensor.send(ReadRFIDStop:{});
+		
+		if(result != none) {
+			return result;
 		}
 		
 		return inconc;
@@ -82,8 +88,7 @@ module Functions {
 		if(thisTimestamp - lastTimestamp <= switchTimeTarget + allowedSwitchTimeDeviation
 			and switchCount >= minSwitches){
 			return pass;
-		}
-		else{
+		} else{
 			return fail;
 		}
 		
