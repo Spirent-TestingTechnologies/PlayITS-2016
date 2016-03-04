@@ -43,7 +43,7 @@ module Functions {
 		
 		var State state;
 		var float lastTimestamp := -1.0;
-		var float thisTimestamp := null;
+		var float thisTimestamp := -1.0;
 		var boolean isTimeout;
 		var integer switchCount := 0;
 		
