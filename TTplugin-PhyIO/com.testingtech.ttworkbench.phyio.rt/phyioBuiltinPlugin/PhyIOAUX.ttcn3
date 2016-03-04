@@ -102,7 +102,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			//** @desc Read the current distance (in cm) measured by the Ultrasonic sensor
 			type port DistanceSensor message {
 				in DistanceSensorState;
-				out ReadDistanceSetup, ReadDistanceStart, ReadDistanceStop;
+				out DistanceSensorSetup, ReadDistanceStart, ReadDistanceStop;
 				map param (SensorID sensorID);
 			}
 		}
