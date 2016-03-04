@@ -31,41 +31,32 @@ module Lights {
 	import from Header all;
 	
 	//** @desc Testcase to check wether Headlights are on or not
-	testcase HeadLightsOn() runs on me system SUT{
-		map(self:lightSensor, system:lightSensor);
-		
+	testcase HeadLightsTestcase(boolean expectOn) runs on me system SUT{
+		var template State LED_OFF := {(0..BRIGHTNESS_THRESHOLD), ?};
 		var default alts := activate(alt_default());
+		
+		map(self:lightSensor, system:lightSensor);
 		
 		lightSensor.send(ReadBrightness:{});
 		t.start(5.0);
 		alt{
-			[]lightSensor.receive(State: {(0..BRIGHTNESS_THRESHOLD), ?}){
-				log("LED aus.");
-				setverdict(fail);
+			[]lightSensor.receive(LED_OFF){
+				log("LED is off.");
+				
+				if(expectOn) {
+					setverdict(fail);
+				} else {
+					setverdict(pass);
+				}
 			}
 			[]lightSensor.receive(State: {?, ?}) {
-				log("LED an.");
-				setverdict(pass);
-			}
-		}
-	}
-
-	//** @desc Testcase to check wether Headlights are off or not
-	testcase HeadLightsOff() runs on me system SUT{
-		map(self:lightSensor, system:lightSensor);
-			
-		var default alts := activate(alt_default());
-			
-		lightSensor.send(ReadBrightness:{});
-		t.start(5.0);
-		alt{
-			[]lightSensor.receive(State: {(0..BRIGHTNESS_THRESHOLD), ?}){
-				log("LED aus.");
-				setverdict(pass);
-			}
-			[]lightSensor.receive(State: {?, ?}) {
-				log("LED an.");
-				setverdict(fail);
+				log("LED is on.");
+				
+				if(expectOn) {
+					setverdict(pass);
+				} else {
+					setverdict(fail);
+				}
 			}
 		}
 	}
@@ -80,8 +71,8 @@ module Lights {
 	}
 	
 	function executeLightsTestcases() {
-		execute(HeadLightsOn());
-		execute(HeadLightsOff());
+		execute(HeadLightsTestcase(true));
+		execute(HeadLightsTestcase(false));
 		
 		execute(EmergencyLights());
 	}
