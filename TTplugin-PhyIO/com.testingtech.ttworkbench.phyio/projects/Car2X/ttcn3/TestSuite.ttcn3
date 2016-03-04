@@ -1,5 +1,7 @@
 module TestSuite {
 	
+	import from TheftDetection {function executeTheftDetectionTestcases;}
+
 	import from Header all;
 	
 	import from Lights all;
@@ -8,5 +10,6 @@ module TestSuite {
 	control {
 		executeLightsTestcases();
 		executeRFIDTestcases();
+		executeTheftDetectionTestcases();
 	}
 }

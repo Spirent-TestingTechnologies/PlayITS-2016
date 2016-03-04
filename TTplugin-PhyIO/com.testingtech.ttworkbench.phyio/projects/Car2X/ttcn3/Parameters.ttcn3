@@ -1,7 +1,9 @@
 module Parameters {
 	import from PhyIOAUX all;
 	
-	modulepar RFID OWNER_RFID := {5, 8, 13, 21};
+//	ID Karte: 194, 96, 196, 169 (DEZ)
+//	ID Chip: 4, 226, 92, 235 (DEZ)
+	modulepar RFID OWNER_RFID := {194, 96, 196, 169};
 	modulepar RFID FALSE_RFID := {34, 55, 89, 144};
 	
 	modulepar float THEFT_RFID_CHECK_RATE := 0.1;

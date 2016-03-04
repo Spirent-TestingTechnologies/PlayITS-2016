@@ -1,0 +1,141 @@
+module TheftDetection {
+	import from Header all;
+	
+	testcase TheftDetect(verdicttype expectRFID, boolean expectDoor, verdicttype expectEmergency) runs on me system SUT{
+		var verdicttype v_rfid := none;
+		var verdicttype v_elights := none;
+		var boolean doorOpened := false;
+		
+		var me rfidComponent := me.create;
+		var me elightsComponent := me.create;
+		
+		map(self:doorSensor, system:doorSensor);
+		map(rfidComponent:rfidSensor, system:rfidSensor);
+		map(elightsComponent:lightSensor, system:lightSensor);
+		
+		//TODO is this correct?
+		connect(self:rfidPort, rfidComponent:rfidPort);
+		connect(self:emergencyLightPort, elightsComponent:emergencyLightPort);
+		
+		rfidComponent.start(executeRFIDDetection(OWNER_RFID, THEFT_RFID_CHECK_RATE));
+		elightsComponent.start(executeEmergencyLightDetection(SWITCH_TIME_TARGET, ALLOWED_SWITCH_TIME_DEVIATION, 5.0));
+		
+		doorSensor.send(ReadDoorStart:{});
+		
+		t.start(30.0);
+		
+		while(doorOpened == false and getverdict == none){
+			alt {
+				[]rfidPort.receive(verdicttype: ?) -> value v_rfid {
+				}
+				[]emergencyLightPort.receive(verdicttype: ?) -> value v_elights {
+				}
+				[]doorSensor.receive(DoorState: true){
+					doorOpened := true;
+				}
+				[]t.timeout {
+					setverdict(inconc);
+				}
+			}
+		}
+		
+		doorSensor.send(ReadDoorStop:{});
+		if(v_rfid != pass) {
+			rfidPort.send(StopThread: {});
+		}
+		
+		if(v_elights != pass){
+		
+			// wait for emergency
+			t.start(10.0);
+		
+			alt {
+				[]emergencyLightPort.receive(verdicttype: ?) -> value v_elights {
+				}
+				[]t.timeout {
+					setverdict(inconc);
+				}
+			}
+		
+			emergencyLightPort.send(StopThread: {});
+		}
+		
+		if(getverdict != none) {
+		// we're done
+		} else if(	expectDoor != doorOpened or
+			v_rfid != expectRFID or
+			v_elights != expectEmergency and not (v_elights == inconc and expectEmergency == fail)) {
+			setverdict(fail);
+		} else {
+			setverdict(pass);
+		}
+		
+		rfidComponent.done;
+		elightsComponent.done;
+	}
+	
+	function executeRFIDDetection(RFID rfid, float checkRate) runs on me system SUT {
+		
+		var verdicttype result;
+		timer loopTimer;
+		
+		rfidSensor.send(OWNER_RFID);
+		
+		while(true) {
+			loopTimer.start(checkRate);
+			
+			result := f_checkRFID(rfid, checkRate);
+			
+			rfidPort.send(result);
+			
+			if(result == pass) {
+				stop;
+			}
+			
+			alt {
+				[]rfidPort.receive(StopThread: {}) {
+					stop;
+				}
+				[]loopTimer.timeout {
+				// do nothing
+				}
+			}
+		}
+	}
+	
+	function executeEmergencyLightDetection(float switchTime, float allowedDeviation, float checkRate) runs on me system SUT {
+		
+		var verdicttype result;
+		timer loopTimer;
+		
+		while(true) {
+			loopTimer.start(checkRate);
+			
+			result := f_checkEmergencyLights(switchTime, allowedDeviation, float2int(checkRate / switchTime / 2.0), checkRate);
+			
+			emergencyLightPort.send(result);
+			
+			if(result == pass) {
+				stop;
+			}
+			
+			alt {
+				[]emergencyLightPort.receive(StopThread: {}) {
+					stop;
+				}
+				[]loopTimer.timeout {
+				// do nothing
+				}
+			}
+		}
+	}
+	
+	function executeTheftDetectionTestcases() {
+		execute(TheftDetect(pass, true, fail));
+		execute(TheftDetect(pass, false, fail));
+		execute(TheftDetect(fail, true, pass));
+		execute(TheftDetect(fail, false, fail));
+		execute(TheftDetect(inconc, true, pass));
+		execute(TheftDetect(inconc, false, fail));
+	}
+}

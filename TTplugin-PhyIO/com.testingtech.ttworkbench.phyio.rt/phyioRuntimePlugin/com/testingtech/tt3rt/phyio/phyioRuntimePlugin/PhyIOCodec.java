@@ -86,7 +86,7 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				brightnessV.setInt(brightness);
 				
 				int timestamp = Integer.parseInt(elements[idx++].trim());
-				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("timestamp");
+				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("time");
 				timestampV.setInt(timestamp);
 			} else if (module == PhyModule.PushButton01 && "PushButtonState".equals(typeName)) {
 				int state = Integer.parseInt(elements[idx++].trim());
@@ -170,6 +170,12 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			int id4 = ((IntegerValue)rValue.getField("id4")).getInt();
 			outStr = value(PhyModule.RFIDSensor01, SET, id1, id2, id3, id4);
 		
+		} else if ("ReadRFIDStart".equals(typeName)) {
+			outStr = value(PhyModule.RFIDSensor01, START);
+			
+		} else if ("ReadRFIDStop".equals(typeName)) {
+			outStr = value(PhyModule.RFIDSensor01, STOP);
+			
 		} else if ("DistanceSensorSetup".equals(typeName)) {
 			float distance = ((FloatValue)value).getFloat();
 			outStr = value(PhyModule.PingEcho02, SET, distance);
