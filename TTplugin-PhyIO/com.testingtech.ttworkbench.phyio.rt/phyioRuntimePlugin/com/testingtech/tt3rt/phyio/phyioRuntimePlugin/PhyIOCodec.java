@@ -47,6 +47,15 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				int distance = Integer.parseInt(elements[idx++].trim());
 				((FloatValue)value).setDouble(distance*1.0/100.0);
 				return value;
+			} else if (module == PhyModule.PingEcho02 && "DistanceSensorState".equals(typeName)) {
+				int distance = Integer.parseInt(elements[idx++].trim());
+				IntegerValue distanceV = (IntegerValue)((RecordValue)value).getField("distance");
+				distanceV.setInt(distance);
+				
+				int timestamp = Integer.parseInt(elements[idx++].trim());
+				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("time");
+				timestampV.setInt(timestamp);
+				return value;
 			} else if (module == PhyModule.ColorView01 && "RGB".equals(typeName)) {
 				// format 10, 101, 81009, 114, 68, 188, 109, 120, 80
 				//   CV01,R1,<timestamp:unit16>,<r:unit16>, <g:unit16>, <b:unit16>, <c:unit16>, <colorTemp:unit16>, <lux:unit16>
@@ -160,6 +169,16 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			int id3 = ((IntegerValue)rValue.getField("id3")).getInt();
 			int id4 = ((IntegerValue)rValue.getField("id4")).getInt();
 			outStr = value(PhyModule.RFIDSensor01, SET, id1, id2, id3, id4);
+		
+		} else if ("DistanceSensorSetup".equals(typeName)) {
+			float distance = ((FloatValue)value).getFloat();
+			outStr = value(PhyModule.PingEcho02, SET, distance);
+			
+		} else if ("ReadDistanceStart".equals(typeName)) {
+			outStr = value(PhyModule.PingEcho02, START);
+			
+		} else if ("ReadDistanceStop".equals(typeName)) {
+			outStr = value(PhyModule.PingEcho02, STOP);
 			
 		// map parameters
 		} else if (

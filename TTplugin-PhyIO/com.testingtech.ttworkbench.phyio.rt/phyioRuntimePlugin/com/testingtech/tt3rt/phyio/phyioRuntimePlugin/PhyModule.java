@@ -4,6 +4,7 @@ public enum PhyModule {
 	GeneralConfig01(0),
 	ColorView01(10),
 	PingEcho01(20),
+	PingEcho02(21),
 	LED01(30),
 	Relay01(40),
 	Motor01(50),

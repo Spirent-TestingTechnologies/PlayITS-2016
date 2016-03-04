@@ -42,6 +42,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 	const integer SensorID_7 := 7;
 	const integer SensorID_8 := 8;
 	const integer SensorID_9 := 9;
+	
+	type integer Timestamp;
 
 	group PhyIO {
 		//** @desc Configuration related types and ports
@@ -87,7 +89,24 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 				map param (SensorID sensorID, UpdateFrequency updateFrequency);
 			}
 		}
-    
+		
+		group DistanceSensorGroup {
+			//** @desc Current distance measured in meters
+			type record DistanceSensorState {integer distance, integer time};
+
+			type float DistanceSensorSetup;
+			
+			type record ReadDistanceStart {};
+			type record ReadDistanceStop {};
+      
+			//** @desc Read the current distance (in cm) measured by the Ultrasonic sensor
+			type port DistanceSensor message {
+				in DistanceSensorState;
+				out ReadDistanceSetup, ReadDistanceStart, ReadDistanceStop;
+				map param (SensorID sensorID);
+			}
+		}
+		
 		group Motor {
 			//** @desc Percentage of voltage set to the motor. 0 means stop, 100 means drive forward at maximum speed, -100 means drive backwards at maximum speed
 			type integer Velocity(-100..100);
@@ -172,7 +191,6 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
     
 		group LightSensor {
 			type integer Brightness(0..1023);
-			type integer Timestamp;
 			type record State {Brightness brightness, Timestamp time};
       
 			//** @desc Reads Light Sensor data and sends it's immediately to the port
