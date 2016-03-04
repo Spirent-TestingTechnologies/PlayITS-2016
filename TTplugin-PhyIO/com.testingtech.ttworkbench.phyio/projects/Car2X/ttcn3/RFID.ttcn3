@@ -10,11 +10,13 @@ module RFIDModule {
 	}
 	
 	testcase FalseRFIDTest() runs on me system SUT {
+		var verdicttype result;
+		
 		map(self:rfidSensor, system:rfidSensor);
 			
 		rfidSensor.send(ReadRFID:{});
 		
-		var verdicttype result := f_checkRFID(FALSE_RFID, 10.0);
+		result := f_checkRFID(FALSE_RFID, 10.0);
 		
 		if(result == pass){
 			setverdict(fail);

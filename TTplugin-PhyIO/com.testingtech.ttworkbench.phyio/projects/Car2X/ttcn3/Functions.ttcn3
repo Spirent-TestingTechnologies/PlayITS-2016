@@ -36,7 +36,7 @@ module Functions {
 		var verdicttype result := none;
 		
 		var State state;
-		var float lastTimestamp := null;
+		var float lastTimestamp := -1.0;
 		var float thisTimestamp := null;
 		var boolean isTimeout;
 		var integer switchCount := 0;
@@ -52,7 +52,7 @@ module Functions {
 					
 					thisTimestamp := int2float(state.time) / 1000.0;
 					
-					if(lastTimestamp == null){
+					if(lastTimestamp == -1.0){
 						lastTimestamp := thisTimestamp;
 					} else {
 						if(f_abs(thisTimestamp - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
