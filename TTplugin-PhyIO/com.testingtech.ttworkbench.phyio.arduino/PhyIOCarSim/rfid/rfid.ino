@@ -100,6 +100,8 @@ void loop() {
 
 
 // -------- RFIDFunction -----------
+// ID Karte: 194, 96, 196, 169 (DEZ)
+// ID Chip: 4, 226, 92, 235 (DEZ)
 int rfid_format = DEC;
 int rfid_tag[4]; // Sollte noch in Struct umgewandelt werden
 // bin = 2; dec = 10; oct = 8; hex = 16;
