@@ -41,8 +41,6 @@ module RFIDModule {
 		map(self:rfidPort, rfidComponent:rfidPort);
 		map(self:emergencyLightPort, elightsComponent:emergencyLightPort);
 		
-		rfidSensor.send(OWNER_RFID);
-		
 		rfidComponent.start(executeRFIDDetection(OWNER_RFID, THEFT_RFID_CHECK_RATE));
 		elightsComponent.start(executeEmergencyLightDetection(SWITCH_TIME_TARGET, ALLOWED_SWITCH_TIME_DEVIATION, 5.0));
 		
@@ -104,6 +102,8 @@ module RFIDModule {
 		
 		var verdicttype result;
 		timer loopTimer;
+		
+		rfidSensor.send(OWNER_RFID);
 		
 		while(true) {
 			loopTimer.start(checkRate);
