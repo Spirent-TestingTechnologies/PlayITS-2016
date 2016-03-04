@@ -2,7 +2,7 @@ module RFIDModule {
 	import from Header all;
 	
 	testcase CorrectRFIDTest() runs on me system SUT {
-		map(self:config, system:config) param (DeviceID_1);
+		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
 		map(self:rfidSensor, system:rfidSensor) param (DeviceID_1, SensorID_2);
 		
 		rfidSensor.send(ReadRFID:{});
@@ -11,7 +11,7 @@ module RFIDModule {
 	}
 	
 	testcase FalseRFIDTest() runs on me system SUT {
-		map(self:config, system:config) param (DeviceID_1);
+		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
 		map(self:rfidSensor, system:rfidSensor) param (DeviceID_1, SensorID_2);
 			
 		rfidSensor.send(ReadRFID:{});
@@ -35,7 +35,7 @@ module RFIDModule {
 		var me rfidComponent := me.create;
 		var me elightsComponent := me.create;
 		
-		map(self:config, system:config) param (DeviceID_1);
+		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
 
 		map(self:doorSensor, system:doorSensor) param (DeviceID_1, SensorID_1);
 		map(rfidComponent:rfidSensor, system:rfidSensor) param (DeviceID_1, SensorID_2);

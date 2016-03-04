@@ -9,11 +9,12 @@ module Components {
 	
 	//**@desc Component  port definition System under Test(Arduino)
 	type component SUTPorts {
+		port PhyConfig config;
 		port PhyEcho distanceSensor;
 		port PhyLightSensor lightSensor;
 		port PhyDoor doorSensor;
 		port PhyRFIDSensor rfidSensor;
-	// TODO add speed sensor
+	    // TODO add speed sensor
 	}
 	
 	type component SimulatorPorts {

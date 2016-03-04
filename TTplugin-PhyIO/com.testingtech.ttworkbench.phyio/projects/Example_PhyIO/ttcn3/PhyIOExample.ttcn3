@@ -37,6 +37,8 @@ module PhyIOExample {
 	
 	const float LED_REFRESH_RATE := 1.0; // seconds
 	const float RGB_REFRESH_RATE := 1.0; // seconds
+	
+	modulepar RS232Config px_rs232Configuration := m_Serial8N1;
 
 	type component me {
 		port PhyConfig config;
@@ -58,7 +60,7 @@ module PhyIOExample {
 	testcase SetupTest1() runs on me system PhyIO {
 		timer t;
 
-		map(self:config, system:config) param (DeviceID_1);
+		map(self:config, system:config) param (px_rs232Configuration, DeviceID_1);
 		
 		map(self:leds[RED], system:leds[RED]) param (DeviceID_1, SensorID_1);
 		map(self:leds[YELLOW], system:leds[YELLOW]) param (DeviceID_1, SensorID_2);
@@ -103,7 +105,7 @@ module PhyIOExample {
 	}
 	testcase SetupTestLEDs() runs on me system PhyIO {
 		timer t;
-		map(self:config, system:config) param (DeviceID_1);
+		map(self:config, system:config) param (px_rs232Configuration, DeviceID_1);
 		
 		map(self:leds[RED], system:leds[RED]) param (DeviceID_1, SensorID_1);
 		map(self:leds[YELLOW], system:leds[YELLOW]) param (DeviceID_1, SensorID_2);
@@ -138,7 +140,7 @@ module PhyIOExample {
 		var RGB rgb;
 		timer t;
 
-		map(self:config, system:config) param (DeviceID_1);
+		map(self:config, system:config) param (px_rs232Configuration, DeviceID_1);
 		
 		map(self:rgbSensor, system:rgbSensor) param (DeviceID_1, SensorID_4, RGB_REFRESH_RATE);
 		

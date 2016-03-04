@@ -30,7 +30,10 @@
  * @desc PhyIO Configuration module
  */
 module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
+	import from RS232ConfigPortAux all;
+
 	import from TTCN3AUX all;
+	public import from RS232ConfigPortAux all;
   
 	const integer SensorID_Configuration := 0;
 	const integer SensorID_1 := 1;
@@ -66,7 +69,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			// TODO Sync time on first map.
 			type port PhyConfig message {
 				inout all;
-				map param (DeviceID deviceID);
+				map param (RS232Config config, DeviceID deviceID);
 			}
 		}
     

@@ -9,4 +9,7 @@ module Parameters {
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
 	modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.1;
 	modulepar float SWITCH_TIME_TARGET := 0.5;
+
+	modulepar RS232Config SUT_RS232_CONFIG := m_Serial8N1(-, c_baudRate_115200);
+	modulepar RS232Config TESTER_RS232_CONFIG := m_Serial8N1(-, c_baudRate_115200);
 }
