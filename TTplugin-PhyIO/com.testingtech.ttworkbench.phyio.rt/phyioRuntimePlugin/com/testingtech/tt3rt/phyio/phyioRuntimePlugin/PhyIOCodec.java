@@ -86,7 +86,7 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				brightnessV.setInt(brightness);
 				
 				int timestamp = Integer.parseInt(elements[idx++].trim());
-				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("timestamp");
+				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("time");
 				timestampV.setInt(timestamp);
 			} else if (module == PhyModule.PushButton01 && "PushButtonState".equals(typeName)) {
 				int state = Integer.parseInt(elements[idx++].trim());
