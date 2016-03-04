@@ -261,7 +261,7 @@ void ColorViewFunctionRead() {
 #else
   cvfPoint.red = random(555);
   cvfPoint.green = random(555);
-  cvfPoint.blue = random(755);
+  cvfPoint.blue = random(555);
   cvfPoint.clear = random(655);
 #endif
   cvfPoint.ReadTimestamp = millis();
