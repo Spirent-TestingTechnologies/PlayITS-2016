@@ -158,6 +158,7 @@ module RFIDModule {
 		execute(CorrectRFIDTest());
 		execute(FalseRFIDTest());
 		
+		// TODO add some constants here please in order to be able to read the parametrization
 		execute(TheftDetect(pass, true, fail));
 		execute(TheftDetect(pass, false, fail));
 		execute(TheftDetect(fail, true, pass));
