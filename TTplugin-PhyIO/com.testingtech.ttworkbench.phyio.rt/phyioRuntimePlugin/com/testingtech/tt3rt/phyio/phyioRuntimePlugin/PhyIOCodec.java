@@ -85,6 +85,17 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			} else if (module == PhyModule.Door01 && "DoorState".equals(typeName)) {
 				int state = Integer.parseInt(elements[idx++].trim());
 				((BooleanValue)value).setBoolean(state != 0);
+			} else if (module == PhyModule.RFIDSensor01 && "RFID".equals(typeName)) {
+				int id1 = Integer.parseInt(elements[idx++].trim());
+				int id2 = Integer.parseInt(elements[idx++].trim());
+				int id3 = Integer.parseInt(elements[idx++].trim());
+				int id4 = Integer.parseInt(elements[idx++].trim());
+				
+				RecordValue rValue = ((RecordValue)value);
+				((IntegerValue)rValue.getField("id1")).setInt(id1);
+				((IntegerValue)rValue.getField("id2")).setInt(id2);
+				((IntegerValue)rValue.getField("id3")).setInt(id3);
+				((IntegerValue)rValue.getField("id4")).setInt(id4);
 			}
 			break;
 
@@ -141,6 +152,14 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			
 		} else if ("ReadBrightness".equals(typeName)) {
 			outStr = value(PhyModule.LightSensor01, READ);
+			
+		} else if ("RFID".equals(typeName)) {
+			RecordValue rValue = (RecordValue)value;
+			int id1 = ((IntegerValue)rValue.getField("id1")).getInt();
+			int id2 = ((IntegerValue)rValue.getField("id2")).getInt();
+			int id3 = ((IntegerValue)rValue.getField("id3")).getInt();
+			int id4 = ((IntegerValue)rValue.getField("id4")).getInt();
+			outStr = value(PhyModule.RFIDSensor01, SET, id1, id2, id3, id4);
 			
 		// map parameters
 		} else if (
