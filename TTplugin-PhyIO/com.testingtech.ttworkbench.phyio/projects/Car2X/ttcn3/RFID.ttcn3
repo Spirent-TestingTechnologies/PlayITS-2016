@@ -38,8 +38,8 @@ module RFIDModule {
 		map(elightsComponent:lightSensor, system:lightSensor);
 		
 		//TODO is this correct?
-		map(self:rfidPort, rfidComponent:rfidPort);
-		map(self:emergencyLightPort, elightsComponent:emergencyLightPort);
+		connect(self:rfidPort, rfidComponent:rfidPort);
+		connect(self:emergencyLightPort, elightsComponent:emergencyLightPort);
 		
 		rfidComponent.start(executeRFIDDetection(OWNER_RFID, THEFT_RFID_CHECK_RATE));
 		elightsComponent.start(executeEmergencyLightDetection(SWITCH_TIME_TARGET, ALLOWED_SWITCH_TIME_DEVIATION, 5.0));
