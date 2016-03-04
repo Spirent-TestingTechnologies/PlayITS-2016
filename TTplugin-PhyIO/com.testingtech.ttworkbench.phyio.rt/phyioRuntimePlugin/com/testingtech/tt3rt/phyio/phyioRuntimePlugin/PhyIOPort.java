@@ -3,6 +3,7 @@ package com.testingtech.tt3rt.phyio.phyioRuntimePlugin;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -58,12 +59,12 @@ public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 		return super.triUnmap(connectedCompPortId, connectedTsiPortId);
 	}
 
-	private TriStatus connect(TriPortId compPortId, TriPortId tsiPortId) {
+	private TriStatus connect(TriPortId compPortId, TriPortId tsiPortId, TriParameterList paramList) {
 		if (!connectedCOMPort) {
 			synchronized (phyPorts) {
 				connectedCompPortId= compPortId;
 				connectedTsiPortId = tsiPortId;
-				TriStatus mapResult = super.triMap(compPortId, tsiPortId);
+				TriStatus mapResult = super.triMapParam(compPortId, tsiPortId, paramList);
 				if (mapResult.getStatus() == TriStatus.TRI_ERROR) {
 					return new TriStatusImpl("Error mapping COM port: " + mapResult);
 				}
@@ -79,16 +80,18 @@ public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 	}
 
 	public TriStatus triMapParam(TriPortId compPortId, TriPortId tsiPortId, TriParameterList paramList) {
-		int deviceId = ((IntegerValue)asValue(paramList, 0)).getInt();
+		int deviceId;
 		int sensorId;
 		
 		if ("PhyIOAUX.PhyConfig".equals(tsiPortId.getPortTypeName())) {
+			deviceId = ((IntegerValue)asValue(paramList, 1)).getInt();
 			sensorId = 0;
 		} else {
+			deviceId = ((IntegerValue)asValue(paramList, 0)).getInt();
 			sensorId = ((IntegerValue)asValue(paramList, 1)).getInt();
 		}
 
-		TriStatus res = virtualTriMap(compPortId, tsiPortId, deviceId, sensorId);
+		TriStatus res = virtualTriMap(compPortId, tsiPortId, deviceId, sensorId, paramList);
 		if (res.getStatus() != TriStatus.TRI_OK) {
 			logDebug("Error during map: "+res);
 			return res;
@@ -108,8 +111,8 @@ public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 		return res;
 	}
 
-	private TriStatus virtualTriMap(TriPortId compPortId, TriPortId tsiPortId, int deviceID, int sensorID) {
-		TriStatus mapResult = connect(compPortId, tsiPortId);
+	private TriStatus virtualTriMap(TriPortId compPortId, TriPortId tsiPortId, int deviceID, int sensorID, TriParameterList paramList) {
+		TriStatus mapResult = connect(compPortId, tsiPortId, paramList);
 		if (mapResult.getStatus() == TriStatus.TRI_ERROR) {
 			return new TriStatusImpl("Error mapping COM port: "+sensorID+" "+ mapResult);
 		}
@@ -204,7 +207,19 @@ public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 		String[] elements = str.split(",");
 		int sensorId = Integer.parseInt(elements[0].trim());
 		int functionId = Integer.parseInt(elements[1].trim());
-		PhyPort phyPort = phyPorts.getOutgoingInfo(tsiPortId, componentId);
+		PhyPort phyPortConfig = phyPorts.getOutgoingInfo(tsiPortId, componentId);
+		int deviceId = phyPortConfig.getDeviceID();
+		PhyPort phyPort = null;
+		Collection<PhyPort> outgoingInfoValues = phyPorts.getOutgoingInfoValues();
+		for (PhyPort phy : outgoingInfoValues) {
+			if (phy.getDeviceID() == deviceId && phy.getSensorID() == sensorId) {
+				phyPort = phy;
+				break;
+			}
+		}
+		if (phyPort == null) {
+			throw new RuntimeException(MessageFormat.format("Unknown sensor id {0} on port {1}", sensorId, tsiPortId));
+		}
 		if (phyPort.getSensorID() != sensorId) {
 			throw new RuntimeException(MessageFormat.format("Invalid sensor id {0} expected {1} on port {2}", sensorId, phyPort.getSensorID(), tsiPortId));
 		}

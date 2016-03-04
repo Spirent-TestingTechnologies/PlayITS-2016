@@ -28,6 +28,8 @@
  */
 module PhyIOExample {
 
+	import from RS232ConfigPortAux all;
+
 	import from PhyIOAUX all;
 	
 	const integer RED := 0;
@@ -38,7 +40,15 @@ module PhyIOExample {
 	const float LED_REFRESH_RATE := 1.0; // seconds
 	const float RGB_REFRESH_RATE := 1.0; // seconds
 	
-	modulepar RS232Config px_rs232Configuration := m_Serial8N1;
+	modulepar RS232Config px_rs232Configuration := {
+		serialPortName := "COM3",
+		baudRate := c_baudRate_115200,
+		dataBits := 8,
+		stopBits := 1,
+		parity := c_ParityNone,
+		flowControl := c_FlowControlNone,
+		checkDSR := false
+	};
 
 	type component me {
 		port PhyConfig config;

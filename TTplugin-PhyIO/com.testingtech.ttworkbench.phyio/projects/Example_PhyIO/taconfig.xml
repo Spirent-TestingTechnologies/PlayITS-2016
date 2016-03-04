@@ -6,6 +6,11 @@
     </plugin>
     <parameter id="default" value="true"/>
   </codec>
+  <codec encode="BASE">
+    <plugin id="com.testingtech.ttcn.XTestAdapter.builtin.tci.codecs">
+      <parameter id="class" value="com.testingtech.ttcn.tci.codec.plugin.ValueStringCodecPluginProvider"/>
+    </plugin>
+  </codec>
   <port>
     <plugin id="com.testingtech.tt3rt.phyio.PhyIORuntimePlugin">
       <parameter id="class" value="com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOPort"/>
@@ -21,7 +26,7 @@
       <parameter id="BaudRate">
         <value>
           <Values:integer xmlns:Values="Values.xsd" type="integer">
-            <Values:value>9600</Values:value>
+            <Values:value>115200</Values:value>
           </Values:integer>
         </value>
       </parameter>
