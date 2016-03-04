@@ -1,0 +1,12 @@
+module TestSuite {
+	
+	import from Header all;
+	
+	import from Lights all;
+	import from RFIDModule all;
+	
+	control {
+		executeLightsTestcases();
+		executeRFIDTestcases();
+	}
+}
