@@ -33,9 +33,13 @@ module RFIDModule {
 		var me rfidComponent := me.create;
 		var me elightsComponent := me.create;
 		
-		map(self:rfidSensor, system:rfidSensor);
 		map(self:doorSensor, system:doorSensor);
-		map(self:lightSensor, system:lightSensor);
+		map(rfidComponent:rfidSensor, system:rfidSensor);
+		map(elightsComponent:lightSensor, system:lightSensor);
+		
+		//TODO is this correct?
+		map(self:rfidPort, rfidComponent:rfidPort);
+		map(self:emergencyLightPort, elightsComponent:emergencyLightPort);
 		
 		rfidSensor.send(OWNER_RFID);
 		
