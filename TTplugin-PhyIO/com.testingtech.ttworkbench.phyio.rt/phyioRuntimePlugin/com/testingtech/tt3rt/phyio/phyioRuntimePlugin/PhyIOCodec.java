@@ -162,6 +162,16 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		} else if ("ReadBrightness".equals(typeName)) {
 			outStr = value(PhyModule.LightSensor01, READ);
 			
+		} else if ("ReadFrequencyStart".equals(typeName)) {
+			RecordValue rValue = ((RecordValue)value);
+			int minDiff = ((IntegerValue)rValue.getField("minDiff")).getInt();
+			int hysteresis = ((IntegerValue)rValue.getField("hysteresis")).getInt();
+			
+			outStr = value(PhyModule.LightSensor01, START, minDiff, hysteresis);
+			
+		} else if ("ReadFrequencyStop".equals(typeName)) {
+			outStr = value(PhyModule.LightSensor01, STOP);
+			
 		} else if ("RFID".equals(typeName)) {
 			RecordValue rValue = (RecordValue)value;
 			int id1 = ((IntegerValue)rValue.getField("id1")).getInt();

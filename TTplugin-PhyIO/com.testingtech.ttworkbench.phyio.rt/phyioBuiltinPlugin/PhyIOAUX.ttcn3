@@ -212,13 +212,19 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			//** @desc start reading timestamps of LED on/off switching
 			type record ReadLightSwitchStart {};
 			
+			//** @desc start measuring frequency
+			type record ReadFrequencyStart {integer minDiff, integer hysteresis};
+			
 			//** @desc stop reading timestamps of LED on/off switching
 			type record ReadLightSwitchStop {};
+			
+			//** @desc stop reading timestamps of LED on/off switching
+			type record ReadFrequencyStop {};
 			
 			//** @desc Drive the relay to switch a contact on and off
 			type port PhyLightSensor message {
 				in State;
-				out ReadBrightness, ReadLightSwitchStart, ReadLightSwitchStop;
+				out ReadBrightness, ReadLightSwitchStart, ReadFrequencyStart, ReadLightSwitchStop, ReadFrequencyStop;
         	
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
