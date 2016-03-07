@@ -37,7 +37,7 @@ module Functions {
 	 *  		allowedSwitchTimeDeviation: allowed delay between status changes
 	 *  		time: time until timeout
 	 */
-	function f_checkEmergencyLights(float switchTimeTarget, float allowedSwitchTimeDeviation, integer minSwitches, float time)
+	function f_checkEmergencyLights(float switchTimeTarget, float allowedSwitchTimeDeviation, integer minDiff, integer minSwitches, float time)
 	runs on me system SUT return verdicttype{
 		var verdicttype result := none;
 		
@@ -47,7 +47,7 @@ module Functions {
 		var boolean isTimeout;
 		var integer switchCount := 0;
 		
-		lightSensor.send(ReadLightSwitchStart:{});
+		lightSensor.send(ReadLightSwitchStart: minDiff);
 		
 		t.start(time);
 

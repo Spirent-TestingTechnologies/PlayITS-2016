@@ -1,4 +1,13 @@
 module TheftDetection {
+	import from Parameters {
+		modulepar
+			ALLOWED_SWITCH_TIME_DEVIATION,
+			MIN_SWITCH_BRIGHTNESS_DIFFERENCE,
+			OWNER_RFID,
+			SWITCH_TIME_TARGET,
+			THEFT_RFID_CHECK_RATE;
+	}
+
 	import from Header all;
 	
 	testcase TheftDetect(verdicttype expectRFID, boolean expectDoor, verdicttype expectEmergency) runs on me system SUT{
@@ -18,7 +27,7 @@ module TheftDetection {
 		connect(self:emergencyLightPort, elightsComponent:emergencyLightPort);
 		
 		rfidComponent.start(executeRFIDDetection(OWNER_RFID, THEFT_RFID_CHECK_RATE));
-		elightsComponent.start(executeEmergencyLightDetection(SWITCH_TIME_TARGET, ALLOWED_SWITCH_TIME_DEVIATION, 5.0));
+		elightsComponent.start(executeEmergencyLightDetection(SWITCH_TIME_TARGET, ALLOWED_SWITCH_TIME_DEVIATION, MIN_SWITCH_BRIGHTNESS_DIFFERENCE, 5.0));
 		
 		doorSensor.send(ReadDoorStart:{});
 		
@@ -103,7 +112,7 @@ module TheftDetection {
 		}
 	}
 	
-	function executeEmergencyLightDetection(float switchTime, float allowedDeviation, float checkRate) runs on me system SUT {
+	function executeEmergencyLightDetection(float switchTime, float allowedDeviation, integer minDiff, float checkRate) runs on me system SUT {
 		
 		var verdicttype result;
 		timer loopTimer;
@@ -111,7 +120,7 @@ module TheftDetection {
 		while(true) {
 			loopTimer.start(checkRate);
 			
-			result := f_checkEmergencyLights(switchTime, allowedDeviation, float2int(checkRate / switchTime / 2.0), checkRate);
+			result := f_checkEmergencyLights(switchTime, allowedDeviation, minDiff, float2int(checkRate / switchTime / 2.0), checkRate);
 			
 			emergencyLightPort.send(result);
 			

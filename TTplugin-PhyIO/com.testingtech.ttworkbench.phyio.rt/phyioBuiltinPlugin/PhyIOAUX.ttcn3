@@ -209,8 +209,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			//** @desc Reads Light Sensor data and sends it's immediately to the port
 			type record ReadBrightness {};
 		
-			//** @desc start reading timestamps of LED on/off switching
-			type record ReadLightSwitchStart {};
+			//** @desc start reading timestamps of LED on/off switching, incl. minDiff
+			type integer ReadLightSwitchStart;
 			
 			//** @desc start measuring frequency
 			type record ReadFrequencyStart {integer minDiff, integer hysteresis};

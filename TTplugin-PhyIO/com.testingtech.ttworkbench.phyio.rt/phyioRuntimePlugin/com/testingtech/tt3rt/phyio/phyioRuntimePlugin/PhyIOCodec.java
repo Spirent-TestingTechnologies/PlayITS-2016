@@ -161,6 +161,10 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			
 		} else if ("ReadBrightness".equals(typeName)) {
 			outStr = value(PhyModule.LightSensor01, READ);
+		
+		} else if ("ReadLightSwitchStart".equals(typeName)) {
+			int minDiff = ((IntegerValue)value).getInt();
+			outStr = value(PhyModule.LightSensor01, START, minDiff);
 			
 		} else if ("ReadFrequencyStart".equals(typeName)) {
 			RecordValue rValue = ((RecordValue)value);
@@ -169,7 +173,8 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			
 			outStr = value(PhyModule.LightSensor01, START, minDiff, hysteresis);
 			
-		} else if ("ReadFrequencyStop".equals(typeName)) {
+		} else if ("ReadFrequencyStop".equals(typeName) ||
+				"ReadLightSwitchStop".equals(typeName)) {
 			outStr = value(PhyModule.LightSensor01, STOP);
 			
 		} else if ("RFID".equals(typeName)) {
