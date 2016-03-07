@@ -7,8 +7,7 @@ module Components {
 		inout verdicttype, StopThread;
 	}
 	
-	
-	type component SimulatorPorts {
+	type component TesterPorts {
 		port PhyConfig config;
 		port PhyEcho distanceSensor;
 		port PhyLightSensor lightSensor;
@@ -22,7 +21,7 @@ module Components {
 	}
 	
 	//**@desc me = System running the tests
-	type component me extends SUTPorts, SimulatorPorts {
+	type component me extends SUTPorts, TesterPorts {
 		timer t;
 		
 		port InternalVerdictPort rfidPort;
@@ -30,6 +29,6 @@ module Components {
 	}
 	
 	//**@desc Component System under Test (Arduino)
-	type component System extends SUTPorts, SimulatorPorts {
+	type component System extends SUTPorts, TesterPorts {
 	}
 }
