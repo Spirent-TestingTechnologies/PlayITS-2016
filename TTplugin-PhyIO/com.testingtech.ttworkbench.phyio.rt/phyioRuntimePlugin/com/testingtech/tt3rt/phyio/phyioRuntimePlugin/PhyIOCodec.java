@@ -88,6 +88,9 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				int timestamp = Integer.parseInt(elements[idx++].trim());
 				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("time");
 				timestampV.setInt(timestamp);
+			} else if (module == PhyModule.LightSensor01 && "Frequency".equals(typeName)) {
+				int frequency = Integer.parseInt(elements[idx++].trim());
+				((IntegerValue)value).setInt(frequency);
 			} else if (module == PhyModule.PushButton01 && "PushButtonState".equals(typeName)) {
 				int state = Integer.parseInt(elements[idx++].trim());
 				((BooleanValue)value).setBoolean(state != 0);
@@ -167,11 +170,9 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			outStr = value(PhyModule.LightSensor01, START, minDiff);
 			
 		} else if ("ReadFrequencyStart".equals(typeName)) {
-			RecordValue rValue = ((RecordValue)value);
-			int minDiff = ((IntegerValue)rValue.getField("minDiff")).getInt();
-			int hysteresis = ((IntegerValue)rValue.getField("hysteresis")).getInt();
+			int minDiff = ((IntegerValue)value).getInt();
 			
-			outStr = value(PhyModule.LightSensor01, START, minDiff, hysteresis);
+			outStr = value(PhyModule.LightSensor01, START, minDiff);
 			
 		} else if ("ReadFrequencyStop".equals(typeName) ||
 				"ReadLightSwitchStop".equals(typeName)) {
