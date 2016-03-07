@@ -28,20 +28,10 @@
  */
 //** @desc Testing Lightsensor data
 module Lights {
-	import from Parameters {
-		modulepar
-			ALLOWED_SWITCH_TIME_DEVIATION,
-			BRIGHTNESS_THRESHOLD,
-			MIN_SWITCH_BRIGHTNESS_DIFFERENCE,
-			SUT_RS232_CONFIG,
-			SWITCH_TIME_TARGET;
-	}
-
-	import from PhyIOAUX all;
 	import from Header all;
 	
 	//** @desc Testcase to check wether Headlights are on or not
-	testcase HeadLightsTestcase(boolean expectOn) runs on me system SUT{
+	testcase HeadLightsTestcase(boolean expectOn) runs on me system System{
 		var template State LED_OFF := {(0..BRIGHTNESS_THRESHOLD), ?};
 		var default alts := activate(alt_default());
 		
@@ -73,19 +63,55 @@ module Lights {
 	}
 	
 	/** @desc Testet Warnblinker
-	* Reads Timestamps of LED status change and compares it to predefined values
-	*/   
-	testcase EmergencyLights() runs on me system SUT{
+	 * Reads Timestamps of LED status change and compares it to predefined values
+	 */
+	testcase EmergencyLights() runs on me system System{
 		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
 		map(self:lightSensor, system:lightSensor) param (DeviceID_1, SensorID_1);
 		
 		setverdict(f_checkEmergencyLights(SWITCH_TIME_TARGET,ALLOWED_SWITCH_TIME_DEVIATION, MIN_SWITCH_BRIGHTNESS_DIFFERENCE, 5, 10.0));
 	}
 	
-	function executeLightsTestcases() {
-		execute(HeadLightsTestcase(true));
-		execute(HeadLightsTestcase(false));
+	testcase EmergencyLights2() runs on me system System {
+		var Frequency frequency;
 		
-		execute(EmergencyLights());
+		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
+		map(self:led, system:led) param (DeviceID_1, SensorID_1);
+		map(self:lightSensor, system:lightSensor) param (DeviceID_1, SensorID_2);
+		
+		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
+		
+		// wait a bit to make sure that arduino had enough time to react
+		t.start(0.25);
+		
+		lightSensor.send(ReadFrequencyStart: MIN_SWITCH_BRIGHTNESS_DIFFERENCE);
+		
+		t.start(10.0);
+		lightSensor.send(ReadFrequencyStop: {});
+		
+		alt {
+			
+			[]lightSensor.receive(Frequency: 0.0) -> value frequency {
+				setverdict(fail);
+			}
+			[]lightSensor.receive(Frequency: (SWITCH_TIME_TARGET - ALLOWED_SWITCH_TIME_DEVIATION .. SWITCH_TIME_TARGET + ALLOWED_SWITCH_TIME_DEVIATION)) -> value frequency {
+				setverdict(pass);
+			}
+			[]lightSensor.receive(Frequency: ?) -> value frequency {
+				setverdict(fail);
+			}
+			[]t.timeout {
+				setverdict(inconc);
+			}
+		}
+		
+		led.send(BlinkLEDStop: {});
 	}
-}
+	
+		function executeLightsTestcases() {
+			execute(HeadLightsTestcase(true));
+			execute(HeadLightsTestcase(false));
+		
+			execute(EmergencyLights());
+		}
+	}

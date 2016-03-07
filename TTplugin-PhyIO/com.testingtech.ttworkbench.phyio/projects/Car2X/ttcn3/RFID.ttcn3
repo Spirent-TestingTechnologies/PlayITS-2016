@@ -1,7 +1,7 @@
 module RFIDModule {
 	import from Header all;
 	
-	testcase RFIDTest(RFID rfid, boolean expectPass) runs on me system SUT {
+	testcase RFIDTest(RFID rfid, boolean expectPass) runs on me system System {
 		var verdicttype result;
 		
 		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);

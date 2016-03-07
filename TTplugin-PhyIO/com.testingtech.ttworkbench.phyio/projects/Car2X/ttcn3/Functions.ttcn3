@@ -6,7 +6,7 @@ module Functions {
 	 * @desc Test to check for valid rfid
 	 * @param RFID in question, time until timeout
 	 */
-	function f_checkRFID(RFID rfid, float time) runs on me system SUT return verdicttype {
+	function f_checkRFID(RFID rfid, float time) runs on me system System return verdicttype {
 		var verdicttype result := none;
 		
 		rfidSensor.send(ReadRFIDStart:{});
@@ -38,7 +38,7 @@ module Functions {
 	 *  		time: time until timeout
 	 */
 	function f_checkEmergencyLights(float switchTimeTarget, float allowedSwitchTimeDeviation, integer minDiff, integer minSwitches, float time)
-	runs on me system SUT return verdicttype{
+	runs on me system System return verdicttype{
 		var verdicttype result := none;
 		
 		var State state;

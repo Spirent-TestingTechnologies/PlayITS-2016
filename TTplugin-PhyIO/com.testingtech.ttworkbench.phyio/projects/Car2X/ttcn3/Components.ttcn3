@@ -7,18 +7,18 @@ module Components {
 		inout verdicttype, StopThread;
 	}
 	
-	//**@desc Component  port definition System under Test(Arduino)
-	type component SUTPorts {
+	
+	type component SimulatorPorts {
 		port PhyConfig config;
 		port PhyEcho distanceSensor;
 		port PhyLightSensor lightSensor;
-		port PhyDoor doorSensor;
-		port PhyRFIDSensor rfidSensor;
-	    // TODO add speed sensor
 	}
 	
-	type component SimulatorPorts {
+	//**@desc Component  port definition System under Test(Arduino)
+	type component SUTPorts {
 		port PhyLED led;
+		port PhyDoor doorSensor;
+		port PhyRFIDSensor rfidSensor;
 	}
 	
 	//**@desc me = System running the tests
@@ -30,10 +30,6 @@ module Components {
 	}
 	
 	//**@desc Component System under Test (Arduino)
-	type component SUT extends SUTPorts {
-	}
-	
-	//**@desc Component to simulate the car
-	type component Simulator extends SimulatorPorts {
+	type component System extends SUTPorts, SimulatorPorts {
 	}
 }

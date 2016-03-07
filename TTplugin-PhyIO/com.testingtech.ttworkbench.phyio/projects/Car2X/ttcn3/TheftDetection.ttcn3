@@ -10,7 +10,7 @@ module TheftDetection {
 
 	import from Header all;
 	
-	testcase TheftDetect(verdicttype expectRFID, boolean expectDoor, verdicttype expectEmergency) runs on me system SUT{
+	testcase TheftDetect(verdicttype expectRFID, boolean expectDoor, verdicttype expectEmergency) runs on me system System{
 		var verdicttype v_rfid := none;
 		var verdicttype v_elights := none;
 		var boolean doorOpened := false;
@@ -83,7 +83,7 @@ module TheftDetection {
 		elightsComponent.done;
 	}
 	
-	function executeRFIDDetection(RFID rfid, float checkRate) runs on me system SUT {
+	function executeRFIDDetection(RFID rfid, float checkRate) runs on me system System {
 		
 		var verdicttype result;
 		timer loopTimer;
@@ -112,7 +112,7 @@ module TheftDetection {
 		}
 	}
 	
-	function executeEmergencyLightDetection(float switchTime, float allowedDeviation, integer minDiff, float checkRate) runs on me system SUT {
+	function executeEmergencyLightDetection(float switchTime, float allowedDeviation, integer minDiff, float checkRate) runs on me system System {
 		
 		var verdicttype result;
 		timer loopTimer;
