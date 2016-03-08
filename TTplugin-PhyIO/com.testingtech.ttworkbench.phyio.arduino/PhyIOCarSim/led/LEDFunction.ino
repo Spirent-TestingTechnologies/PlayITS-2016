@@ -1,7 +1,7 @@
 //#include <SoftwareSerial.h>
 //#include <Time.h>
 
-#define XSERIAL Serial // mySerial // Serial // to switch between Bluetooth and USB XSERIAL connection for communication
+#define XSERIAL Serial // mySerial // Serial // to LEDSwitch between Bluetooth and USB XSERIAL connection for communication
 
 #define CV01   10
 #define PE01   20
@@ -36,7 +36,7 @@ unsigned int readSpeed = 500; // How frequently are we going to read the serial 
 // definitionen der funktionen
 void establishContact();
 void processCleanUp ();
-void toggle();
+void LEDshouldBlink();
 void LEDFunction( int id, int command);
 
 
@@ -53,8 +53,8 @@ void setup() {
 
 void loop() {
   int id, functionType, command;
-  //if (millis() >= readTimer) {
-    //readTimer += readSpeed;      // Set the next ping time.
+  if (millis() >= readTimer) {
+    readTimer += readSpeed;      // Set the next ping time.
     if (XSERIAL.available() > 0) {
       // Read in loop all data for one line
       id = XSERIAL.parseInt();
@@ -80,8 +80,8 @@ void loop() {
       }
       processCleanUp();
     }
-    toggle();
-  //}
+  }
+  LEDshouldBlink();
 }
 
 
@@ -90,13 +90,16 @@ void loop() {
 #define Led2Pin 11 // yellow
 #define Led3Pin 12 // red
 
+
+
 struct LEDFunctionConfig{
+  // Struct that simulates and controlls the corresponding diods
   
   int ID; // The ID
   int state;
   int pin;
   bool is_toggling;
-  long toggle_time;
+  long toggling_time;
   unsigned long previousMillis;
 
   LEDFunctionConfig(int theID, int ledPin) {
@@ -109,25 +112,26 @@ struct LEDFunctionConfig{
     // Set default values in case there is nothing store
     state = LOW;
     is_toggling = false;
-    toggle_time = 0;
+    toggling_time = 0;
     previousMillis = 0;
   }
 };
 
-LEDFunctionConfig LED1(1, Led1Pin);
-LEDFunctionConfig LED2(2, Led2Pin);
-LEDFunctionConfig LED3(3, Led3Pin);
+LEDFunctionConfig LED1(1, Led1Pin); // green
+LEDFunctionConfig LED2(2, Led2Pin); // yellow
+LEDFunctionConfig LED3(3, Led3Pin); // red
 
+// Definitions of the needed functions
 void LEDFunctionSet(int id, int state);
-void LEDtoggleblinken(int id);
+void LEDFunctionBlink(int id);
 void LEDFunctionStop(int id);
 void toggling(LEDFunctionConfig led);
-void Switch(LEDFunctionConfig led, int state);
+void LEDSwitch(LEDFunctionConfig led, int state);
 
-unsigned long currentMillis;
+unsigned long currentMillis; // keeps track of time to signal if blinking is needed
 
 void LEDFunction( int id, int command) {
-  // wählt die Funktion aus, die mit der LED ausgeführt werden soll
+  // chooses the function for the led
   
   DEBUG_PRINT("\n#In the LEDFunction with function : '");
   DEBUG_PRINTLN(command);
@@ -136,16 +140,14 @@ void LEDFunction( int id, int command) {
   DEBUG_PRINTLN(id);
 
   switch (command) {
-    case SET:{
-      int state = XSERIAL.parseInt();
-      LEDFunctionSet(id, state);
+    case SET:
+      LEDFunctionSet(id, XSERIAL.parseInt());
       break;
-      }
     case BLINK:
-      LEDtoggleblinken(id);
+      LEDFunctionBlink(id);
       break;
     case STOP:
-      LEDFunctionStop(id);
+      LEDFunctionSet(id, 0);
       break;
     default:
       break;
@@ -153,29 +155,31 @@ void LEDFunction( int id, int command) {
 }
 
 
-void LEDtoggleblinken(int id) {
-  // Gibt weiter, welche LED jetzt blinken soll
+void LEDFunctionBlink(int id) {
+  // tells the given led, that it now has to blink
   float freq = XSERIAL.parseFloat();
 
-  if(id == LED1.ID){
-    LED1.is_toggling = true;
-    LED1.toggle_time = (1000/(freq*2));
-  }
+  switch (id){
+    case 1:
+      LED1.is_toggling = true;
+      LED1.toggling_time = (1000/(freq*2));
+      break;
+      
+    case 2:
+      LED2.is_toggling = true;
+      LED2.toggling_time = (1000/(freq*2));  
+      break;
     
-  if(id == LED2.ID){
-    LED2.is_toggling = true;
-    LED2.toggle_time = (1000/(freq*2));  
-  }
-  
-  if(id == LED3.ID){;
-    LED3.is_toggling = true;
-    LED3.toggle_time = (1000/(freq*2));
+    case 3:
+      LED3.is_toggling = true;
+      LED3.toggling_time = (1000/(freq*2));
+      break;
   }
 }
 
 
-void toggle(){
-  // überprüft, ob eine der LED gerade blinken muss und schlatet je nach Stand um
+void LEDshouldBlink(){
+  // checks if a led has to blink
   currentMillis = millis();
 
   if(LED1.is_toggling){toggling(&LED1);}
@@ -185,38 +189,44 @@ void toggle(){
 
 
 void toggling(struct LEDFunctionConfig *led){
-  
-  if((currentMillis - led->previousMillis) >= led->toggle_time){
+  // toggles between the on and off state of the given led
+  if((currentMillis - led->previousMillis) >= led->toggling_time){
       led->previousMillis = currentMillis;
       if (led->state == LOW){
-        Switch(led, 1);
+        LEDSwitch(led, 1);
         
       } else {
-        Switch(led, 0);
+        LEDSwitch(led, 0);
       }
   }
 }
 
 
 void LEDFunctionSet(int id, int state) {
-  // Schaltet die jeweilige LED basierend auf ihrer ID an oder aus
-  
-  if (id == LED1.ID) {
-    Switch(&LED1, state);
+  // sets the the corresponding led to the given state
+  // and turns off toggling
+  switch (id){
+    case 1:
+    LED1.is_toggling = false;
+    LEDSwitch(&LED1, state);
+    break;
     
-  } else if (id == LED2.ID) {
-    Switch(&LED2, state);
+    case 2: 
+    LED2.is_toggling = false;
+    LEDSwitch(&LED2, state);
+    break;
     
-  } else if (id == LED3.ID) {
-    Switch(&LED3, state);
+    case 3: 
+    LED3.is_toggling = false;
+    LEDSwitch(&LED3, state);
+    break;
   }
 }
 
 
-void Switch(struct LEDFunctionConfig *led, int state){
-  // schlatet den übergeben pin mit 1 an und mit 0 aus
-  // hilfsfunktion zum Wechseln der Zustände der LED
-  
+void LEDSwitch(struct LEDFunctionConfig *led, int state){
+  // switches the given led into the given state
+
   if(state == 0){
     led->state = LOW;
     digitalWrite(led->pin, LOW);
@@ -224,20 +234,6 @@ void Switch(struct LEDFunctionConfig *led, int state){
   } else {
     led->state = HIGH;
     digitalWrite(led->pin, HIGH);
-  }
-}
-
-
-void LEDFunctionStop(int id){  
-  
-  if (id == LED1.ID) {
-    LED1.is_toggling = false;
-    
-  } else if (id == LED2.ID) {
-    LED2.is_toggling = false;
-    
-  } else if (id == LED3.ID) {    
-    LED3.is_toggling = false;
   }
 }
 

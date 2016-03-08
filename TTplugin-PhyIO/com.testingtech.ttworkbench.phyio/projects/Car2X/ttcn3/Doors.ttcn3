@@ -1,0 +1,35 @@
+//** @desc Testing Doors
+module Doors {
+	import from PhyIOAUX all;
+	import from Components all;
+	import from Header all;
+
+    testcase DoorStatus() runs on me system System{
+    	var default alts := activate(alt_default());
+    	
+    	map(self:config, system:config);
+    	map(self:doorSensor, system:doorSensor);
+    	
+    	t.start(5.0);
+    	doorSensor.send(ReadDoorStart:{});
+    	
+    	alt{
+    		[]doorSensor.receive(DoorState: true){
+    			log("Door was opened");
+    			setverdict(pass);
+    		}
+    		[]doorSensor.receive(DoorState: false){
+    			log("Door is closed");
+    			setverdict(pass);
+    		}
+    		[]doorSensor.receive(DoorState: ?){
+    			log("received wrong data");
+    			setverdict(inconc);
+    		}
+    		[]t.timeout{
+    			log("Sensor not responding");
+    			setverdict(fail);
+    		}
+    	}
+    }	
+}
