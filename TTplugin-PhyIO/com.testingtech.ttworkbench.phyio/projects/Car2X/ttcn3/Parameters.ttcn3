@@ -1,6 +1,8 @@
 module Parameters {
 	import from PhyIOAUX all;
-	import from RS232ConfigPortAux all;
+	import from RS232ConfigPortAux all with {
+		encode "BASE";
+	}
 
 	// ID Karte: 194, 96, 196, 169 (DEZ)
 	// ID Chip: 4, 226, 92, 235 (DEZ)

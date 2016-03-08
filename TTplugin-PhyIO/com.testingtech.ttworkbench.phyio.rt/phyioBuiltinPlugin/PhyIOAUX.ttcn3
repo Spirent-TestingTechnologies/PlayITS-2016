@@ -35,22 +35,22 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 	import from TTCN3AUX all;
 	public import from RS232ConfigPortAux all;
   
-	const integer SensorID_Configuration := 0;
-	const integer SensorID_1 := 1;
-	const integer SensorID_2 := 2;
-	const integer SensorID_3 := 3;
-	const integer SensorID_4 := 4;
-	const integer SensorID_5 := 5;
-	const integer SensorID_6 := 6;
-	const integer SensorID_7 := 7;
-	const integer SensorID_8 := 8;
-	const integer SensorID_9 := 9;
+	const SensorID SensorID_Configuration := 0;
+	const SensorID SensorID_1 := 1;
+	const SensorID SensorID_2 := 2;
+	const SensorID SensorID_3 := 3;
+	const SensorID SensorID_4 := 4;
+	const SensorID SensorID_5 := 5;
+	const SensorID SensorID_6 := 6;
+	const SensorID SensorID_7 := 7;
+	const SensorID SensorID_8 := 8;
+	const SensorID SensorID_9 := 9;
 	
-	const integer DeviceID_1 := 1;
-	const integer DeviceID_2 := 2;
-	const integer DeviceID_3 := 3;
-	const integer DeviceID_4 := 4;
-	const integer DeviceID_5 := 5;
+	const DeviceID DeviceID_1 := 1;
+	const DeviceID DeviceID_2 := 2;
+	const DeviceID DeviceID_3 := 3;
+	const DeviceID DeviceID_4 := 4;
+	const DeviceID DeviceID_5 := 5;
 
 	type integer Timestamp;
 
@@ -58,10 +58,14 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		//** @desc Configuration related types and ports
 		group Config {
 			//** @desc Sensor ID as defined by the HW spec. Within a device the sensor IDs should be unique.
-			type integer SensorID;
+			type integer SensorID with {
+				encode "BASE"
+			}
 			
 			//** @desc Device ID an identifier for different devices (e.g. used unterneeth to connect to different COM/TTY ports)
-			type integer DeviceID;
+			type integer DeviceID with {
+				encode "BASE"
+			}
 
 			//** @desc Reads Sensor data and sends it's to the port each UpdateFrequency seconds
 			type float UpdateFrequency;

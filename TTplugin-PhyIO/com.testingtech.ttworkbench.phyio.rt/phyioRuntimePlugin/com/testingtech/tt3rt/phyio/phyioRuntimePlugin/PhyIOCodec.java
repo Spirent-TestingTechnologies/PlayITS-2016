@@ -3,6 +3,7 @@ package com.testingtech.tt3rt.phyio.phyioRuntimePlugin;
 import static com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOConstants.*;
 
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 
 import org.etsi.ttcn.tci.BooleanValue;
 import org.etsi.ttcn.tci.FloatValue;
@@ -77,7 +78,19 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 
 	@Override
 	public TriMessage encode(Value value) {
-		String moduleFunction = translateVariant(value.getType().getTypeEncodingVariant());	
+		String typeEncoding = value.getType().getTypeEncoding();
+		
+		if ("BASE".equals(typeEncoding)) {
+			TciCDProvided codec = getCodec(typeEncoding);
+			if (codec != null) {
+				return codec.encode(value);
+			} else {
+				tciErrorReq(MessageFormat.format("Unknown encoding '{0}' for type {1}", typeEncoding, value.getType()));
+				return null;
+			}
+		}
+		
+		String moduleFunction = translateVariant(value.getType().getTypeEncodingVariant());
 		String parameters = encodeParameters(value);
 		
 		if (moduleFunction != null && parameters != null) {
@@ -86,11 +99,15 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				out += ", " + parameters;
 			return TriMessageImpl.valueOf(str2bytes(out));
 		} else {
+			tciErrorReq(MessageFormat.format("Unknown xxxxxx '{0}' for type {1}", typeEncoding, value.getType()));
 			return null;
 		}
 	}
 	
 	String translateVariant(String variant) {
+		if (variant == null) {
+			return null;
+		}
 		String[] elements = variant.split(COMMA_DELIM);
 		
 		int module = getModuleID(elements[0].trim());
