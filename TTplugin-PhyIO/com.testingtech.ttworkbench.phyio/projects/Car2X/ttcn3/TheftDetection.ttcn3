@@ -10,6 +10,13 @@ module TheftDetection {
 
 	import from Header all;
 	
+	/**
+	 * 
+	 * @desc 
+	 * @param expectRFID
+	 * @param expectDoor
+	 * @param expectEmergency
+	 */
 	testcase TheftDetect(verdicttype expectRFID, boolean expectDoor, verdicttype expectEmergency) runs on me system System{
 		var verdicttype v_rfid := none;
 		var verdicttype v_elights := none;

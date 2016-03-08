@@ -7,8 +7,9 @@ module Components {
 		inout verdicttype, StopThread;
 	}
 	
+
 	//**@desc Component port definition System measuring the SUT (Arduino)
-	type component SimulatorPorts {
+	type component TesterPorts {
 		port PhyConfig config;
 		port PhyEcho distanceSensor;
 		port PhyLightSensor lightSensor;
@@ -22,18 +23,19 @@ module Components {
 	}
 	
 	//**@desc me = System running the tests
-	type component me extends SUTPorts, SimulatorPorts {
+	type component me extends SUTPorts, TesterPorts {
 		timer t;
 		
 		port InternalVerdictPort rfidPort;
 		port InternalVerdictPort emergencyLightPort;
 	}
 	
+
 	/**
 	 * @desc Component port definition System under Test (Arduino) and
 	 * System measuring the System under Test (Arduino)
 	 * used to run tests on a single Arduino
 	 */
-	type component System extends SUTPorts, SimulatorPorts {
+	type component System extends SUTPorts, TesterPorts {
 	}
 }
