@@ -27,8 +27,8 @@ module Doors {
     			setverdict(fail);
     		}
     		[]t.timeout{
-    			log("Sensor not responding");
-    			setverdict(inconc);
+    			log("Sensor sent no data.");
+    			setverdict(fail);
     		}
     	}
     	doorSensor.send(ReadDoorStop:{});
