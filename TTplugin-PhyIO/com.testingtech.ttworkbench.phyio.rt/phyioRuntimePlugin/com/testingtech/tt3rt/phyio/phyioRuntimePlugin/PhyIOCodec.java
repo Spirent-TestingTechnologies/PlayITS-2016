@@ -88,15 +88,19 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				int timestamp = Integer.parseInt(elements[idx++].trim());
 				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("time");
 				timestampV.setInt(timestamp);
+				return value;
 			} else if (module == PhyModule.LightSensor01 && "Frequency".equals(typeName)) {
 				int frequency = Integer.parseInt(elements[idx++].trim());
 				((IntegerValue)value).setInt(frequency);
+				return value;
 			} else if (module == PhyModule.PushButton01 && "PushButtonState".equals(typeName)) {
 				int state = Integer.parseInt(elements[idx++].trim());
 				((BooleanValue)value).setBoolean(state != 0);
+				return value;
 			} else if (module == PhyModule.Door01 && "DoorState".equals(typeName)) {
 				int state = Integer.parseInt(elements[idx++].trim());
 				((BooleanValue)value).setBoolean(state != 0);
+				return value;
 			} else if (module == PhyModule.RFIDSensor01 && "RFID".equals(typeName)) {
 				int id1 = Integer.parseInt(elements[idx++].trim());
 				int id2 = Integer.parseInt(elements[idx++].trim());
@@ -108,6 +112,7 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				((IntegerValue)rValue.getField("id2")).setInt(id2);
 				((IntegerValue)rValue.getField("id3")).setInt(id3);
 				((IntegerValue)rValue.getField("id4")).setInt(id4);
+				return value;
 			}
 			break;
 
