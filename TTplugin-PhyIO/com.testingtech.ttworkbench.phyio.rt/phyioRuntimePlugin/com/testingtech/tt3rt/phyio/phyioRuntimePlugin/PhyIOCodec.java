@@ -66,7 +66,8 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			
 			for(String name : names) {
 				Value field = ((RecordValue)value).getField(name);
-				decodeParameters(field, elements, idx);
+				field = decodeParameters(field, elements, idx);
+				((RecordValue)value).setField(name, field);
 			}
 		} else {
 			logWarn("Could not decode: type " + value.getType().getName() + " not supported.");
