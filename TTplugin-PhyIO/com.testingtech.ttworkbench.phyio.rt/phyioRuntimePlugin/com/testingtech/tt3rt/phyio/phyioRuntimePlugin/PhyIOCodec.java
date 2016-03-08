@@ -150,72 +150,64 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 	String translateVariant(String variant) {
 		String[] elements = variant.split(COMMA_DELIM);
 		
-		String module = "";
-		String function = "";
+		int module = getModuleID(elements[0].trim());
+		int function = getFunctionID(elements[1].trim());
 		
-		switch(elements[0].trim()){
-		case "CONFIG":
-			module = "0";
-			break;
-		case "COLOR":
-			module = "10";
-			break;
-		case "ECHO":
-			module = "20";
-			break;
-		case "DISTANCE":
-			module = "21";
-			break;
-		case "LED":
-			module = "30";
-			break;
-		case "RELAY":
-			module = "40";
-			break;
-		case "MOTOR":
-			module = "60";
-			break;
-		case "BUTTON":
-		case "DOOR":
-			module = "60";
-			break;
-		case "LIGHTSENSOR":
-			module = "70";
-			break;
-		case "RFID":
-			module = "80";
-			break;
-		default:
-			logWarn("Module identifier unknown: "+elements[0].trim());
+		if(module == -1 || function == -1)
 			return null;
-		}
-		
-		switch(elements[1].trim()){
-		case "SETUP":
-		case "SET":
-			function = "1";
-			break;
-		case "START":
-			function = "2";
-			break;
-		case "STOP":
-			function = "3";
-			break;
-		case "READ":
-			function = "4";
-			break;
-		case "BLINK":
-			function = "5";
-			break;
-		case "RESULT":
-			function = "101";
-			break;
-		default:
-			logWarn("Function identifier unknown: "+elements[0].trim());
-			return null;
-		}
 		
 		return module + ", " + function;
+	}
+	
+	int getModuleID(String moduleIdentifier) {
+		switch(moduleIdentifier){
+		case "CONFIG":
+			return PhyModule.GeneralConfig01.getId();
+		case "COLOR":
+			return PhyModule.ColorView01.getId();
+		case "ECHO":
+			return PhyModule.PingEcho01.getId();
+		case "DISTANCE":
+			return PhyModule.PingEcho02.getId();
+		case "LED":
+			return PhyModule.LED01.getId();
+		case "RELAY":
+			return PhyModule.Relay01.getId();
+		case "MOTOR":
+			return PhyModule.Motor01.getId();
+		case "BUTTON":
+			return PhyModule.PushButton01.getId();
+		case "DOOR":
+			return PhyModule.Door01.getId();
+		case "LIGHTSENSOR":
+			return PhyModule.LightSensor01.getId();
+		case "RFID":
+			return PhyModule.RFIDSensor01.getId();
+		default:
+			logWarn("Module identifier unknown: " + moduleIdentifier);
+			return -1;
+		}
+	}
+	
+	int getFunctionID(String functionIdentifier) {
+		switch(functionIdentifier){
+		case "SETUP":
+		case "SET":
+			return SET;
+		case "START":
+			return START;
+		case "STOP":
+			return STOP;
+		case "READ":
+			return READ;
+		case "BLINK":
+			return BLINK;
+		case "RESULT":
+			return RESULT;
+		default:
+			logWarn("Function identifier unknown: " + functionIdentifier);
+			return -1;
+		}
 	}
 	
 	String encodeParameters(Value value) {
