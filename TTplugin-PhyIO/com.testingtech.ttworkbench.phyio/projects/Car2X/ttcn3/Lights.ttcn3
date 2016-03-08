@@ -32,7 +32,7 @@ module Lights {
 	import from Components all;
 	import from Header all;
 	
-	//** @desc Testcase to check wether Headlights are on or not
+	//** @desc Testcase to check whether headlights are switched on or off
 	testcase HeadLightsTestcase() runs on me system System{
 		var template State LED_OFF := {(0..BRIGHTNESS_THRESHOLD), ?};
 		var default alts := activate(alt_default());
@@ -57,8 +57,8 @@ module Lights {
 			}
 		}
 	}
-	/** @desc Testet Warnblinker
-	 * Reads Timestamps of LED status change and compares it to predefined values
+	/** @desc tests emergency lights
+	 * reads timestamps of LED status change and compares it to predefined values
 	 */
 	testcase EmergencyLights() runs on me system System{
 		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
@@ -66,7 +66,11 @@ module Lights {
 		
 		setverdict(f_checkEmergencyLights(SWITCH_TIME_TARGET,ALLOWED_SWITCH_TIME_DEVIATION, MIN_SWITCH_BRIGHTNESS_DIFFERENCE, 5, 10.0));
 	}
-	
+	/**
+	 * @desc tests emergency lights
+	 * sends an expected switch time target to the SUT
+	 * reads the sensors output, which is the average time elapsed between switches
+	 */
 	testcase EmergencyLights2() runs on me system System {
 		var Frequency frequency;
 		
