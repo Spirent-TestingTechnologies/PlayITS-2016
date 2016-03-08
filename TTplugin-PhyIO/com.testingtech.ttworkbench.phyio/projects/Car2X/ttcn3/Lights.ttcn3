@@ -28,40 +28,35 @@
  */
 //** @desc Testing Lightsensor data
 module Lights {
+	import from PhyIOAUX all;
+	import from Components all;
 	import from Header all;
 	
 	//** @desc Testcase to check wether Headlights are on or not
-	testcase HeadLightsTestcase(boolean expectOn) runs on me system System{
+	testcase HeadLightsTestcase() runs on me system System{
 		var template State LED_OFF := {(0..BRIGHTNESS_THRESHOLD), ?};
 		var default alts := activate(alt_default());
 		
 		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
-		map(self:lightSensor, system:lightSensor) param (DeviceID_1, SensorID_1);
-		
+		map(self:lightSensor, system:lightSensor) param (DeviceID_1, SensorID_2);
+		// needed as long as we test on a single arduino
+		map(self:led, system:led) param (DeviceID_1, SensorID_1);
+		led.send(switchLED_ON);
+		led.send(switchLED_ON);
 		lightSensor.send(ReadBrightness:{});
 		t.start(5.0);
 		alt{
 			[]lightSensor.receive(LED_OFF){
 				log("LED is off.");
-				
-				if(expectOn) {
-					setverdict(fail);
-				} else {
-					setverdict(pass);
+				setverdict(fail);
 				}
-			}
 			[]lightSensor.receive(State: {?, ?}) {
 				log("LED is on.");
-				
-				if(expectOn) {
 					setverdict(pass);
-				} else {
-					setverdict(fail);
-				}
+
 			}
 		}
 	}
-	
 	/** @desc Testet Warnblinker
 	 * Reads Timestamps of LED status change and compares it to predefined values
 	 */
@@ -109,8 +104,7 @@ module Lights {
 	}
 	
 		function executeLightsTestcases() {
-			execute(HeadLightsTestcase(true));
-			execute(HeadLightsTestcase(false));
+			execute(HeadLightsTestcase());
 		
 			execute(EmergencyLights());
 		}
