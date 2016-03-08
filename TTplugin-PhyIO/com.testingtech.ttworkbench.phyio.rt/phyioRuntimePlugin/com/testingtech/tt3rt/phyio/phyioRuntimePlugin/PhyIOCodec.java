@@ -80,7 +80,7 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 	public TriMessage encode(Value value) {
 		String typeEncoding = value.getType().getTypeEncoding();
 		
-		if ("BASE".equals(typeEncoding)) {
+		if (!"PhyIO".equals(typeEncoding)) {
 			TciCDProvided codec = getCodec(typeEncoding);
 			if (codec != null) {
 				return codec.encode(value);
@@ -99,15 +99,15 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				out += ", " + parameters;
 			return TriMessageImpl.valueOf(str2bytes(out));
 		} else {
-			tciErrorReq(MessageFormat.format("Unknown xxxxxx '{0}' for type {1}", typeEncoding, value.getType()));
+			tciErrorReq(MessageFormat.format("Unable to encode '{0}' for type {1}", value, value.getType()));
 			return null;
 		}
 	}
 	
 	String translateVariant(String variant) {
-		if (variant == null) {
+		if (variant == null)
 			return null;
-		}
+		
 		String[] elements = variant.split(COMMA_DELIM);
 		
 		int module = getModuleID(elements[0].trim());
@@ -171,13 +171,13 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 	}
 	
 	String encodeParameters(Value value) {
-		if(value instanceof IntegerValue){
+		if(value instanceof IntegerValue) {
 			return ((IntegerValue)value).getInt() + "";
-		} else if(value instanceof FloatValue){
+		} else if(value instanceof FloatValue) {
 			return ((FloatValue)value).getFloat() + "";
-		} else if(value instanceof BooleanValue){
+		} else if(value instanceof BooleanValue) {
 			return ((BooleanValue)value).getBoolean() ? "1" : "0";
-		} else if(value instanceof RecordValue){
+		} else if(value instanceof RecordValue) {
 			String[] names = ((RecordValue)value).getFieldNames();
 			String result = "";
 			
@@ -185,9 +185,12 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				Value field = ((RecordValue)value).getField(name);
 				String encodedField = encodeParameters(field);
 				
-				if(result.equals(""))
+				if(encodedField == null)
+					return null;
+				
+				if("".equals(result))
 					result = encodedField;
-				else if(!encodedField.equals(""))
+				else if(!"".equals(encodedField))
 					result += ", " + encodedField;
 			}
 			
