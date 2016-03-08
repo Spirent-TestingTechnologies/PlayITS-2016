@@ -74,12 +74,18 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		}
     
 		group LED {
-			type boolean SwitchLED;
+			type boolean SwitchLED with {
+				variant "LED,SET"
+			}
 			template SwitchLED switchLED_ON := true;
 			template SwitchLED switchLED_OFF := false;
 			
-			type float BlinkLEDStart;
-			type record BlinkLEDStop {};
+			type float BlinkLEDStart with {
+				variant "LED,BLINK"
+			}
+			type record BlinkLEDStop {} with {
+				variant "LED,STOP"
+			}
 
 			//** @desc Read the LED state and switch LED on/off
 			type port PhyLED message {
@@ -90,10 +96,14 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
     
 		group Echo {
 			//** @desc Current distance measured in meters
-			type float Distance;
+			type float Distance with {
+				variant "ECHO,RESULT"
+			}
 
 			//** @desc Reads Distance sensor data and sends it's immediately to the port
-			type record ReadDistance {};
+			type record ReadDistance {} with {
+				variant "ECHO,READ"
+			}
       
 			//** @desc Read the current distance (in meters) measured by the Ultrasonic sensor
 			type port PhyEcho message {
@@ -105,12 +115,20 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		
 		group DistanceSensorGroup {
 			//** @desc Current distance measured in meters
-			type record DistanceSensorState {integer distance, integer time};
+			type record DistanceSensorState {integer distance, integer time} with {
+				variant "DISTANCE,RESULT"
+			}
 
-			type float DistanceSensorSetup;
+			type float DistanceSensorSetup with {
+				variant "DISTANCE,SET"
+			}
 			
-			type record ReadDistanceStart {};
-			type record ReadDistanceStop {};
+			type record ReadDistanceStart {} with {
+				variant "DISTANCE,START"
+			}
+			type record ReadDistanceStop {} with {
+				variant "DISTANCE,STOP"
+			}
       
 			//** @desc Read the current distance (in cm) measured by the Ultrasonic sensor
 			type port DistanceSensor message {
@@ -122,7 +140,9 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		
 		group Motor {
 			//** @desc Percentage of voltage set to the motor. 0 means stop, 100 means drive forward at maximum speed, -100 means drive backwards at maximum speed
-			type integer Velocity(-100..100);
+			type integer Velocity(-100..100) with {
+				variant "MOTOR,SET"
+			}
       
 			type port PhyMotor message {
 				out Velocity;
@@ -132,12 +152,20 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
     
 		group PushButton {
 			//** @desc The state of the push button
-			type boolean PushButtonState;
+			type boolean PushButtonState with {
+				variant "BUTTON,RESULT"
+			}
 
 			//** @desc Reads Button state and sends it's immediately to the port
-			type record ReadButtonState {};
-			type record ReadButtonStateStart {};
-			type record ReadButtonStateStop {};
+			type record ReadButtonState {} with {
+				variant "BUTTON,READ"
+			}
+			type record ReadButtonStateStart {} with {
+				variant "BUTTON,START"
+			}
+			type record ReadButtonStateStop {} with {
+				variant "BUTTON,STOP"
+			}
 
 			//** @desc Read the state of the push button
 			type port PhyPushButton message {
@@ -151,11 +179,17 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		//** functionality we thought changing the name would be a wise thing to do
 		group Door {
 			//** @desc The state of the push button
-			type boolean DoorState;
+			type boolean DoorState with {
+				variant "DOOR,RESULT"
+			}
 
 			//** @desc Reads Button state and sends it's immediately to the port
-			type record ReadDoorStart {};
-			type record ReadDoorStop {};
+			type record ReadDoorStart {} with {
+				variant "DOOR,START"
+			}
+			type record ReadDoorStop {} with {
+				variant "DOOR,STOP"
+			}
 
 			//** @desc Read the state of the push button
 			type port PhyDoor message {
@@ -177,10 +211,14 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 				unsignedbyte red,
 				unsignedbyte green,
 				unsignedbyte blue
+			} with {
+				variant "RGB,RESULT"
 			}
 
 			//** @desc Reads RGB Sensor data and sends it's immediately to the port
-			type record ReadRGB {};
+			type record ReadRGB {} with {
+				variant "RGB,READ"
+			}
       
 			//** @desc Read the current color detected by the color sensor
 			type port PhyColorSensor message {
@@ -191,7 +229,9 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		}
         
 		group Relay {
-			type boolean RelaySwith;
+			type boolean RelaySwith with {
+				variant "RELAY,SET"
+			}
 			template RelaySwith switchRelay_ON := true;
 			template RelaySwith switchRelay_OFF := false;
       
@@ -204,24 +244,38 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
     
 		group LightSensor {
 			type integer Brightness(0..1023);
-			type record State {Brightness brightness, Timestamp time};
+			type record State {Brightness brightness, Timestamp time} with {
+				variant "LIGHTSENSOR,RESULT"
+			}
 			
-			type float Frequency;
+			type float Frequency with {
+				variant "LIGHTSENSOR,RESULT"
+			}
       
 			//** @desc Reads Light Sensor data and sends it's immediately to the port
-			type record ReadBrightness {};
+			type record ReadBrightness {} with {
+				variant "LIGHTSENSOR,READ"
+			}
 		
 			//** @desc start reading timestamps of LED on/off switching, incl. minDiff
-			type integer ReadLightSwitchStart;
+			type integer ReadLightSwitchStart with {
+				variant "LIGHTSENSOR,START"
+			}
 			
 			//** @desc start measuring frequency incl. minDiff
-			type integer ReadFrequencyStart;
+			type integer ReadFrequencyStart with {
+				variant "LIGHTSENSOR,START"
+			}
 			
 			//** @desc stop reading timestamps of LED on/off switching
-			type record ReadLightSwitchStop {};
+			type record ReadLightSwitchStop {} with {
+				variant "LIGHTSENSOR,STOP"
+			}
 			
 			//** @desc stop reading timestamps of LED on/off switching
-			type record ReadFrequencyStop {};
+			type record ReadFrequencyStop {} with {
+				variant "LIGHTSENSOR,STOP"
+			}
 			
 			//** @desc Drive the relay to switch a contact on and off
 			type port PhyLightSensor message {
@@ -233,10 +287,16 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		}
 		
 		group RFIDSensor {
-			type record RFID {unsignedbyte id1, unsignedbyte id2, unsignedbyte id3, unsignedbyte id4};
+			type record RFID {unsignedbyte id1, unsignedbyte id2, unsignedbyte id3, unsignedbyte id4} with {
+				variant "RFID,SETUP"
+			}
 			
-			type record ReadRFIDStart {};
-			type record ReadRFIDStop {};
+			type record ReadRFIDStart {} with {
+				variant "RFID,START"
+			}
+			type record ReadRFIDStop {} with {
+				variant "RFID,STOP"
+			}
 			
 			type port PhyRFIDSensor message {
 				in RFID;
