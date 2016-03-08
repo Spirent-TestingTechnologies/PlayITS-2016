@@ -49,12 +49,17 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				return value;
 			} else if (module == PhyModule.PingEcho02 && "DistanceSensorState".equals(typeName)) {
 				int distance = Integer.parseInt(elements[idx++].trim());
-				IntegerValue distanceV = (IntegerValue)((RecordValue)value).getField("distance");
+				RecordValue rv = (RecordValue)value;
+				IntegerValue distanceV = (IntegerValue)rv.getField("distance");
 				distanceV.setInt(distance);
 				
 				int timestamp = Integer.parseInt(elements[idx++].trim());
-				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("time");
+				IntegerValue timestampV = (IntegerValue)rv.getField("time");
 				timestampV.setInt(timestamp);
+				
+				rv.setField("distance", distanceV);
+				rv.setField("time", timestampV);
+				
 				return value;
 			} else if (module == PhyModule.ColorView01 && "RGB".equals(typeName)) {
 				// format 10, 101, 81009, 114, 68, 188, 109, 120, 80
@@ -82,12 +87,16 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				return value;
 			} else if (module == PhyModule.LightSensor01 && "State".equals(typeName)) {
 				int brightness = Integer.parseInt(elements[idx++].trim());
-				IntegerValue brightnessV = (IntegerValue)((RecordValue)value).getField("brightness");
+				RecordValue rv = (RecordValue)value;
+				IntegerValue brightnessV = (IntegerValue)rv.getField("brightness");
 				brightnessV.setInt(brightness);
 				
 				int timestamp = Integer.parseInt(elements[idx++].trim());
-				IntegerValue timestampV = (IntegerValue)((RecordValue)value).getField("time");
+				IntegerValue timestampV = (IntegerValue)rv.getField("time");
 				timestampV.setInt(timestamp);
+				
+				rv.setField("brightness", brightnessV);
+				rv.setField("time", timestampV);
 				return value;
 			} else if (module == PhyModule.LightSensor01 && "Frequency".equals(typeName)) {
 				int frequency = Integer.parseInt(elements[idx++].trim());
@@ -108,10 +117,21 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				int id4 = Integer.parseInt(elements[idx++].trim());
 				
 				RecordValue rValue = ((RecordValue)value);
-				((IntegerValue)rValue.getField("id1")).setInt(id1);
-				((IntegerValue)rValue.getField("id2")).setInt(id2);
-				((IntegerValue)rValue.getField("id3")).setInt(id3);
-				((IntegerValue)rValue.getField("id4")).setInt(id4);
+				IntegerValue id1V = (IntegerValue)rValue.getField("id1");
+				IntegerValue id2V = (IntegerValue)rValue.getField("id2");
+				IntegerValue id3V = (IntegerValue)rValue.getField("id3");
+				IntegerValue id4V = (IntegerValue)rValue.getField("id4");
+				
+				id1V.setInt(id1);
+				id2V.setInt(id2);
+				id3V.setInt(id3);
+				id4V.setInt(id4);
+				
+				rValue.setField("id1", id1V);
+				rValue.setField("id2", id2V);
+				rValue.setField("id3", id3V);
+				rValue.setField("id4", id4V);
+				
 				return value;
 			}
 			break;
