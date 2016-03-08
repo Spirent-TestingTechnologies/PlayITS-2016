@@ -9,8 +9,8 @@ module Header {
 		[] t.timeout {
 			setverdict(inconc);
 		}
-		[] any port.receive {
-			setverdict(inconc);
+		[] config.receive {
+			repeat;
 		}
 	}
 }
