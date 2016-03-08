@@ -88,6 +88,8 @@ module Lights {
 		if(expectOn) {
 			led.send(switchLED_OFF);
 		}
+		
+		return result;
 	}
 	/** @desc tests emergency lights
 	 * reads timestamps of LED status change and compares it to predefined values
