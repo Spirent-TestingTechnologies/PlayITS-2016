@@ -33,28 +33,60 @@ module Lights {
 	import from Header all;
 	
 	//** @desc Testcase to check whether headlights are switched on or off
-	testcase HeadLightsTestcase() runs on me system System{
+	testcase HeadLightsOnTestcase() runs on me system System{
+		setverdict(HeadLightsTestcase_internal(true));
+	}
+
+	//** @desc Testcase to check whether headlights are switched on or off
+	testcase HeadLightsOffTestcase() runs on me system System{
+		setverdict(HeadLightsTestcase_internal(false));
+	}
+	
+	function HeadLightsTestcase_internal(boolean expectOn) runs on me system System return verdicttype{
 		var template State LED_OFF := {(0..BRIGHTNESS_THRESHOLD), ?};
-		var default alts := activate(alt_default());
+		var verdicttype result := none;
 		
 		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
 		map(self:lightSensor, system:lightSensor) param (DeviceID_1, SensorID_2);
 		// needed as long as we test on a single arduino
 		map(self:led, system:led) param (DeviceID_1, SensorID_1);
-		led.send(switchLED_ON);
-		led.send(switchLED_ON);
+		
+		if(expectOn) {
+			// unreliable when only sent once (?)
+			led.send(switchLED_ON);
+			led.send(switchLED_ON);
+		}
+		
 		lightSensor.send(ReadBrightness:{});
 		t.start(5.0);
 		alt{
 			[]lightSensor.receive(LED_OFF){
-				log("LED is off.");
-				setverdict(fail);
+				if(expectOn) {
+					result := fail;
+				} else {
+					result := pass;
 				}
-			[]lightSensor.receive(State: {?, ?}) {
-				log("LED is on.");
-					setverdict(pass);
-
 			}
+			[]lightSensor.receive(State: {?, ?}) {
+				if(expectOn) {
+					result := pass;
+				} else {
+					result := fail;
+				}
+			}
+			[] t.timeout {
+				result := inconc;
+			}
+			[] config.receive {
+				repeat;
+			}
+			[] any port.receive {
+				result := inconc;
+			}
+		}
+		
+		if(expectOn) {
+			led.send(switchLED_OFF);
 		}
 	}
 	/** @desc tests emergency lights
@@ -107,9 +139,10 @@ module Lights {
 		led.send(BlinkLEDStop: {});
 	}
 	
-		function executeLightsTestcases() {
-			execute(HeadLightsTestcase());
+	function executeLightsTestcases() {
+		execute(HeadLightsOnTestcase());
+		execute(HeadLightsOffTestcase());
 		
-			execute(EmergencyLights());
-		}
+		execute(EmergencyLights());
 	}
+}
