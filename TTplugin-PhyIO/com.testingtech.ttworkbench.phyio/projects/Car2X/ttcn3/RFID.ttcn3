@@ -1,6 +1,12 @@
 module RFIDModule {
 	import from Header all;
 	
+	/**
+	 * 
+	 * @desc tests whether the code on the RFID chip is valid
+	 * @param rfid, the RFID code that is to be verified
+	 * @param expectPass, the expected result of the testcase
+	 */
 	testcase RFIDTest(RFID rfid, boolean expectPass) runs on me system System {
 		var verdicttype result;
 		
