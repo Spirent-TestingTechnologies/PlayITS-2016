@@ -138,7 +138,9 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		String parameters = encodeParameters(value);
 		
 		if (moduleFunction != null && parameters != null) {
-			String out = moduleFunction + ", " + parameters;
+			String out = moduleFunction;
+			if(!parameters.equals(""))
+				out += ", " + parameters;
 			return TriMessageImpl.valueOf(str2bytes(out));
 		} else {
 			return null;
@@ -231,9 +233,9 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				Value field = ((RecordValue)value).getField(name);
 				String encodedField = encodeParameters(field);
 				
-				if(result == "")
+				if(result.equals(""))
 					result = encodedField;
-				else
+				else if(!encodedField.equals(""))
 					result += ", " + encodedField;
 			}
 			
