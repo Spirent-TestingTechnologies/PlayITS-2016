@@ -117,9 +117,10 @@ module Lights {
 	 */
 	testcase EmergencyLights() runs on me system System {
 		setup();
+		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
 		
 		setverdict(checkEmergencyLights(SWITCH_TIME_TARGET,ALLOWED_SWITCH_TIME_DEVIATION, MIN_SWITCH_BRIGHTNESS_DIFFERENCE, 5, 10.0));
-		
+		led.send(BlinkLEDStop: {});
 		tearDown();
 	}
 	/**
