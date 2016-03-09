@@ -7,6 +7,7 @@ module Functions {
 	/**
 	 * @desc Test to check for valid rfid
 	 * @param RFID in question, time until timeout
+	 * @deprecated should be removed
 	 */
 	function checkRFID(RFID rfid, float time) runs on me system System return verdicttype {
 		var verdicttype result := none;
@@ -38,6 +39,7 @@ module Functions {
 	 *  @param 	switchTimetarget: time to next status change
 	 *  		allowedSwitchTimeDeviation: allowed delay between status changes
 	 *  		time: time until timeout
+	 *  @deprecated communication with light sensor isn't up-to-date, protocol has changed
 	 */
 	function checkEmergencyLights(float switchTimeTarget,
 			float allowedSwitchTimeDeviation,
