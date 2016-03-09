@@ -1,4 +1,4 @@
-//** @desc Testing Doors
+//** @desc Testing Door Status
 module Doors {
 	import from PhyIOAUX all;
 	import from Components all;
@@ -18,18 +18,19 @@ module Doors {
     			log("Door was opened");
     			setverdict(pass);
     		}
-    		[]doorSensor.receive(DoorState: false){
-    			log("Door is closed");
-    			setverdict(pass);
-    		}
+    		//[]doorSensor.receive(DoorState: false){
+    		//	log("Door is closed");
+    		//	setverdict(pass);
+    		//}
     		[]doorSensor.receive(DoorState: ?){
     			log("received wrong data");
-    			setverdict(inconc);
+    			setverdict(fail);
     		}
     		[]t.timeout{
-    			log("Sensor not responding");
+    			log("Sensor sent no data.");
     			setverdict(fail);
     		}
     	}
+    	doorSensor.send(ReadDoorStop:{});
     }	
 }
