@@ -1,8 +1,15 @@
 module RFIDModule {
 	import from Header all;
 	
+	testcase CorrectRFIDTestcase() runs on me system System {
+		setverdict(RFIDTest_internal(OWNER_RFID, true));
+	}
+	
+	testcase FalseRFIDTestcase() runs on me system System {
+		setverdict(RFIDTest_internal(FALSE_RFID, false));
+	}
+	
 	/**
-	 *
 	 * @desc tests whether the code on the RFID chip is valid
 	 * @param rfid, the RFID code that is to be verified
 	 * @param expectPass, the expected result of the testcase
@@ -23,14 +30,6 @@ module RFIDModule {
 		} else {
 			return inconc;
 		}
-	}
-	
-	testcase CorrectRFIDTestcase() runs on me system System {
-		setverdict(RFIDTest_internal(OWNER_RFID, true));
-	}
-	
-	testcase FalseRFIDTestcase() runs on me system System {
-		setverdict(RFIDTest_internal(FALSE_RFID, false));
 	}
 	
 	function executeRFIDTestcases() {
