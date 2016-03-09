@@ -18,10 +18,10 @@ module Doors {
     			log("Door was opened");
     			setverdict(pass);
     		}
-    		//[]doorSensor.receive(DoorState: false){
-    		//	log("Door is closed");
-    		//	setverdict(pass);
-    		//}
+    		[]doorSensor.receive(DoorState: false){
+    			log("Door is closed");
+    			repeat;
+    		}
     		[]doorSensor.receive(DoorState: ?){
     			log("received wrong data");
     			setverdict(fail);
