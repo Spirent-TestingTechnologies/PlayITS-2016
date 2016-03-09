@@ -1,7 +1,8 @@
 module Functions {
+	import from PhyIOAUX all;
+	
 	import from Components all;
 	import from Parameters all;
-	import from PhyIOAUX all;
 	
 	/**
 	 * @desc Test to check for valid rfid

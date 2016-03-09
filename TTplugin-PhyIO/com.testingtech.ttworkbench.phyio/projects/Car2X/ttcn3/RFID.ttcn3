@@ -1,5 +1,9 @@
 module RFIDModule {
-	import from Header all;
+	import from PhyIOAUX all;
+	
+	import from Components all;
+	import from Functions all;
+	import from Parameters all; 
 	
 	/**
 	 * @title Correct RFID

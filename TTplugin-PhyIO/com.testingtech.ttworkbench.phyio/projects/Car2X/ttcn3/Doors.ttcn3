@@ -1,8 +1,9 @@
 //** @desc Testing Door Status
 module Doors {
 	import from PhyIOAUX all;
+	
 	import from Components all;
-	import from Header all;
+	import from Functions all;
 
 	/**
 	 * @title Open Door

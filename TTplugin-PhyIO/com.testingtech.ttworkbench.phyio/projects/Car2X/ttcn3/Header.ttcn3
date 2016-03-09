@@ -1,6 +1,0 @@
-module Header {
-	public import from Parameters all;
-	public import from PhyIOAUX all;
-	public import from Components all;
-	public import from Functions all;
-}
