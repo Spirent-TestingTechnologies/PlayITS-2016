@@ -2,12 +2,12 @@ module RFIDModule {
 	import from Header all;
 	
 	/**
-	 * 
+	 *
 	 * @desc tests whether the code on the RFID chip is valid
 	 * @param rfid, the RFID code that is to be verified
 	 * @param expectPass, the expected result of the testcase
 	 */
-	testcase RFIDTest(RFID rfid, boolean expectPass) runs on me system System {
+	function RFIDTest_internal(RFID rfid, boolean expectPass) runs on me system System return verdicttype {
 		var verdicttype result;
 		
 		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
@@ -16,16 +16,24 @@ module RFIDModule {
 		result := f_checkRFID(rfid, 10.0);
 		
 		if((result == pass and expectPass) or (result == fail and not expectPass)){
-			setverdict(pass);
+			return pass;
 		} else if((result == fail and expectPass) or (result == pass and not expectPass)){
-			setverdict(fail);
+			return fail;
 		} else {
-			setverdict(inconc);
+			return inconc;
 		}
 	}
 	
+	testcase CorrectRFIDTestcase() runs on me system System {
+		setverdict(RFIDTest_internal(OWNER_RFID, true));
+	}
+	
+	testcase FalseRFIDTestcase() runs on me system System {
+			setverdict(RFIDTest_internal(FALSE_RFID, false));
+		}
+	
 	function executeRFIDTestcases() {
-		execute(RFIDTest(OWNER_RFID, true));
-		execute(RFIDTest(FALSE_RFID, false));
+		execute(CorrectRFIDTestcase());
+		execute(FalseRFIDTestcase());
 	}
 }
