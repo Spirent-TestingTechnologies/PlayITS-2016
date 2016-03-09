@@ -104,6 +104,13 @@ module Functions {
 		else{return a;}
 	}
 	
+	function compareDist(integer distance, integer expected_dist) return boolean{
+		if(abs(int2float(distance-expected_dist))<= int2float(ALLOWED_DISTANCE_DEVIATION)){
+			return true;
+		}
+		else{return false;}
+	}
+	
 	function setup() runs on me system System {
 		map(self:config,			system:config)			param (SUT_RS232_CONFIG, DeviceID_1);
 		
@@ -123,4 +130,5 @@ module Functions {
 		unmap(self:doorSensor,		system:doorSensor);
 		unmap(self:distanceSensor,	system:distanceSensor);
 	}
+	
 }
