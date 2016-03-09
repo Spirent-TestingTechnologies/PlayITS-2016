@@ -5,8 +5,6 @@ module Doors {
 	import from Header all;
 
     testcase DoorStatus() runs on me system System{
-    	var default alts := activate(alt_default());
-    	
     	setup();
     	
     	t.start(5.0);
