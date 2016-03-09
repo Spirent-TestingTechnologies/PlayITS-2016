@@ -3,6 +3,7 @@ module Functions {
 	
 	import from Components all;
 	import from Parameters all;
+	import from TTlibrary all;
 	
 	/**
 	 * @desc Test to check for valid rfid
@@ -69,7 +70,7 @@ module Functions {
 					if(lastTimestamp == -1.0){
 						lastTimestamp := thisTimestamp;
 					} else {
-						if(absFloat(thisTimestamp - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
+						if(abs_float(thisTimestamp - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
 							result := fail;
 						} else {
 							lastTimestamp := thisTimestamp;
@@ -103,36 +104,10 @@ module Functions {
 	}
 	
 	/**
-	 * @desc returns absolute value for a float
-	 * @param a a number
-	 * @return absolute value of a
-	 */
-	function absFloat(float a) return float{
-		if(a < 0.0){
-			return -a;
-		} else {
-			return a;
-		}
-	}
-	
-	/**
-	 * @desc returns absolute value for an integer
-	 * @param a a number
-	 * @return absolute value of a
-	 */
-	function absInt(integer a) return integer{
-		if(a < 0){
-			return -a;
-		} else {
-			return a;
-		}
-	}
-	
-	/**
 	 * @desc checks if the measured distance is within a certain range of an expected value
 	 */
 	function compareDist(integer measuredDistance, integer expectedDistance) return boolean {
-		return absInt(measuredDistance - expectedDistance) <= ALLOWED_DISTANCE_DEVIATION;
+		return abs_int(measuredDistance - expectedDistance) <= ALLOWED_DISTANCE_DEVIATION;
 	}
 	
 	/**
