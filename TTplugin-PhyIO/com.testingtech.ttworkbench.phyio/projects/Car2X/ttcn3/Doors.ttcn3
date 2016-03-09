@@ -4,32 +4,39 @@ module Doors {
 	import from Components all;
 	import from Header all;
 
-    testcase DoorStatus() runs on me system System{
-    	setup();
+	/**
+	 * @title Open Door
+	 * @desc In this testcase the door should be opened once.
+	 * @verdict passes if the door is opened within the given time window otherwise it fails.
+	 */
+	testcase OpenDoorTestcase() runs on me system System {
+		setup();
     	
-    	t.start(5.0);
-    	doorSensor.send(ReadDoorStart:{});
+		t.start(5.0);
+		doorSensor.send(ReadDoorStart:{});
     	
-    	alt{
-    		[]doorSensor.receive(DoorState: true){
-    			log("Door was opened");
-    			setverdict(pass);
-    		}
-    		[]doorSensor.receive(DoorState: false){
-    			log("Door is closed");
-    			repeat;
-    		}
-    		[]doorSensor.receive(DoorState: ?){
-    			log("received wrong data");
-    			setverdict(fail);
-    		}
-    		[]t.timeout{
-    			log("Sensor sent no data.");
-    			setverdict(fail);
-    		}
-    	}
-    	doorSensor.send(ReadDoorStop:{});
+		alt{
+			[]doorSensor.receive(DoorState: true) {
+				log("Door was opened");
+				setverdict(pass);
+			}
+			[]doorSensor.receive(DoorState: false) {
+				// false should never be sent but if it is we don't bother.
+				log("Door is closed");
+				repeat;
+			}
+			[]t.timeout {
+				log("Sensor sent no data.");
+				setverdict(fail);
+			}
+			[]any port.receive {
+				log("Unexpected Message");
+				setverdict(fail);
+			}
+		}
+
+		doorSensor.send(ReadDoorStop:{});
 
 		tearDown();
-    }
+	}
 }
