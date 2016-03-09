@@ -39,4 +39,8 @@ module Doors {
 
 		tearDown();
 	}
+	
+	function executeDoorTestcases() {
+		execute(OpenDoorTestcase());
+	}
 }
