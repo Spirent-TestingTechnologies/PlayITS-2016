@@ -14,7 +14,9 @@ module Parameters {
 	modulepar float SWITCH_TIME_TARGET := 0.5;
 	modulepar integer MIN_SWITCH_BRIGHTNESS_DIFFERENCE := 100;
 
-	modulepar float ALLOWED_DISTANCE_DEVIATION := 3.0;	
+	modulepar float ALLOWED_DISTANCE_DEVIATION := 3.0;
+	modulepar integer EXPETECD_DISTANCE_10 := 10;
+	modulepar integer EXPETECD_DISTANCE_20 := 20;	
 	//**@desc moduleparameters of the system under test
 	modulepar RS232Config SUT_RS232_CONFIG := {
 		serialPortName := "COM3",
