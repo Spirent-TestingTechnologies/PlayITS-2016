@@ -6,13 +6,9 @@ module TheftDetection {
 	import from Parameters all;
 	
 	/**
-	 * 
-	 * @desc 
-	 * @param expectRFID
-	 * @param expectDoor
-	 * @param expectEmergency
+	 * @deprecated doesn't use latest communication standard with light sensor, also parameters are kinda meh...
 	 */
-	testcase TheftDetect(verdicttype expectRFID, boolean expectDoor, verdicttype expectEmergency) runs on me system System{
+	testcase OldTheftDetectionTestcase(verdicttype expectRFID, boolean expectDoor, verdicttype expectEmergency) runs on me system System{
 		var verdicttype v_rfid := none;
 		var verdicttype v_elights := none;
 		var boolean doorOpened := false;
@@ -144,11 +140,11 @@ module TheftDetection {
 	}
 	
 	function executeTheftDetectionTestcases() {
-		execute(TheftDetect(pass, true, fail));
-		execute(TheftDetect(pass, false, fail));
-		execute(TheftDetect(fail, true, pass));
-		execute(TheftDetect(fail, false, fail));
-		execute(TheftDetect(inconc, true, pass));
-		execute(TheftDetect(inconc, false, fail));
+		execute(OldTheftDetectionTestcase(pass, true, fail));
+		execute(OldTheftDetectionTestcase(pass, false, fail));
+		execute(OldTheftDetectionTestcase(fail, true, pass));
+		execute(OldTheftDetectionTestcase(fail, false, fail));
+		execute(OldTheftDetectionTestcase(inconc, true, pass));
+		execute(OldTheftDetectionTestcase(inconc, false, fail));
 	}
 }
