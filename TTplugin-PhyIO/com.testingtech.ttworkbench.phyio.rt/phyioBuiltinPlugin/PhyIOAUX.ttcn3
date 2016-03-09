@@ -89,13 +89,13 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		}
     
 		group Echo {
-			//** @desc Current distance measured in meters
+			//** @desc Current distance measured in cm
 			type float Distance;
 
 			//** @desc Reads Distance sensor data and sends it's immediately to the port
 			type record ReadDistance {};
       
-			//** @desc Read the current distance (in meters) measured by the Ultrasonic sensor
+			//** @desc Read the current distance (in cm) measured by the Ultrasonic sensor
 			type port PhyEcho message {
 				in Distance;
 				out ReadDistance;
@@ -104,7 +104,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		}
 		
 		group DistanceSensorGroup {
-			//** @desc Current distance measured in meters
+			//** @desc Current distance measured in cm
 			type record DistanceSensorState {integer distance, integer time};
 
 			type float DistanceSensorSetup;
