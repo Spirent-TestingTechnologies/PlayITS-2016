@@ -93,7 +93,7 @@ module TheftDetection {
 		while(true) {
 			loopTimer.start(checkRate);
 			
-			result := f_checkRFID(rfid, checkRate);
+			result := checkRFID(rfid, checkRate);
 			
 			rfidPort.send(result);
 			
@@ -120,7 +120,7 @@ module TheftDetection {
 		while(true) {
 			loopTimer.start(checkRate);
 			
-			result := f_checkEmergencyLights(switchTime, allowedDeviation, minDiff, float2int(checkRate / switchTime / 2.0), checkRate);
+			result := checkEmergencyLights(switchTime, allowedDeviation, minDiff, float2int(checkRate / switchTime / 2.0), checkRate);
 			
 			emergencyLightPort.send(result);
 			

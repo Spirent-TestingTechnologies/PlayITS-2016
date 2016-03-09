@@ -7,7 +7,7 @@ module Functions {
 	 * @desc Test to check for valid rfid
 	 * @param RFID in question, time until timeout
 	 */
-	function f_checkRFID(RFID rfid, float time) runs on me system System return verdicttype {
+	function checkRFID(RFID rfid, float time) runs on me system System return verdicttype {
 		var verdicttype result := none;
 		
 		rfidSensor.send(ReadRFIDStart:{});
@@ -38,8 +38,12 @@ module Functions {
 	 *  		allowedSwitchTimeDeviation: allowed delay between status changes
 	 *  		time: time until timeout
 	 */
-	function f_checkEmergencyLights(float switchTimeTarget, float allowedSwitchTimeDeviation, integer minDiff, integer minSwitches, float time)
-	runs on me system System return verdicttype{
+	function checkEmergencyLights(float switchTimeTarget,
+			float allowedSwitchTimeDeviation,
+			integer minDiff,
+			integer minSwitches,
+			float time)
+			runs on me system System return verdicttype{
 		var verdicttype result := none;
 		
 		var State state;
@@ -62,7 +66,7 @@ module Functions {
 					if(lastTimestamp == -1.0){
 						lastTimestamp := thisTimestamp;
 					} else {
-						if(f_abs(thisTimestamp - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
+						if(abs(thisTimestamp - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
 							result := fail;
 						} else {
 							lastTimestamp := thisTimestamp;
@@ -95,7 +99,7 @@ module Functions {
 		
 	}
 	
-	function f_abs(float a) return float{
+	function abs(float a) return float{
 		if(a < 0.0){return -a;}
 		else{return a;}
 	}

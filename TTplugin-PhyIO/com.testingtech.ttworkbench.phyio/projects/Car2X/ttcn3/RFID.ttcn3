@@ -12,7 +12,7 @@ module RFIDModule {
 		
 		setup();
 			
-		result := f_checkRFID(rfid, 10.0);
+		result := checkRFID(rfid, 10.0);
 		
 		tearDown();
 		

@@ -94,7 +94,7 @@ module Lights {
 	testcase EmergencyLights() runs on me system System{
 		setup();
 		
-		setverdict(f_checkEmergencyLights(SWITCH_TIME_TARGET,ALLOWED_SWITCH_TIME_DEVIATION, MIN_SWITCH_BRIGHTNESS_DIFFERENCE, 5, 10.0));
+		setverdict(checkEmergencyLights(SWITCH_TIME_TARGET,ALLOWED_SWITCH_TIME_DEVIATION, MIN_SWITCH_BRIGHTNESS_DIFFERENCE, 5, 10.0));
 		
 		tearDown();
 	}
