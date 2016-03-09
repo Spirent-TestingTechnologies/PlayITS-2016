@@ -10,10 +10,11 @@ module RFIDModule {
 	function RFIDTest_internal(RFID rfid, boolean expectPass) runs on me system System return verdicttype {
 		var verdicttype result;
 		
-		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
-		map(self:rfidSensor, system:rfidSensor) param (DeviceID_1, SensorID_2);
+		setup();
 			
 		result := f_checkRFID(rfid, 10.0);
+		
+		tearDown();
 		
 		if((result == pass and expectPass) or (result == fail and not expectPass)){
 			return pass;
@@ -29,8 +30,8 @@ module RFIDModule {
 	}
 	
 	testcase FalseRFIDTestcase() runs on me system System {
-			setverdict(RFIDTest_internal(FALSE_RFID, false));
-		}
+		setverdict(RFIDTest_internal(FALSE_RFID, false));
+	}
 	
 	function executeRFIDTestcases() {
 		execute(CorrectRFIDTestcase());

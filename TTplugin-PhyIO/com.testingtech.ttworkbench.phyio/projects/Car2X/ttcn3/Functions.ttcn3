@@ -1,6 +1,7 @@
 module Functions {
-	import from PhyIOAUX all;
 	import from Components all;
+	import from Parameters all;
+	import from PhyIOAUX all;
 	
 	/**
 	 * @desc Test to check for valid rfid
@@ -97,5 +98,25 @@ module Functions {
 	function f_abs(float a) return float{
 		if(a < 0.0){return -a;}
 		else{return a;}
+	}
+	
+	function setup() runs on me system System {
+		map(self:config,			system:config)			param (SUT_RS232_CONFIG, DeviceID_1);
+		
+		// TODO currently all sensors ports are mapped to device 1 since that's how we were testing the system
+		// once we changed that, the device IDs must be updated
+		map(self:led, 				system:led) 			param (DeviceID_1, SensorID_1);
+		map(self:lightSensor,		system:lightSensor)		param (DeviceID_1, SensorID_2);
+		map(self:rfidSensor,		system:rfidSensor)		param (DeviceID_1, SensorID_3);
+		map(self:doorSensor,		system:doorSensor)		param (DeviceID_1, SensorID_4);
+		map(self:distanceSensor,	system:distanceSensor)	param (DeviceID_1, SensorID_5);
+	}
+	
+	function tearDown() runs on me system System {
+		unmap(self:led, 			system:led);
+		unmap(self:lightSensor,		system:lightSensor);
+		unmap(self:rfidSensor,		system:rfidSensor);
+		unmap(self:doorSensor,		system:doorSensor);
+		unmap(self:distanceSensor,	system:distanceSensor);
 	}
 }

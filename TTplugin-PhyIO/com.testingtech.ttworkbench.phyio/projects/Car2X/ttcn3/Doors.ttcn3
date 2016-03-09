@@ -7,8 +7,7 @@ module Doors {
     testcase DoorStatus() runs on me system System{
     	var default alts := activate(alt_default());
     	
-    	map(self:config, system:config);
-    	map(self:doorSensor, system:doorSensor);
+    	setup();
     	
     	t.start(5.0);
     	doorSensor.send(ReadDoorStart:{});
@@ -32,5 +31,7 @@ module Doors {
     		}
     	}
     	doorSensor.send(ReadDoorStop:{});
-    }	
+
+		tearDown();
+    }
 }

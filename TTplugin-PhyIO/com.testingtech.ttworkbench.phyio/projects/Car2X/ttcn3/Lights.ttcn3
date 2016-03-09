@@ -28,8 +28,6 @@
  */
 //** @desc Testing Lightsensor data
 module Lights {
-	import from PhyIOAUX all;
-	import from Components all;
 	import from Header all;
 	
 	//** @desc Testcase to check whether headlights are switched on or off
@@ -46,10 +44,7 @@ module Lights {
 		var template State LED_OFF := {(0..BRIGHTNESS_THRESHOLD), ?};
 		var verdicttype result := none;
 		
-		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
-		map(self:lightSensor, system:lightSensor) param (DeviceID_1, SensorID_2);
-		// needed as long as we test on a single arduino
-		map(self:led, system:led) param (DeviceID_1, SensorID_1);
+		setup();
 		
 		if(expectOn) {
 			// unreliable when only sent once (?)
@@ -89,16 +84,19 @@ module Lights {
 			led.send(switchLED_OFF);
 		}
 		
+		tearDown();
+		
 		return result;
 	}
 	/** @desc tests emergency lights
 	 * reads timestamps of LED status change and compares it to predefined values
 	 */
 	testcase EmergencyLights() runs on me system System{
-		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
-		map(self:lightSensor, system:lightSensor) param (DeviceID_1, SensorID_1);
+		setup();
 		
 		setverdict(f_checkEmergencyLights(SWITCH_TIME_TARGET,ALLOWED_SWITCH_TIME_DEVIATION, MIN_SWITCH_BRIGHTNESS_DIFFERENCE, 5, 10.0));
+		
+		tearDown();
 	}
 	/**
 	 * @desc tests emergency lights
@@ -108,9 +106,7 @@ module Lights {
 	testcase EmergencyLights2() runs on me system System {
 		var Frequency frequency;
 		
-		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
-		map(self:led, system:led) param (DeviceID_1, SensorID_1);
-		map(self:lightSensor, system:lightSensor) param (DeviceID_1, SensorID_2);
+		setup();
 		
 		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
 		
@@ -139,6 +135,8 @@ module Lights {
 		}
 		
 		led.send(BlinkLEDStop: {});
+		
+		tearDown();
 	}
 	
 	function executeLightsTestcases() {

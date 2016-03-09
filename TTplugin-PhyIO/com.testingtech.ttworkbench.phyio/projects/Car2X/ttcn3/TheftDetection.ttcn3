@@ -1,13 +1,4 @@
 module TheftDetection {
-	import from Parameters {
-		modulepar
-			ALLOWED_SWITCH_TIME_DEVIATION,
-			MIN_SWITCH_BRIGHTNESS_DIFFERENCE,
-			OWNER_RFID,
-			SWITCH_TIME_TARGET,
-			THEFT_RFID_CHECK_RATE;
-	}
-
 	import from Header all;
 	
 	/**
@@ -25,11 +16,8 @@ module TheftDetection {
 		var me rfidComponent := me.create;
 		var me elightsComponent := me.create;
 		
-		map(self:doorSensor, system:doorSensor);
-		map(rfidComponent:rfidSensor, system:rfidSensor);
-		map(elightsComponent:lightSensor, system:lightSensor);
+		setup();
 		
-		//TODO is this correct?
 		connect(self:rfidPort, rfidComponent:rfidPort);
 		connect(self:emergencyLightPort, elightsComponent:emergencyLightPort);
 		
@@ -88,6 +76,11 @@ module TheftDetection {
 		
 		rfidComponent.done;
 		elightsComponent.done;
+		
+		disconnect(self:rfidPort, rfidComponent:rfidPort);
+		disconnect(self:emergencyLightPort, elightsComponent:emergencyLightPort);
+		
+		tearDown();
 	}
 	
 	function executeRFIDDetection(RFID rfid, float checkRate) runs on me system System {
