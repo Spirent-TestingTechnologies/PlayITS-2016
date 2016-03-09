@@ -35,7 +35,7 @@ module Lights {
 	import from Parameters all;
 	
 	/**
-	 * @title Headlights On 
+	 * @shortdesc Headlights On 
 	 * @desc Turns the LED on then checks using the light sensor if it really is turned on.
 	 */
 	testcase HeadLightsOnTestcase() runs on me system System{
@@ -43,7 +43,7 @@ module Lights {
 	}
 
 	/**
-	 * @title Headlights Off 
+	 * @shortdesc Headlights Off 
 	 * @desc Turns the LED off then checks using the light sensor if it really is turned off.
 	 */
 	testcase HeadLightsOffTestcase() runs on me system System{

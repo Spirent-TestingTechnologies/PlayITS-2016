@@ -6,7 +6,7 @@ module Doors {
 	import from Functions all;
 
 	/**
-	 * @title Open Door
+	 * @shortdesc Open Door
 	 * @desc In this testcase the door should be opened once.
 	 * @verdict passes if the door is opened within the given time window otherwise it fails.
 	 */

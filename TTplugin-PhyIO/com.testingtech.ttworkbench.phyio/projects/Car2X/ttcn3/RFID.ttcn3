@@ -6,7 +6,7 @@ module RFIDModule {
 	import from Parameters all; 
 	
 	/**
-	 * @title Correct RFID
+	 * @shortdesc Correct RFID
 	 * @desc Receives detected RFID which ought to be the correct one.
 	 * @verdict pass if RFID is currect else fail
 	 */
@@ -15,7 +15,7 @@ module RFIDModule {
 	}
 	
 	/**
-	 * @title False RFID
+	 * @shortdesc False RFID
 	 * @desc Receives detected RFID which ought to be a false one.
 	 * @verdict pass if RFID is detected and does NOT match. fail if there is NO RFID or the correct one.
 	 */
