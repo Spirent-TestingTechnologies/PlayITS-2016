@@ -42,11 +42,11 @@ module Functions {
 	 *  @deprecated communication with light sensor isn't up-to-date, protocol has changed
 	 */
 	function checkEmergencyLights(float switchTimeTarget,
-			float allowedSwitchTimeDeviation,
-			integer minDiff,
-			integer minSwitches,
-			float time)
-			runs on me system System return verdicttype{
+		float allowedSwitchTimeDeviation,
+		integer minDiff,
+		integer minSwitches,
+		float time)
+	runs on me system System return verdicttype{
 		var verdicttype result := none;
 		
 		var State state;
@@ -69,7 +69,7 @@ module Functions {
 					if(lastTimestamp == -1.0){
 						lastTimestamp := thisTimestamp;
 					} else {
-						if(abs(thisTimestamp - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
+						if(absFloat(thisTimestamp - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
 							result := fail;
 						} else {
 							lastTimestamp := thisTimestamp;
@@ -102,18 +102,42 @@ module Functions {
 		
 	}
 	
-	function abs(float a) return float{
-		if(a < 0.0){return -a;}
-		else{return a;}
-	}
-	
-	function compareDist(integer distance, integer expected_dist) return boolean{
-		if(abs(int2float(distance-expected_dist))<= int2float(ALLOWED_DISTANCE_DEVIATION)){
-			return true;
+	/**
+	 * @desc returns absolute value for a float
+	 * @param a a number
+	 * @return absolute value of a
+	 */
+	function absFloat(float a) return float{
+		if(a < 0.0){
+			return -a;
+		} else {
+			return a;
 		}
-		else{return false;}
 	}
 	
+	/**
+	 * @desc returns absolute value for an integer
+	 * @param a a number
+	 * @return absolute value of a
+	 */
+	function absInt(integer a) return integer{
+		if(a < 0){
+			return -a;
+		} else {
+			return a;
+		}
+	}
+	
+	/**
+	 * @desc checks if the measured distance is within a certain range of an expected value
+	 */
+	function compareDist(integer measuredDistance, integer expectedDistance) return boolean {
+		return absInt(measuredDistance - expectedDistance) <= ALLOWED_DISTANCE_DEVIATION;
+	}
+	
+	/**
+	 * @desc maps all ports  
+	 */
 	function setup() runs on me system System {
 		map(self:config,			system:config)			param (SUT_RS232_CONFIG, DeviceID_1);
 		
@@ -126,6 +150,9 @@ module Functions {
 		map(self:distanceSensor,	system:distanceSensor)	param (DeviceID_1, SensorID_5);
 	}
 	
+	/**
+	 * @desc unmaps all ports 
+	 */
 	function tearDown() runs on me system System {
 		unmap(self:led, 			system:led);
 		unmap(self:lightSensor,		system:lightSensor);
