@@ -28,21 +28,43 @@ module RFIDModule {
 	 * @param rfid, the RFID code that is to be verified
 	 * @param expectCorrectRFID true if match for correct RFID, false if a false one is expected
 	 */
-	function internalRFIDTestcase(RFID rfid, boolean expectCorrectRFID) runs on me system System return verdicttype {
-		var verdicttype result;
+	function internalRFIDTestcase(RFID correctRFID, boolean expectCorrectRFID)
+			runs on me system System return verdicttype {
+		var boolean hasRFID := false;
+		var boolean isRFIDCorrect := false;
 		
 		setup();
-			
-		result := checkRFID(rfid, 10.0);
+		
+		rfidSensor.send(ReadRFIDStart:{});
+		t.start(10.0);
+		
+		alt{
+			[]rfidSensor.receive(RFID: correctRFID){
+				hasRFID := true;
+				isRFIDCorrect := true;
+			}
+			[]rfidSensor.receive(RFID: ?) {
+				hasRFID := true;
+				isRFIDCorrect := false;
+			}
+			[]t.timeout {
+				hasRFID := false;
+			}
+			[] any port.receive {
+				hasRFID := false;
+			}
+		}
+		
+		rfidSensor.send(ReadRFIDStop:{});
 		
 		tearDown();
 		
-		if((result == pass and expectCorrectRFID) or (result == fail and not expectCorrectRFID)){
-			return pass;
-		} else if((result == fail and expectCorrectRFID) or (result == pass and not expectCorrectRFID)){
-			return fail;
-		} else {
+		if(not hasRFID) {
 			return inconc;
+		} else if(isRFIDCorrect == expectCorrectRFID) {
+			return pass;
+		} else {
+			return fail;
 		}
 	}
 	
