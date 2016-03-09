@@ -6,6 +6,67 @@ module TheftDetection {
 	import from Parameters all;
 	
 	/**
+	 * @shortdesc Theft Detection (correct RFID, door opens)
+	 * @desc Theft detection with the correct RFID and door opening. Expect no alarm.
+	 * @verdict pass if RFID is correct, door opens and no alarm. inconc if light sensor doesn't inform about
+	 * 			the alarm. Otherwise fail
+	 */
+	testcase TheftDetectionTestcase_RfidOk_DoorOpens() runs on me system System {
+	// TODO
+	}
+	
+	/**
+	 * @shortdesc Theft Detection (correct RFID, door remains closed)
+	 * @desc Theft detection with the correct RFID and door doesn't open. Expect no alarm.
+	 * @verdict pass if RFID is correct, door doesn't open and no alarm. inconc if light sensor doesn't inform about
+	 * 			the alarm. Otherwise fail
+	 */
+	testcase TheftDetectionTestcase_RfidOk_DoorClosed() runs on me system System {
+	// TODO
+	}
+	
+	/**
+	 * @shortdesc Theft Detection (false RFID, door opens)
+	 * @desc Theft detection with a false RFID and door opening. Expect alarm.
+	 * @verdict pass if RFID is false, door opens and alarm goes off. inconc if light sensor doesn't inform about
+	 * 			the alarm. Otherwise fail
+	 */
+	testcase TheftDetectionTestcase_RfidFalse_DoorOpens() runs on me system System {
+	// TODO
+	}
+	
+		
+	/**
+	 * @shortdesc Theft Detection (flase RFID, door remains closed)
+	 * @desc Theft detection with the false RFID and door doesn't open. Expect no alarm.
+	 * @verdict pass if RFID is false, door doesn't open and no alarm. inconc if light sensor doesn't inform about
+	 * 			the alarm. Otherwise fail
+	 */
+	testcase TheftDetectionTestcase_RfidFalse_DoorClosed() runs on me system System {
+	// TODO
+	}
+		
+	/**
+	 * @shortdesc Theft Detection (no RFID, door opens)
+	 * @desc Theft detection with no RFID and door opening. Expect alarm.
+	 * @verdict pass if RFID is missing, door opens and alarm goes off. inconc if light sensor doesn't inform about
+	 * 			the alarm. Otherwise fail
+	 */
+	testcase TheftDetectionTestcase_RfidMissing_DoorOpens() runs on me system System {
+	// TODO
+	}
+	
+	/**
+	 * @shortdesc Theft Detection (no RFID, door remains closed)
+	 * @desc Theft detection with the no RFID and door doesn't open. Expect no alarm.
+	 * @verdict pass if RFID is missing, door doesn't open and no alarm. inconc if light sensor doesn't inform about
+	 * 			the alarm. Otherwise fail
+	 */
+	testcase TheftDetectionTestcase_RfidMissing_DoorClosed() runs on me system System {
+	// TODO
+	}
+	
+	/**
 	 * @deprecated doesn't use latest communication standard with light sensor, also parameters are kinda meh...
 	 */
 	testcase OldTheftDetectionTestcase(verdicttype expectRFID, boolean expectDoor, verdicttype expectEmergency) runs on me system System{
