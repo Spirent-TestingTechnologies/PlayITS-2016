@@ -1,20 +1,30 @@
 module RFIDModule {
 	import from Header all;
 	
+	/**
+	 * @title Correct RFID
+	 * @desc Receives detected RFID which ought to be the correct one.
+	 * @verdict pass if RFID is currect else fail
+	 */
 	testcase CorrectRFIDTestcase() runs on me system System {
-		setverdict(RFIDTest_internal(OWNER_RFID, true));
+		setverdict(internalRFIDTestcase(OWNER_RFID, true));
 	}
 	
+	/**
+	 * @title False RFID
+	 * @desc Receives detected RFID which ought to be a false one.
+	 * @verdict pass if RFID is detected and does NOT match. fail if there is NO RFID or the correct one.
+	 */
 	testcase FalseRFIDTestcase() runs on me system System {
-		setverdict(RFIDTest_internal(FALSE_RFID, false));
+		setverdict(internalRFIDTestcase(FALSE_RFID, false));
 	}
 	
 	/**
 	 * @desc tests whether the code on the RFID chip is valid
 	 * @param rfid, the RFID code that is to be verified
-	 * @param expectPass, the expected result of the testcase
+	 * @param expectCorrectRFID true if match for correct RFID, false if a false one is expected
 	 */
-	function RFIDTest_internal(RFID rfid, boolean expectPass) runs on me system System return verdicttype {
+	function internalRFIDTestcase(RFID rfid, boolean expectCorrectRFID) runs on me system System return verdicttype {
 		var verdicttype result;
 		
 		setup();
@@ -23,9 +33,9 @@ module RFIDModule {
 		
 		tearDown();
 		
-		if((result == pass and expectPass) or (result == fail and not expectPass)){
+		if((result == pass and expectCorrectRFID) or (result == fail and not expectCorrectRFID)){
 			return pass;
-		} else if((result == fail and expectPass) or (result == pass and not expectPass)){
+		} else if((result == fail and expectCorrectRFID) or (result == pass and not expectCorrectRFID)){
 			return fail;
 		} else {
 			return inconc;
