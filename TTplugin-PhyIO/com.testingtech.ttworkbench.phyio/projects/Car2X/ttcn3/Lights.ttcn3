@@ -30,68 +30,92 @@
 module Lights {
 	import from Header all;
 	
-	//** @desc Testcase to check whether headlights are switched on or off
+	/**
+	 * @title Headlights On 
+	 * @desc Turns the LED on then checks using the light sensor if it really is turned on.
+	 */
 	testcase HeadLightsOnTestcase() runs on me system System{
-		setverdict(HeadLightsTestcase_internal(true));
+		setverdict(internalHeadLightsTestcase(true));
 	}
 
-	//** @desc Testcase to check whether headlights are switched on or off
+	/**
+	 * @title Headlights Off 
+	 * @desc Turns the LED off then checks using the light sensor if it really is turned off.
+	 */
 	testcase HeadLightsOffTestcase() runs on me system System{
-		setverdict(HeadLightsTestcase_internal(false));
+		setverdict(internalHeadLightsTestcase(false));
 	}
 	
-	function HeadLightsTestcase_internal(boolean expectOn) runs on me system System return verdicttype{
+	/**
+	 * @desc Set LED in desired state, then measure its brightness. 
+	 * @param expectLEDOn the expected state of the LED
+	 * @return verdict
+	 * @verdict to pass the measurement has to reveal the LED to be in the desired state. If it's not, then it fails.
+	 * 			The verdict is inconc if we get not result or a message of an unexpected type.
+	 */
+	function internalHeadLightsTestcase(boolean expectLEDOn) runs on me system System return verdicttype{
 		var template State LED_OFF := {(0..BRIGHTNESS_THRESHOLD), ?};
-		var verdicttype result := none;
+		var boolean isLEDOn := false;
+		var boolean measuredLED := false;
 		
 		setup();
 		
-		if(expectOn) {
-			// unreliable when only sent once (?)
+		if(expectLEDOn) {
 			led.send(switchLED_ON);
+		} else {
+			// should be off already but we want to be sure
 			led.send(switchLED_ON);
 		}
 		
+		// wait a bit to make sure that the LED really has the desired state by now
+		t.start(0.5);
+		t.timeout;
+		
 		lightSensor.send(ReadBrightness:{});
+		
 		t.start(5.0);
+		
 		alt{
 			[]lightSensor.receive(LED_OFF){
-				if(expectOn) {
-					result := fail;
-				} else {
-					result := pass;
-				}
+				measuredLED := true;
+				isLEDOn := false;
 			}
 			[]lightSensor.receive(State: {?, ?}) {
-				if(expectOn) {
-					result := pass;
-				} else {
-					result := fail;
-				}
+				measuredLED := true;
+				isLEDOn := true;
 			}
 			[] t.timeout {
-				result := inconc;
+				measuredLED := false;
 			}
 			[] config.receive {
+				// config port sends some data in some of the Arduino files
+				// TODO make sure that it doesn't
 				repeat;
 			}
 			[] any port.receive {
-				result := inconc;
+				// some unexpected message arrived
+				measuredLED := false;
 			}
 		}
 		
-		if(expectOn) {
+		if(expectLEDOn) {
 			led.send(switchLED_OFF);
 		}
 		
 		tearDown();
 		
-		return result;
+		if(not measuredLED) {
+			return inconc;
+		} else if(expectLEDOn != isLEDOn) {
+			return fail;
+		} else {
+			return pass;
+		}
 	}
 	/** @desc tests emergency lights
 	 * reads timestamps of LED status change and compares it to predefined values
 	 */
-	testcase EmergencyLights() runs on me system System{
+	testcase EmergencyLights() runs on me system System {
 		setup();
 		
 		setverdict(checkEmergencyLights(SWITCH_TIME_TARGET,ALLOWED_SWITCH_TIME_DEVIATION, MIN_SWITCH_BRIGHTNESS_DIFFERENCE, 5, 10.0));
