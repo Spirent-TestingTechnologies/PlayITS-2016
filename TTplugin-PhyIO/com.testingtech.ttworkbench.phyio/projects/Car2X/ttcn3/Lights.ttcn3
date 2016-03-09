@@ -170,14 +170,9 @@ module Lights {
 				setverdict(fail);
 			}
 			[]lightSensor.receive(CORRECT_FREQUENCY) -> value frequency {
-				log("Emergency lights blink with correct frequency: " +
-					frequency + " switches/s");
 				setverdict(pass);
 			}
 			[]lightSensor.receive(Frequency: ?) -> value frequency {
-				log("Emergency lights blink with incorrect frequency: " +
-					frequency + " switches/s. Expected: " +
-					SWITCH_TIME_TARGET  + " switches/s");
 				setverdict(fail);
 			}
 			[]t.timeout {
