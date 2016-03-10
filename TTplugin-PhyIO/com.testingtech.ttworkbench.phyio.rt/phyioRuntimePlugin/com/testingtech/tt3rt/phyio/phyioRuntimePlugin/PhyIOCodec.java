@@ -25,6 +25,14 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 
 	private static final String COMMA_DELIM = ",";
 	private static final Charset UTF8Charset = Charset.forName("UTF-8");
+	
+	/**
+	 * Simple counter, needed because decodeParameters() needs a counter of which only a reference is passed over. 
+	 */
+	private class Counter {
+		private int i = 0;
+		public int inc() { return i++; }
+	}
 
 	@Override
 	public Value decode(TriMessage message, Type decodingHypothesis) {
@@ -40,9 +48,9 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		//functionID not needed
 		
 		String[] elements = str.split(COMMA_DELIM);
-		int idx = 0;
-		int moduleIdMessage = Integer.parseInt(elements[idx++].trim());
-		int functionIdMessage = Integer.parseInt(elements[idx++].trim());
+		Counter idx = new Counter();
+		int moduleIdMessage = Integer.parseInt(elements[idx.inc()].trim());
+		int functionIdMessage = Integer.parseInt(elements[idx.inc()].trim());
 		
 		if(moduleIdMessage != moduleIdHypothesis || functionIdMessage != RESULT)
 			return null;
@@ -50,16 +58,16 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		return decodeParameters(value, elements, idx);
 	}
 	
-	Value decodeParameters(Value value, String[] elements, Integer idx)
+	Value decodeParameters(Value value, String[] elements,  Counter idx)
 	{
 		if(value instanceof IntegerValue){
-			int v = Integer.parseInt(elements[idx++].trim());
+			int v = Integer.parseInt(elements[idx.inc()].trim());
 			((IntegerValue)value).setInt(v);
 		} else if(value instanceof FloatValue){
-			float v = Float.parseFloat(elements[idx++].trim());
+			float v = Float.parseFloat(elements[idx.inc()].trim());
 			((FloatValue)value).setFloat(v);
 		} else if(value instanceof BooleanValue){
-			int v = Integer.parseInt(elements[idx++].trim());
+			int v = Integer.parseInt(elements[idx.inc()].trim());
 			((BooleanValue)value).setBoolean(v != 0);
 		} else if(value instanceof RecordValue){
 			String[] names = ((RecordValue)value).getFieldNames();
