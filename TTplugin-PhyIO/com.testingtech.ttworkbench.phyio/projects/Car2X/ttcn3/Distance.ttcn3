@@ -5,11 +5,12 @@ module Distance{
 	import from Functions all;
 	import from Parameters all;
 
+	//** @desc testcase how a continous stream of distance values compare to one specific value
 	testcase MeasureDistanceTestcase() runs on me system System {
 		template DistancesToCheck elem := {};
 		setverdict(continuedDistanceCheck(elem));
 	}
-	
+	//** @desc testcase to see wether a continous stream of distance values lie in a specified range of expected distances
 	testcase VariousDistanceTestcase() runs on me system System{
 		template DistancesToCheck distlist := {};
 		
@@ -19,6 +20,13 @@ module Distance{
 	
 	type record of integer DistancesToCheck;
 
+	/**
+		 * @desc 
+		 * @param list of expected distances
+		 * @return verdict
+		 * @verdict to pass every incoming value has to lie in a specified set of expected distances.
+		 * 			
+		 */
 	function continuedDistanceCheck(DistancesToCheck list) runs on me system System return verdicttype{
 		var verdicttype temp_V := none;
 		var DistanceSensorState state;
@@ -49,6 +57,7 @@ module Distance{
     	if(temp_V == none){
     		temp_V := pass;
     	}
+		distanceSensor.send(ReadDistanceStop:{});
     	tearDown();
     	return temp_V;
  	}
