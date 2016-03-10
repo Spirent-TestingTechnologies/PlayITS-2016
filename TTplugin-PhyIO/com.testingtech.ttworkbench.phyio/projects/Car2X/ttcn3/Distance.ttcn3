@@ -62,22 +62,21 @@ module Distance{
     		alt{
     			[]t.timeout{
     				temp_V := fail;
-    				return temp_V;
     				break;
     			}
     			[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state{
-    				if(not compareDist(state.distance, list[i])){
-    					repeat;
+    				if(compareDist(state.distance, list[i])){
+						t.start(2.0);
+						i := i +1;
     				}
-    				else{
-    					t.start(2.0);
-    					i := i +1;
-    					repeat;
-    				}
+    				
     			}
     		}    	
     	}
-    	temp_V := pass;
+    	if(temp_V == none){
+    		temp_V := pass;
+    	}
+    	tearDown();
     	return temp_V;
  	}
 	
