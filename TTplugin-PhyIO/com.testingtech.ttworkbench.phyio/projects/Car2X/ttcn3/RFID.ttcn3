@@ -1,31 +1,75 @@
 module RFIDModule {
-	import from Header all;
+	import from PhyIOAUX all;
+	
+	import from Components all;
+	import from Functions all;
+	import from Parameters all; 
 	
 	/**
-	 * 
+	 * @shortdesc Correct RFID
+	 * @desc Receives detected RFID which ought to be the correct one.
+	 * @verdict pass if RFID is currect else fail
+	 */
+	testcase CorrectRFIDTestcase() runs on me system System {
+		setverdict(internalRFIDTestcase(OWNER_RFID, true));
+	}
+	
+	/**
+	 * @shortdesc False RFID
+	 * @desc Receives detected RFID which ought to be a false one.
+	 * @verdict pass if RFID is detected and does NOT match. fail if there is NO RFID or the correct one.
+	 */
+	testcase FalseRFIDTestcase() runs on me system System {
+		setverdict(internalRFIDTestcase(FALSE_RFID, false));
+	}
+	
+	/**
 	 * @desc tests whether the code on the RFID chip is valid
 	 * @param rfid, the RFID code that is to be verified
-	 * @param expectPass, the expected result of the testcase
+	 * @param expectCorrectRFID true if match for correct RFID, false if a false one is expected
 	 */
-	testcase RFIDTest(RFID rfid, boolean expectPass) runs on me system System {
-		var verdicttype result;
+	function internalRFIDTestcase(RFID correctRFID, boolean expectCorrectRFID)
+			runs on me system System return verdicttype {
+		var boolean hasRFID := false;
+		var boolean isRFIDCorrect := false;
 		
-		map(self:config, system:config) param (SUT_RS232_CONFIG, DeviceID_1);
-		map(self:rfidSensor, system:rfidSensor) param (DeviceID_1, SensorID_2);
-			
-		result := f_checkRFID(rfid, 10.0);
+		setup();
 		
-		if((result == pass and expectPass) or (result == fail and not expectPass)){
-			setverdict(pass);
-		} else if((result == fail and expectPass) or (result == pass and not expectPass)){
-			setverdict(fail);
+		rfidSensor.send(ReadRFIDStart:{});
+		t.start(10.0);
+		
+		alt{
+			[]rfidSensor.receive(RFID: correctRFID){
+				hasRFID := true;
+				isRFIDCorrect := true;
+			}
+			[]rfidSensor.receive(RFID: ?) {
+				hasRFID := true;
+				isRFIDCorrect := false;
+			}
+			[]t.timeout {
+				hasRFID := false;
+			}
+			[] any port.receive {
+				hasRFID := false;
+			}
+		}
+		
+		rfidSensor.send(ReadRFIDStop:{});
+		
+		tearDown();
+		
+		if(not hasRFID) {
+			return inconc;
+		} else if(isRFIDCorrect == expectCorrectRFID) {
+			return pass;
 		} else {
-			setverdict(inconc);
+			return fail;
 		}
 	}
 	
 	function executeRFIDTestcases() {
-		execute(RFIDTest(OWNER_RFID, true));
-		execute(RFIDTest(FALSE_RFID, false));
+		execute(CorrectRFIDTestcase());
+		execute(FalseRFIDTestcase());
 	}
 }

@@ -1,0 +1,45 @@
+module Distance{
+	import from PhyIOAUX all;
+	
+	import from Components all;
+	import from Functions all;
+	import from Parameters all;
+
+	testcase MeasureDistance() runs on me system System {
+
+		var DistanceSensorState state;
+		map(self:config, system:config);
+		map(self:distanceSensor, system:distanceSensor);
+
+		distanceSensor.send(ReadDistanceStart:{});
+		t.start(1.0);
+		t.timeout;
+		t.start(15.0);
+		alt {
+			[] distanceSensor.receive(DistanceSensorState:{?,?}) ->
+			   value state {
+				log("received Sensor state");
+				var integer dist := state.distance;
+				if (compareDist(dist, EXPECTED_DISTANCE_10)) {
+					log("measured distance in threshold");
+					setverdict(pass);
+				}
+				if (compareDist(dist, EXPECTED_DISTANCE_20)) {
+					log("measured distance in threshold");
+					setverdict(pass);
+				} else {
+					log("unexpected distance");
+					repeat;
+				}
+			}
+			[] t.timeout {
+				log("received no data");
+				setverdict(fail);
+			}
+		}
+	}
+
+	function executeDistanceTestcases() {
+		// TODO fill me
+	}
+}

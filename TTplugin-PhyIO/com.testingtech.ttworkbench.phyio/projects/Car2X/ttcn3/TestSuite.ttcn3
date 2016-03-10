@@ -1,15 +1,15 @@
 module TestSuite {
-	
-	import from TheftDetection {function executeTheftDetectionTestcases;}
-
-	import from Header all;
-	
+	import from Distance all;
+	import from Doors all;
 	import from Lights all;
 	import from RFIDModule all;
+	import from TheftDetection all;
 	
 	control {
 		executeLightsTestcases();
+		executeDoorTestcases();
 		executeRFIDTestcases();
 		executeTheftDetectionTestcases();
+		executeDistanceTestcases();
 	}
 }

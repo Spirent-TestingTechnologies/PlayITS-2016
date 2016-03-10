@@ -131,7 +131,6 @@ void setup() {
   // ECHO PING Config in Constructor of SONAR
   // BT / Softserial Config in Constructor of SoftSerial
 
-
   establishContact();  // send a byte to establish contact until receiver responds
 
   DEBUG_PRINTLN("#Entered loop");
@@ -188,13 +187,13 @@ void LightSensorFunction( int id, int command){
       break;
     }
     case START:{
-      int valueMax = XSERIAL.parseInt();
-      int value = analogRead(LS1PIN);
-      LightFunctionStart(id,valueMax,value);
+      int valueDiff = XSERIAL.parseInt();
+      int valueNow = analogRead(LS1PIN);
+      LightFunctionStart(id,valueDiff,valueNow);
       break;
     }
     case STOP:{
-      LightFunctionStop(id);
+      LightFunctionStop(id,0.0);
       break;
     }
     default:
@@ -203,6 +202,19 @@ void LightSensorFunction( int id, int command){
   // ID, LS01, R1, <brightness:int>, <timestamp:long>
 }
 void LightFunctionPrint(int id,int value,unsigned long time){
+    DEBUG_PRINTLN("# In the sub-function LightFunctionPrint of LightSensorFunction");
+    DEBUG_PRINT("# with id");
+    DEBUG_PRINTLN(id);
+    
+    XSERIAL.print(id); XSERIAL.print(", ");
+    XSERIAL.print(LS01);  XSERIAL.print(", ");
+    XSERIAL.print(R1);  XSERIAL.print(", ");
+    XSERIAL.print(value);  XSERIAL.print(", ");
+    XSERIAL.println(time);
+    XSERIAL.flush();
+  }
+  //print funktion für die Frequenz
+  void LightFunctionPrint2(int id,float value,unsigned long time){
     DEBUG_PRINTLN("# In the sub-function LightFunctionPrint of LightSensorFunction");
     DEBUG_PRINT("# with id");
     DEBUG_PRINTLN(id);
@@ -224,26 +236,128 @@ void LightFunctionPrint(int id,int value,unsigned long time){
       LightFunctionPrint(id,analogRead(LS1PIN),millis());
     }
   }
-  void LightFunctionStart(int id,int valueMax,int value){
+  void LightFunctionStart(int id,int valueDiff,int valueDown){
     //gibt sobald sich die Helligkeit um valueMax geändert hat die Helligkeit und Zeit
     //zurück
     DEBUG_PRINTLN("# In the sub-function LightFunctionStart of LightSensorFunction");
     DEBUG_PRINT("# with id");
     DEBUG_PRINTLN(id);
-    
+    int counter = 0;
+    unsigned long startTime;
+    boolean AnAus;
+    int valueNow;
     while(Serial.available()<=0){
-      if(analogRead(LS1PIN)>=valueMax+value){
-        LightFunctionPrint(id,analogRead(LS1PIN),millis());
+      
+      //auf wechsel warten, je nach dem ob wir bei hell oder dunkel angefangen haben
+      valueNow = analogRead(LS1PIN); 
+      if(valueNow>=valueDown+valueDiff){
+        startTime = millis();
+        counter++;
+        AnAus = true;
+        LightFunctionFrequenz(id,valueDown,0.0,valueDiff,AnAus,startTime,counter);
+        return;
+      }
+      int valueX = valueDown-valueDiff;
+      if(valueX < 0){
+        valueX = 0;
+      }
+       if(valueNow <= valueX){
+        startTime = millis();
+        counter++;
+        AnAus = false; 
+        LightFunctionFrequenz(id,valueNow,0.0,valueDiff,AnAus,startTime,counter);
+        return;
       }
     }
+    Serial.println("Keine Frequenz oder Lichtunterschied zu gering ");
   }
- void LightFunctionStop(int id){
+ void LightFunctionFrequenz(int id,int valueDown,float frequenz,int valueDiff,boolean highDown,unsigned long startZeit,int counter){
+    int valueNow;
+    float frequenzNow;
+    unsigned long endZeit;
+  while(Serial.available()<=0){
+    valueNow = analogRead(LS1PIN);
+    if(valueNow>=valueDown+valueDiff && highDown == false){
+      highDown = true;
+      counter++;
+    }
+    int valueX = valueDown-valueDiff;
+    if(valueX < 0){
+        valueX = 0;
+    }
+    if(valueNow <=valueX && highDown == true){
+      highDown = false;
+      counter++;
+    }
+  }
+
+  //////////Berechne Frequenz//////////////////
+  endZeit = millis();
+  frequenzNow = counter*1000/(endZeit-startZeit);
+  frequenz = (frequenz+frequenzNow)/2;
+
+  ///////////ReadInput//////////////////
+  int functionType, command;
+     if (millis() >= readTimer) {
+    readTimer += readSpeed;      // Set the next ping time.
+    if (XSERIAL.available() > 0) {
+      // Read in loop all data for one line
+      id = XSERIAL.parseInt();
+      functionType = XSERIAL.parseInt();
+      command = XSERIAL.parseInt();
+
+      switch (functionType) {
+        case CV01:
+        //  ColorViewFunction(id, command);
+          break;
+        case PE01:
+         // PingEchoFunction(id, command);
+          break;
+        case LED01:
+         // LEDFunction(id, command);
+          break;
+        case REL01:
+         // RelayFunction(id, command);
+          break;
+        case MM01:
+         // MotorFunction(id, command);
+          break;
+        case LS01:
+          switch(command){
+            case READ:{       
+              if(XSERIAL.parseInt()==1){
+                //gib die aktuelle frequenz zurück und mache weiter
+                LightFunctionPrint2(id,frequenz,millis());
+                LightFunctionFrequenz(id,valueDown,frequenz,valueDiff,highDown,millis(),counter);
+              }
+              else{
+                //starte neu, rufe normale Read auf
+                 LightFunctionRead(id);
+              }  
+               break;}
+            case START:{
+               // starte neu 
+                int valueMax = XSERIAL.parseInt();
+                int value = analogRead(LS1PIN);
+                LightFunctionStart(id,valueMax,value);  
+                break;}
+            case STOP:{
+                LightFunctionStop(id,frequenz);
+               break;}
+          }
+          break;
+      }
+      processCleanUp();
+    } 
+  }
+  
+ }
+ void LightFunctionStop(int id,float frequenz){
     //gibt die Helligkeit und Zeit zurück
     DEBUG_PRINTLN("# In the sub-function LightFunctionRead of LightSensorFunction");
     DEBUG_PRINT("# with id");
     DEBUG_PRINTLN(id);
-    
-    LightFunctionPrint(id,analogRead(LS1PIN),millis());
+    LightFunctionPrint2(id,frequenz,millis());
   }
 
   
