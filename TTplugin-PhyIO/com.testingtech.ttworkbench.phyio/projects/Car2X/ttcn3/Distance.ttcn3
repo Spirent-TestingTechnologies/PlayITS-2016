@@ -39,7 +39,7 @@ module Distance{
 		t.timeout;
 		while(i < lengthof(list)){
 
-			t.start(2.0);
+			t.start(t_dist);
     		alt{
     			[]t.timeout{
     				temp_V := fail;
@@ -47,7 +47,7 @@ module Distance{
     			}
     			[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state{
     				if(compareDist(state.distance, list[i])){
-						t.start(2.0);
+						t.start(t_dist);
 						i := i +1;
     				}
     				
