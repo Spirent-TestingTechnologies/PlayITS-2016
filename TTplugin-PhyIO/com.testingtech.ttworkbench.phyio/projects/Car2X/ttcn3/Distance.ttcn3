@@ -38,7 +38,49 @@ module Distance{
 			}
 		}
 	}
+	testcase VariousDistanceTestcase() runs on me system System{
+		template DistancesToCheck distlist := {};
+		
+		 
+		
+	}
+	type record of integer DistancesToCheck;
 
+	function continuedDistanceCheck(DistancesToCheck list) runs on me system System return verdicttype{
+		var verdicttype temp_V := none;
+		var DistanceSensorState state;
+		var integer i := 0;
+		
+		setup();
+		
+		distanceSensor.send(ReadDistanceStart:{});
+		t.start(1.0);
+		t.timeout;
+		while(i < lengthof(list)){
+
+			t.start(2.0);
+    		alt{
+    			[]t.timeout{
+    				temp_V := fail;
+    				return temp_V;
+    				break;
+    			}
+    			[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state{
+    				if(not compareDist(state.distance, list[i])){
+    					repeat;
+    				}
+    				else{
+    					t.start(2.0);
+    					i := i +1;
+    					repeat;
+    				}
+    			}
+    		}    	
+    	}
+    	temp_V := pass;
+    	return temp_V;
+ 	}
+	
 	function executeDistanceTestcases() {
 		// TODO fill me
 	}
