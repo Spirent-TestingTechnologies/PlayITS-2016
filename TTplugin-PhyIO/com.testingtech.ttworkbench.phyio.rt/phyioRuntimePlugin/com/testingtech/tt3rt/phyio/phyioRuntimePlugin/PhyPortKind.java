@@ -4,7 +4,8 @@ import static com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyModule.*;
 
 public enum PhyPortKind {
 	// TODO refine push button
-	PhyPushButton(PushButton01), 
+	PhyPushButton(PushButton01),
+	PhyDoor(PushButton01),
 	// fixed
 	PhyConfig(GeneralConfig01), PhyLED(LED01), PhyEcho(PingEcho01), DistanceSensor(PingEcho02), PhyMotor(Motor01), PhyColorSensor(ColorView01), PhyRelay(Relay01), PhyLightSensor(LightSensor01), PhyRFIDSensor(RFIDSensor01);
 
