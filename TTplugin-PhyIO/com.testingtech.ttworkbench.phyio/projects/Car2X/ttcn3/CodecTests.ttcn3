@@ -1,7 +1,7 @@
 //** @desc Testing Door Status
 module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
+
 	import from PhyIOAUX all;
-	
 	import from Components all;
 	
 	type record of boolean RecordList;
@@ -10,9 +10,41 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		var RecordList verdicts;
 		var integer idx := 0;
 		
+		var RFID SAMPLE_RFID := {255, 0, 2, 156}
+		
 		// TODO there has got to be a better way to make these calls, like a list or something...
-		verdicts[idx] := checkEncode<SwitchLED>(SwitchLED: true, "30, 1, 1"); idx := idx + 1;
-		verdicts[idx] := checkEncode<SwitchLED>(SwitchLED: false, "30, 1, 0"); idx := idx + 1;
+		
+		// LED
+		verdicts[idx] := checkEncode<SwitchLED>(SwitchLED: true,		"30, 1, 1");				idx := idx + 1;
+		verdicts[idx] := checkEncode<SwitchLED>(SwitchLED: false,		"30, 1, 0");				idx := idx + 1;
+		verdicts[idx] := checkEncode<BlinkLEDStart>(BlinkLEDStart: 0.4,	"30, 5, 0.4");				idx := idx + 1;
+		verdicts[idx] := checkEncode<BlinkLEDStop>(BlinkLEDStop: {},	"30, 3");					idx := idx + 1;
+		
+		// RFID
+		verdicts[idx] := checkEncode<ReadRFIDStart>(ReadRFIDStart: {},	"80, 2");					idx := idx + 1;
+		verdicts[idx] := checkEncode<ReadRFIDStop>(ReadRFIDStop: {},	"80, 3");					idx := idx + 1;
+		verdicts[idx] := checkEncode<RFID>(RFID: SAMPLE_RFID,			"80, 1, 255, 0, 2, 156");	idx := idx + 1;
+		verdicts[idx] := checkDecode<RFID>(RFID: SAMPLE_RFID,			"80, 101, 255, 0, 2, 156");	idx := idx + 1;
+		
+		// Door
+		verdicts[idx] := checkEncode<ReadDoorStart>(ReadDoorStart: {},	"60, 2");					idx := idx + 1;
+		verdicts[idx] := checkEncode<ReadDoorStop>(ReadDoorStop: {},	"60, 3");					idx := idx + 1;
+		verdicts[idx] := checkEncode<DoorState>(DoorState: true,		"60, 101, 1");				idx := idx + 1;
+		
+		// Distance Sensor
+		verdicts[idx] := checkEncode<DistanceSensorSetup>(DistanceSensorSetup: 0.1,	"21, 1, 0.1");	idx := idx + 1;
+		verdicts[idx] := checkEncode<ReadDistanceStart>(ReadDistanceStart: {},		"21, 2");		idx := idx + 1;
+		verdicts[idx] := checkEncode<ReadDistanceStop>(ReadDistanceStop: {},		"21, 3");		idx := idx + 1;
+		verdicts[idx] := checkEncode<DistanceSensorState>(DistanceSensorState: {3, 1002}, "21, 101, 3, 1002"); idx := idx + 1;
+		
+		// Light Sensor
+		verdicts[idx] := checkEncode<ReadFrequencyStart>(ReadFrequencyStart: 8,		"70, 2, 8");	idx := idx + 1;
+		verdicts[idx] := checkEncode<ReadFrequencyStop>(ReadFrequencyStop: {},		"70, 3");		idx := idx + 1;
+		// ReadLightSwitchStart/Stop is not used anymore -> no tests
+		verdicts[idx] := checkEncode<ReadBrightness>(ReadBrightness: {},			"70, 4");		idx := idx + 1;
+		// TODO ReadFrequency 
+		verdicts[idx] := checkDecode<State>(State: {37, 1002},						"70, 101, 37, 1002"); idx := idx + 1;
+		verdicts[idx] := checkDecode<Frequency>(Frequency: 3.25,					"70, 101, 3.25"); idx := idx + 1;
 		
 		for (var integer i := 0; i < lengthof(verdicts); i :=i  + 1) {
 			if(verdicts[i] == false) {
@@ -24,10 +56,6 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		if(getverdict == none) {
 			setverdict(pass);
 		}
-	}
-	
-	function checkBothWays<T>(T object, charstring encoded) return boolean {
-		return checkEncode<T>(object, encoded) and checkDecode<T>(object, encoded);
 	}
 	
 	function checkEncode<T>(T object, charstring encoded) return boolean {
