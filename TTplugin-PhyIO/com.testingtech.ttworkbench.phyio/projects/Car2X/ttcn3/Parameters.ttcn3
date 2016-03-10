@@ -40,4 +40,11 @@ module Parameters {
 		flowControl := c_FlowControlNone,
 		checkDSR := false
 	};
+	//timerparams for different testcases
+	modulepar float t_headLights := 5.0;
+	modulepar float t_eLights := 10.0;
+	modulepar float t_doors := 5.0;
+	modulepar float t_rfid := 10.0;
+	modulepar float t_theft := 30.0;
+	modulepar float t_dist := 5.0;
 }
