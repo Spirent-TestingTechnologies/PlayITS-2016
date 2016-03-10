@@ -201,11 +201,11 @@ module TheftDetection {
 	}
 	
 	function executeTheftDetectionTestcases() {
-		execute(OldTheftDetectionTestcase(pass, true, fail));
-		execute(OldTheftDetectionTestcase(pass, false, fail));
-		execute(OldTheftDetectionTestcase(fail, true, pass));
-		execute(OldTheftDetectionTestcase(fail, false, fail));
-		execute(OldTheftDetectionTestcase(inconc, true, pass));
-		execute(OldTheftDetectionTestcase(inconc, false, fail));
+		execute(TheftDetectionTestcase_RfidOk_DoorOpens());
+		execute(TheftDetectionTestcase_RfidOk_DoorClosed());
+		execute(TheftDetectionTestcase_RfidFalse_DoorOpens());
+		execute(TheftDetectionTestcase_RfidFalse_DoorClosed());
+		execute(TheftDetectionTestcase_RfidMissing_DoorOpens());
+		execute(TheftDetectionTestcase_RfidMissing_DoorClosed());
 	}
 }
