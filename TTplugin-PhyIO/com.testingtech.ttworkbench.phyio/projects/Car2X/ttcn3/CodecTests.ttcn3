@@ -1,0 +1,108 @@
+//** @desc Testing Door Status
+module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
+	import from PhyIOAUX all;
+	
+	import from Components all;
+	
+	type record of boolean RecordList;
+	
+	testcase EncodingTestcase() runs on me system me {
+		var RecordList verdicts;
+		var integer idx := 0;
+		
+		// TODO there has got to be a better way to make these calls, like a list or something...
+		verdicts[idx] := checkEncode<SwitchLED>(SwitchLED: true, "30, 1, 1"); idx := idx + 1;
+		verdicts[idx] := checkEncode<SwitchLED>(SwitchLED: false, "30, 1, 0"); idx := idx + 1;
+		
+		for (var integer i := 0; i < lengthof(verdicts); i :=i  + 1) {
+			if(verdicts[i] == false) {
+				setverdict(fail);
+				break;
+			}
+		}
+
+		if(getverdict == none) {
+			setverdict(pass);
+		}
+	}
+	
+	function checkBothWays<T>(T object, charstring encoded) return boolean {
+		return checkEncode<T>(object, encoded) and checkDecode<T>(object, encoded);
+	}
+	
+	function checkEncode<T>(T object, charstring encoded) return boolean {
+		var bitstring b := encvalue(object);
+	
+		var charstring str := oct2char(bit2oct(b));
+		
+		return str == encoded;
+	}
+	
+	function checkDecode<T>(T object, charstring encoded) return boolean {
+		var T expected := object;
+		
+		var bitstring bt := oct2bit(char2oct(encoded));
+		var integer r := decvalue(bt, object);
+		
+		return r == 0 and expected == object;
+	}
+	
+	/**
+	 * @desc Executes a codec test, decode, encode and the decode the encoded value and match against the first decoded value
+	 * @return the value decoded the first time
+	 */
+	function codecTestTwice<T>(
+		in bitstring p_encodedMessage,
+		out verdicttype p_verdict,
+		in boolean p_enableLog := true) return T {
+		var T expect_decoded_logfile;
+
+		//First decoding
+		var integer dec_result := decvalue(p_encodedMessage, expect_decoded_logfile);
+		if (p_enableLog) {
+			log("decoding result is: ", int2str(dec_result));
+		}
+		if(dec_result != 0){
+			p_verdict := fail;//verdictFail("Couldn't decode the message");
+		}else{
+			if (p_enableLog) {
+				log("decoded value: ", expect_decoded_logfile);
+			}
+			if (isvalue(expect_decoded_logfile) == false) {
+				p_verdict := fail;//verdictFail("Couldn't decode the message");
+			}else{
+
+				//First encoding
+				var bitstring encoded_bs := encvalue(expect_decoded_logfile);
+				//oct2char(bit2oct(..)):
+				var T result_decoded_logfile;
+
+				//Second decoding
+				dec_result := decvalue(encoded_bs, result_decoded_logfile);
+
+				if (match(result_decoded_logfile, expect_decoded_logfile)) {
+					p_verdict := pass;//verdictPass("decoded value matches");
+				} else {
+					p_verdict := fail;//verdictFail("decoded value mismatch");
+				}
+			}
+		}
+		if (p_enableLog) {
+			log("CodecTestTwice test verdict: ", p_verdict);
+		}
+		return expect_decoded_logfile;
+	}
+	
+	/* @desc Assertion function. If condition is false, set the given verdict with the error message.
+	@param p_condition the assertion boolean condition @param p_errorMessage the assertion message
+	@param p_verdict the assertion verdict @param p_stopOnFail if the verdict is fail, stop all components
+	@verdict p_verdict if condition is false */
+	function assert(in boolean p_condition, in charstring p_errorMessage, in verdicttype p_verdict := fail, in boolean p_stopOnFail := true) {
+		if (not p_condition) {
+			setverdict(p_verdict, p_errorMessage);
+			if (p_stopOnFail and p_verdict == fail) {
+				testcase.stop(p_errorMessage);
+			}
+		}
+	}
+}
