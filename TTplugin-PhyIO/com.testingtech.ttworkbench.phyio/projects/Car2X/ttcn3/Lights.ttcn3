@@ -145,10 +145,6 @@ module Lights {
 	 * @verdict pass when emergency light blink with expected frequency, fail otherwise
 	 */
 	testcase EmergencyLightsTestcase() runs on me system System {
-		var template Frequency CORRECT_FREQUENCY := 
-    		(SWITCH_TIME_TARGET - ALLOWED_SWITCH_TIME_DEVIATION ..
-    		SWITCH_TIME_TARGET + ALLOWED_SWITCH_TIME_DEVIATION);
-		
 		var Frequency frequency;
 		
 		setup();
