@@ -4,6 +4,7 @@ module Doors {
 	
 	import from Components all;
 	import from Functions all;
+	import from Parameters all;
 
 	/**
 	 * @shortdesc Open Door
@@ -13,7 +14,7 @@ module Doors {
 	testcase OpenDoorTestcase() runs on me system System {
 		setup();
     	
-		t.start(5.0);
+		t.start(t_doors);
 		doorSensor.send(ReadDoorStart:{});
     	
 		alt{
