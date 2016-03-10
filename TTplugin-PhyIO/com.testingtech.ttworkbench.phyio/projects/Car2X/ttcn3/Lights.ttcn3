@@ -77,7 +77,7 @@ module Lights {
 		
 		lightSensor.send(READ_BRIGHTNESS);
 		
-		t.start(5.0);
+		t.start(t_headLights);
 		
 		alt{
 			[]lightSensor.receive(LED_OFF){
@@ -160,7 +160,7 @@ module Lights {
 		
 		lightSensor.send(ReadFrequencyStart: MIN_SWITCH_BRIGHTNESS_DIFFERENCE);
 		
-		t.start(10.0);
+		t.start(t_eLights);
 		lightSensor.send(ReadFrequencyStop: {});
 		
 		alt {
