@@ -256,10 +256,13 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 				variant "LIGHTSENSOR,RESULT"
 			}
       
-			//** @desc Reads Light Sensor data and sends it's immediately to the port
-			type record ReadBrightness {} with {
+			//** @desc if false requests brightness and timestamp, if true requests current blink frequency estimate
+			type boolean ReadLightSensorState with {
 				variant "LIGHTSENSOR,READ"
 			}
+			
+			const ReadLightSensorState READ_BRIGHTNESS := false;
+			const ReadLightSensorState READ_FREQUENCY := true;
 		
 			//** @desc start reading timestamps of LED on/off switching, incl. minDiff
 			type integer ReadLightSwitchStart with {
@@ -284,7 +287,11 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			//** @desc Drive the relay to switch a contact on and off
 			type port PhyLightSensor message {
 				in State, Frequency;
-				out ReadBrightness, ReadLightSwitchStart, ReadFrequencyStart, ReadLightSwitchStop, ReadFrequencyStop;
+				out ReadLightSensorState,
+					ReadLightSwitchStart,
+					ReadFrequencyStart,
+					ReadLightSwitchStop,
+					ReadFrequencyStop;
         	
 				map param (DeviceID deviceID, SensorID sensorID);
 			}

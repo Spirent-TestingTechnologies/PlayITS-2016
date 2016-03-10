@@ -75,7 +75,7 @@ module Lights {
 		t.start(0.5);
 		t.timeout;
 		
-		lightSensor.send(ReadBrightness:{});
+		lightSensor.send(READ_BRIGHTNESS);
 		
 		t.start(5.0);
 		
