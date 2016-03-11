@@ -5,64 +5,75 @@ module Distance{
 	import from Functions all;
 	import from Parameters all;
 
-	//** @desc testcase how a continous stream of distance values compare to one specific value
-	testcase MeasureDistanceTestcase() runs on me system System {
-		template DistancesToCheck elem := {};
-		setverdict(continuedDistanceCheck(elem));
-	}
-	//** @desc testcase to see wether a continous stream of distance values lie in a specified range of expected distances
-	testcase VariousDistanceTestcase() runs on me system System{
-		template DistancesToCheck distlist := {};
-		
-		setverdict(continuedDistanceCheck(distlist));
-			
+	/**
+	 * @shortdesc Single Distance
+	 * @desc Move object a certain distance in front of the sensor and measure it
+	 * @verdict pass if the distance sensor yields the expected distance else fail
+	 */
+	testcase SingleDistanceTestcase() runs on me system System {
+		setverdict(internalDistancesTestcase(SINGLE_DISTANCE));
 	}
 	
-	type record of integer DistancesToCheck;
-
 	/**
-		 * @desc 
-		 * @param list of expected distances
-		 * @return verdict
-		 * @verdict to pass every incoming value has to lie in a specified set of expected distances.
-		 * 			
-		 */
-	function continuedDistanceCheck(DistancesToCheck list) runs on me system System return verdicttype{
-		var verdicttype temp_V := none;
+	 * @shortdesc Various Distances
+	 * @desc Move object a certain distance in front of the sensor and measure it. Repeat this for a number of values.
+	 * @verdict pass if the distance sensor yields the expected distances else fail
+	 */
+	testcase VariousDistancesTestcase() runs on me system System {
+		setverdict(internalDistancesTestcase(VARIOUS_DISTANCES));
+	}
+	
+	/**
+	 * @desc turns on the distance sensor. Then receives a series of measurements which it tries to match to the first
+	 * 		 element of the list. If this succeeds before the timeout, the function moves on the next list element
+	 * 		 until all distances matched or a timeout happens.
+	 * @param list list of expected distances
+	 * @return verdict
+	 * @verdict pass if all distances match before timeout, fail otherwise.
+	 *
+	 */
+	function internalDistancesTestcase(DistancesToCheck list) runs on me system System return verdicttype {
+		// TODO should yield inconc if no answers come from the sensor
+		 
+		var verdicttype result := none;
 		var DistanceSensorState state;
 		var integer i := 0;
 		
 		setup();
 		
 		distanceSensor.send(ReadDistanceStart:{});
-		t.start(1.0);
-		t.timeout;
-		while(i < lengthof(list)){
+		
+		while(i < lengthof(list) and result == none) {
 
 			t.start(t_dist);
-    		alt{
-    			[]t.timeout{
-    				temp_V := fail;
-    				break;
-    			}
-    			[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state{
-    				if(compareDist(state.distance, list[i])){
+			
+			alt {
+				[]t.timeout {
+					result := fail;
+				}
+				[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state {
+					if(compareDist(state.distance, list[i])){
 						t.start(t_dist);
-						i := i +1;
-    				}
-    				
-    			}
-    		}    	
-    	}
-    	if(temp_V == none){
-    		temp_V := pass;
-    	}
+						i := i + 1;
+					}
+				// else continue since the we're not in the desired range
+				}
+			}
+		}
+		
+		if(result == none) {
+			result := pass;
+		}
+		
 		distanceSensor.send(ReadDistanceStop:{});
-    	tearDown();
-    	return temp_V;
- 	}
+		
+		tearDown();
+		
+		return result;
+	}
 	
 	function executeDistanceTestcases() {
-		// TODO fill me
+		execute(SingleDistanceTestcase());
+		execute(VariousDistancesTestcase());
 	}
 }

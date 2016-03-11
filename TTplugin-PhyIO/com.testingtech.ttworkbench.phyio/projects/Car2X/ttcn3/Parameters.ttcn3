@@ -1,9 +1,10 @@
 module Parameters {
 	import from PhyIOAUX all;
-	import from RS232ConfigPortAux all with {
-		encode "BASE";
+	import from RS232ConfigPortAux all
+	with {
+		encode "BASE"
 	}
-
+	
 	// ID Karte: 194, 96, 196, 169 (DEZ)
 	// ID Chip: 4, 226, 92, 235 (DEZ)
 	modulepar RFID OWNER_RFID := {194, 96, 196, 169};
@@ -49,6 +50,12 @@ module Parameters {
 	modulepar float t_rfid := 10.0;
 	modulepar float t_theft := 30.0;
 	modulepar float t_dist := 5.0;
+
+	type record of integer DistancesToCheck;
+	
+	modulepar DistancesToCheck SINGLE_DISTANCE := {10};
+	modulepar DistancesToCheck VARIOUS_DISTANCES := {30, 20, 10, 50};
+	
 	
 	template Frequency CORRECT_FREQUENCY :=
 		(SWITCH_TIME_TARGET - ALLOWED_SWITCH_TIME_DEVIATION ..
