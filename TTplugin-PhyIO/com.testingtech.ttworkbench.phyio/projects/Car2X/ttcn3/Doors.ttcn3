@@ -14,7 +14,7 @@ module Doors {
 	testcase OpenDoorTestcase() runs on me system System {
 		setup();
     	
-		t.start(t_doors);
+		t.start(TIME_DOORS);
 		doorSensor.send(ReadDoorStart:{});
     	
 		alt{

@@ -47,13 +47,13 @@ module Distance{
 		
 		while(i < lengthof(list) and result == none) {
 
-			t.start(t_dist);
+			t.start(TIME_DISTANCE);
 			singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
 			
 			alt {
 				[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state {
 					if(compareDist(state.distance, list[i])){
-						t.start(t_dist);
+						t.start(TIME_DISTANCE);
 						i := i + 1;
 					}
 					// else continue with same index since the we're not in the desired range

@@ -36,7 +36,7 @@ module RFIDModule {
 		setup();
 		
 		rfidSensor.send(ReadRFIDStart:{});
-		t.start(t_rfid);
+		t.start(TIME_RFID);
 		
 		alt{
 			[]rfidSensor.receive(RFID: correctRFID){
