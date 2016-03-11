@@ -39,6 +39,8 @@ module Distance{
 		var DistanceSensorState state;
 		var integer i := 0;
 		
+		timer singleMeasurementTimer;
+		
 		setup();
 		
 		distanceSensor.send(ReadDistanceStart:{});
@@ -46,17 +48,23 @@ module Distance{
 		while(i < lengthof(list) and result == none) {
 
 			t.start(t_dist);
+			singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
 			
 			alt {
-				[]t.timeout {
-					result := fail;
-				}
 				[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state {
 					if(compareDist(state.distance, list[i])){
 						t.start(t_dist);
 						i := i + 1;
 					}
-				// else continue since the we're not in the desired range
+					// else continue with same index since the we're not in the desired range
+					
+					singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
+				}
+				[]singleMeasurementTimer.timeout {
+					result := inconc;
+				}
+				[]t.timeout {
+					result := fail;
 				}
 			}
 		}
