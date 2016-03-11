@@ -7,7 +7,6 @@ module Components {
 		inout verdicttype, StopThread;
 	}
 	
-	type record Verdict {verdicttype v, charstring r};
 
 	//**@desc Component port definition System measuring the SUT (Arduino)
 	type component TesterPorts {
