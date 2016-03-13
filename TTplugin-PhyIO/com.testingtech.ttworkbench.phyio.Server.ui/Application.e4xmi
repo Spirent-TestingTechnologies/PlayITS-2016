@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_lNqewOg-EeWi7b33UnBFgw" elementId="org.eclipse.e4.ide.application" bindingContexts="_lNqeyeg-EeWi7b33UnBFgw">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_lNqeweg-EeWi7b33UnBFgw" label="com.testingtech.ttworkbench.phyio.Server.ui" width="500" height="400">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_L_IKAOhPEeWi7b33UnBFgw" elementId="com.testingtech.ttworkbench.phyio.server.ui.perspectivestack.0">
+      <children xsi:type="advanced:Perspective" xmi:id="_RZhWIOhPEeWi7b33UnBFgw" elementId="com.testingtech.ttworkbench.phyio.server.ui.perspective.0">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_Vo0oIOhPEeWi7b33UnBFgw" elementId="com.testingtech.ttworkbench.phyio.server.ui.partsashcontainer.0">
+          <children xsi:type="basic:PartStack" xmi:id="_WBPvMOhPEeWi7b33UnBFgw" elementId="com.testingtech.ttworkbench.phyio.server.ui.partstack.0">
+            <children xsi:type="basic:Part" xmi:id="_XE_EIOhPEeWi7b33UnBFgw" elementId="" contributionURI="bundleclass://com.testingtech.ttworkbench.phyio.Server.ui/com.testingtech.ttworkbench.phyio.server.ui.parts.ServerMainPart" label="Server"/>
+          </children>
+        </children>
+      </children>
+    </children>
+  </children>
+  <bindingTables xmi:id="_lNrF0ug-EeWi7b33UnBFgw" bindingContext="_lNqeyeg-EeWi7b33UnBFgw">
+    <bindings xmi:id="_lNrF0-g-EeWi7b33UnBFgw" keySequence="M1+Q"/>
+    <bindings xmi:id="_lNrF1ug-EeWi7b33UnBFgw" keySequence="M1+O"/>
+    <bindings xmi:id="_lNrF2eg-EeWi7b33UnBFgw" keySequence="M1+S"/>
+    <bindings xmi:id="_lNrF3Og-EeWi7b33UnBFgw" keySequence="M1+A"/>
+  </bindingTables>
+  <rootContext xmi:id="_lNqeyeg-EeWi7b33UnBFgw" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
+    <children xmi:id="_lNqeyug-EeWi7b33UnBFgw" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_lNqey-g-EeWi7b33UnBFgw" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
+  </rootContext>
+  <addons xmi:id="_lNqewug-EeWi7b33UnBFgw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_lNqew-g-EeWi7b33UnBFgw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_lNqexOg-EeWi7b33UnBFgw" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_lNqexeg-EeWi7b33UnBFgw" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_lNqexug-EeWi7b33UnBFgw" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+  <addons xmi:id="_lNqex-g-EeWi7b33UnBFgw" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_lNqeyOg-EeWi7b33UnBFgw" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+</application:Application>
