@@ -11,3 +11,6 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 .DEPENDENCIES
+.DS_Store
+TTplugin-PhyIO/com.testingtech.ttworkbench.phyio/projects/Example_PhyIO/.settings/.clfcache/
+TTplugin-PhyIO/com.testingtech.ttworkbench.phyio/projects/Car2X/.settings/.clfcache/

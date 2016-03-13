@@ -28,6 +28,8 @@
  */
 module PhyIOExample {
 
+	import from RS232ConfigPortAux all;
+
 	import from PhyIOAUX all;
 	
 	const integer RED := 0;
@@ -37,6 +39,16 @@ module PhyIOExample {
 	
 	const float LED_REFRESH_RATE := 1.0; // seconds
 	const float RGB_REFRESH_RATE := 1.0; // seconds
+	
+	modulepar RS232Config px_rs232Configuration := {
+		serialPortName := "COM3",
+		baudRate := c_baudRate_115200,
+		dataBits := 8,
+		stopBits := 1,
+		parity := c_ParityNone,
+		flowControl := c_FlowControlNone,
+		checkDSR := false
+	};
 
 	type component me {
 		port PhyConfig config;
@@ -58,17 +70,17 @@ module PhyIOExample {
 	testcase SetupTest1() runs on me system PhyIO {
 		timer t;
 
-		map(self:config, system:config);
+		map(self:config, system:config) param (px_rs232Configuration, DeviceID_1);
 		
-		map(self:leds[RED], system:leds[RED]) param (SensorID_1);
-		map(self:leds[YELLOW], system:leds[YELLOW]) param (SensorID_2);
-		map(self:relays[A], system:relays[A]) param (SensorID_5);
-		map(self:relays[B], system:relays[B]) param (SensorID_6);
+		map(self:leds[RED], system:leds[RED]) param (DeviceID_1, SensorID_1);
+		map(self:leds[YELLOW], system:leds[YELLOW]) param (DeviceID_1, SensorID_2);
+		map(self:relays[A], system:relays[A]) param (DeviceID_1, SensorID_5);
+		map(self:relays[B], system:relays[B]) param (DeviceID_1, SensorID_6);
 		
 		var Evaluation eval := Evaluation.create alive;
-		map(eval:motor, system:motor) param (SensorID_3);
-		map(eval:rgbSensor, system:rgbSensor) param (SensorID_4, RGB_REFRESH_RATE);
-		map(eval:echoSensor, system:echoSensor) param (SensorID_8, LED_REFRESH_RATE);
+		map(eval:motor, system:motor) param (DeviceID_1, SensorID_3);
+		map(eval:rgbSensor, system:rgbSensor) param (DeviceID_1, SensorID_4, RGB_REFRESH_RATE);
+		map(eval:echoSensor, system:echoSensor) param (DeviceID_1, SensorID_8, LED_REFRESH_RATE);
 		
 		var default cfgUpdates := activate(configUpdates());
 
@@ -103,10 +115,10 @@ module PhyIOExample {
 	}
 	testcase SetupTestLEDs() runs on me system PhyIO {
 		timer t;
-		map(self:config, system:config);
+		map(self:config, system:config) param (px_rs232Configuration, DeviceID_1);
 		
-		map(self:leds[RED], system:leds[RED]) param (SensorID_1);
-		map(self:leds[YELLOW], system:leds[YELLOW]) param (SensorID_2);
+		map(self:leds[RED], system:leds[RED]) param (DeviceID_1, SensorID_1);
+		map(self:leds[YELLOW], system:leds[YELLOW]) param (DeviceID_1, SensorID_2);
 
 		leds[RED].send(switchLED_ON);
 		
@@ -138,9 +150,9 @@ module PhyIOExample {
 		var RGB rgb;
 		timer t;
 
-		map(self:config, system:config);
+		map(self:config, system:config) param (px_rs232Configuration, DeviceID_1);
 		
-		map(self:rgbSensor, system:rgbSensor) param (SensorID_4, RGB_REFRESH_RATE);
+		map(self:rgbSensor, system:rgbSensor) param (DeviceID_1, SensorID_4, RGB_REFRESH_RATE);
 		
 		var default cfgUpdates := activate(configUpdates());
 		rgbSensor.send(ReadRGB:{});

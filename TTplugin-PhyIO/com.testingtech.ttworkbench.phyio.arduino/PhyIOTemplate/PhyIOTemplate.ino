@@ -3,7 +3,7 @@
 #include "Adafruit_TCS34725.h"
 #include <NewPing.h>
 #include <Time.h>
-#include <IRremote.h>
+//#include <IRremote.h>
 
 
 #define MAX_PARAM 5
@@ -237,7 +237,7 @@ void ColorViewFunctionSetup() {
   DEBUG_PRINT(" time = ");
   DEBUG_PRINT(cvfPoint.TimeBetweenSamples);
 
-  if (XSERIAL.peek() == 10 && XSERIAL.find(10)) {
+  if (XSERIAL.peek() == 10 && XSERIAL.find("10")) {
     DEBUG_PRINT(" ; intLED<default>= ");
     DEBUG_PRINTLN(intLED);
     return; // no more optional params
@@ -261,7 +261,7 @@ void ColorViewFunctionRead() {
 #else
   cvfPoint.red = random(555);
   cvfPoint.green = random(555);
-  cvfPoint.blue = random(755);
+  cvfPoint.blue = random(555);
   cvfPoint.clear = random(655);
 #endif
   cvfPoint.ReadTimestamp = millis();
@@ -372,7 +372,7 @@ void PingEchoFunctionSetup() {
   DEBUG_PRINT(pePoint.TimeBetweenSamples);
 
   // [,<medianIterations:uint16 = 1>]
-  if (XSERIAL.peek() == 10 && XSERIAL.find(10)) {
+  if (XSERIAL.peek() == 10 && XSERIAL.find("10")) {
     DEBUG_PRINT(" ; medianIterations<default>= ");
     pePoint.medianIterations = 1;
     DEBUG_PRINTLN(pePoint.medianIterations);
@@ -384,7 +384,7 @@ void PingEchoFunctionSetup() {
 
   //[,<maxDistance:uint16 = 200>]
 
-  if (XSERIAL.peek() == 10 && XSERIAL.find(10)) {
+  if (XSERIAL.peek() == 10 && XSERIAL.find("10")) {
     DEBUG_PRINT("# ; maxDistance<default>= ");
     pePoint.maxDistance = MAX_DISTANCE;
     DEBUG_PRINTLN(pePoint.maxDistance);
@@ -395,7 +395,7 @@ void PingEchoFunctionSetup() {
   DEBUG_PRINTLN(pePoint.maxDistance);
 
   // <unit:uint16= cm>]
-  if (XSERIAL.peek() == 10 && XSERIAL.find(10)) {
+  if (XSERIAL.peek() == 10 && XSERIAL.find("10")) {
     DEBUG_PRINT("# ; unit<default>= ");
     pePoint.unit = 1;
     DEBUG_PRINTLN(pePoint.unit);
@@ -643,12 +643,14 @@ void LightSensorFunction( int id, int command){
   //TODO Debug output
   
   int value = analogRead(LS1PIN);
+  unsigned long time = millis();
   
-  // ID, LS01, R1, <brightness:uint16>
+  // ID, LS01, R1, <brightness:int>, <timestamp:long>
   XSERIAL.print(id); XSERIAL.print(", ");
   XSERIAL.print(LS01);  XSERIAL.print(", ");
   XSERIAL.print(R1);  XSERIAL.print(", ");
-  XSERIAL.println(value);
+  XSERIAL.print(value);  XSERIAL.print(", ");
+  XSERIAL.println(time);
   XSERIAL.flush();
 }
 

@@ -30,145 +30,294 @@
  * @desc PhyIO Configuration module
  */
 module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
-  import from TTCN3AUX all;
+	import from RS232ConfigPortAux all;
+
+	import from TTCN3AUX all;
+	public import from RS232ConfigPortAux all;
   
-  const integer SensorID_Configuration := 0;
-  const integer SensorID_1 := 1;
-  const integer SensorID_2 := 2;
-  const integer SensorID_3 := 3;
-  const integer SensorID_4 := 4;
-  const integer SensorID_5 := 5;
-  const integer SensorID_6 := 6;
-  const integer SensorID_7 := 7;
-  const integer SensorID_8 := 8;
-  const integer SensorID_9 := 9;
+	const SensorID SensorID_Configuration := 0;
+	const SensorID SensorID_1 := 1;
+	const SensorID SensorID_2 := 2;
+	const SensorID SensorID_3 := 3;
+	const SensorID SensorID_4 := 4;
+	const SensorID SensorID_5 := 5;
+	const SensorID SensorID_6 := 6;
+	const SensorID SensorID_7 := 7;
+	const SensorID SensorID_8 := 8;
+	const SensorID SensorID_9 := 9;
+	
+	const DeviceID DeviceID_1 := 1;
+	const DeviceID DeviceID_2 := 2;
+	const DeviceID DeviceID_3 := 3;
+	const DeviceID DeviceID_4 := 4;
+	const DeviceID DeviceID_5 := 5;
 
-  group PhyIO {
-    //** @desc Configuration related types and ports
-    group Config {
-      //** @desc Sensor ID as defined by the HW spec
-      type integer SensorID;
+	type integer Timestamp;
 
-      //** @desc Reads Sensor data and sends it's to the port each UpdateFrequency seconds
-      type float UpdateFrequency;
+	group PhyIO {
+		//** @desc Configuration related types and ports
+		group Config {
+			//** @desc Sensor ID as defined by the HW spec. Within a device the sensor IDs should be unique.
+			type integer SensorID with {
+				encode "BASE"
+			}
+			
+			//** @desc Device ID an identifier for different devices (e.g. used unterneeth to connect to different COM/TTY ports)
+			type integer DeviceID with {
+				encode "BASE"
+			}
 
-      // TODO Sync time on first map.
-      type port PhyConfig message {
-        inout all;
-      }
-    }
+			//** @desc Reads Sensor data and sends it's to the port each UpdateFrequency seconds
+			type float UpdateFrequency;
+
+			// TODO Sync time on first map.
+			type port PhyConfig message {
+				inout all;
+				map param (RS232Config config, DeviceID deviceID);
+			}
+		}
     
-    group LED {
-      type boolean SwitchLED;
-      template SwitchLED switchLED_ON := true;
-      template SwitchLED switchLED_OFF := false;
+		group LED {
+			type boolean SwitchLED with {
+				variant "LED,SET"
+			}
+			template SwitchLED switchLED_ON := true;
+			template SwitchLED switchLED_OFF := false;
+			
+			type float BlinkLEDStart with {
+				variant "LED,BLINK"
+			}
+			type record BlinkLEDStop {} with {
+				variant "LED,STOP"
+			}
 
-      //** @desc Read the LED state and switch LED on/off
-      type port PhyLED message {
-        out SwitchLED;
-        map param (SensorID sensorID);
-      }
-    }
+			//** @desc Read the LED state and switch LED on/off
+			type port PhyLED message {
+				out SwitchLED, BlinkLEDStart, BlinkLEDStop;
+				map param (DeviceID deviceID, SensorID sensorID);
+			}
+		}
     
-    group Echo {
-      //** @desc Current distance measured in meters
-      type float Distance;
+		group Echo {
+			//** @desc Current distance measured in cm
+			type float Distance with {
+				variant "ECHO,RESULT"
+			}
 
-      //** @desc Reads Distance sensor data and sends it's immediately to the port
-      type record ReadDistance {};
+			//** @desc Reads Distance sensor data and sends it's immediately to the port
+			type record ReadDistance {} with {
+				variant "ECHO,READ"
+			}
       
-      //** @desc Read the current distance (in meters) measured by the Ultrasonic sensor
-      type port PhyEcho message {
-        in Distance;
-        out ReadDistance;
-        map param (SensorID sensorID, UpdateFrequency updateFrequency);
-      }
-    }
-    
-    group Motor {
-      //** @desc Percentage of voltage set to the motor. 0 means stop, 100 means drive forward at maximum speed, -100 means drive backwards at maximum speed
-      type integer Velocity(-100..100);
-      
-      type port PhyMotor message {
-        out Velocity;
-        map param (SensorID sensorID);
-      }
-    }
-    
-    group PushButton {
-      //** @desc The state of the push button
-      type boolean PushButtonState;
-
-      //** @desc Reads Button state and sends it's immediately to the port
-      type record ReadButtonState {};
-
-      //** @desc Read the state of the push button
-      type port PhyPushButton message {
-        in PushButtonState;
-        out ReadButtonState;
-        map param (SensorID sensorID);
-      }
-    }
-    
-    group ColorSensor {
-
-      /**
-       * @desc RGB value having red, green, blue values between 0..255
-       * @member red values between 0..255
-       * @member green values between 0..255
-       * @member blue values between 0..255
-       */
-      type record RGB {
-        unsignedbyte red,
-        unsignedbyte green,
-        unsignedbyte blue
-      }
-
-      //** @desc Reads RGB Sensor data and sends it's immediately to the port
-      type record ReadRGB {};
-      
-      //** @desc Read the current color detected by the color sensor
-      type port PhyColorSensor message {
-        in RGB;
-        out ReadRGB;
-        map param (SensorID sensorID, UpdateFrequency updateFrequency);
-      }
-    }
-        
-    group Relay {
-      type boolean RelaySwith;
-      template RelaySwith switchRelay_ON := true;
-      template RelaySwith switchRelay_OFF := false;
-      
-      //** @desc Drive the relay to switch a contact on and off
-      type port PhyRelay message {
-        out RelaySwith;
-        map param (SensorID sensorID);
-      }
-    }
-    
-	group LightSensor {
-		type integer Brightness(0..1023);
-		type boolean State;
-      
-		//** @desc Reads Light Sensor data and sends it's immediately to the port
-		type record ReadBrightness {};
+			//** @desc Read the current distance (in cm) measured by the Ultrasonic sensor
+			type port PhyEcho message {
+				in Distance;
+				out ReadDistance;
+				map param (DeviceID deviceID, SensorID sensorID, UpdateFrequency updateFrequency);
+			}
+		}
 		
-		//** @desc Reads state of LED (on/off) and sends it to the port
-    	type record ReadState {};
-		//** @desc Drive the relay to switch a contact on and off
-		type port PhyLightSensor message {
-        	in Brightness;
-        	out ReadBrightness;
-        	
-        	in State;
-        	out ReadState;
-        	
-        	map param (SensorID sensorID);
-    	}
-    }
+		group DistanceSensorGroup {
+			//** @desc Current distance measured in cm
+			type record DistanceSensorState {integer distance, integer time} with {
+				variant "DISTANCE,RESULT"
+			}
+
+			type float DistanceSensorSetup with {
+				variant "DISTANCE,SET"
+			}
+			
+			type record ReadDistanceStart {} with {
+				variant "DISTANCE,START"
+			}
+			type record ReadDistanceStop {} with {
+				variant "DISTANCE,STOP"
+			}
+      
+			//** @desc Read the current distance (in cm) measured by the Ultrasonic sensor
+			type port DistanceSensor message {
+				in DistanceSensorState;
+				out DistanceSensorSetup, ReadDistanceStart, ReadDistanceStop;
+				map param (DeviceID deviceID, SensorID sensorID);
+			}
+		}
+		
+		group Motor {
+			//** @desc Percentage of voltage set to the motor. 0 means stop, 100 means drive forward at maximum speed, -100 means drive backwards at maximum speed
+			type integer Velocity(-100..100) with {
+				variant "MOTOR,SET"
+			}
+      
+			type port PhyMotor message {
+				out Velocity;
+				map param (DeviceID deviceID, SensorID sensorID);
+			}
+		}
     
-  }
+		group PushButton {
+			//** @desc The state of the push button
+			type boolean PushButtonState with {
+				variant "BUTTON,RESULT"
+			}
+
+			//** @desc Reads Button state and sends it's immediately to the port
+			type record ReadButtonState {} with {
+				variant "BUTTON,READ"
+			}
+			type record ReadButtonStateStart {} with {
+				variant "BUTTON,START"
+			}
+			type record ReadButtonStateStop {} with {
+				variant "BUTTON,STOP"
+			}
+
+			//** @desc Read the state of the push button
+			type port PhyPushButton message {
+				in PushButtonState;
+				out ReadButtonState, ReadButtonStateStart, ReadButtonStateStop;
+				map param (DeviceID deviceID, SensorID sensorID);
+			}
+		}
+		
+		//** this is practically the same thing as a PushButton but since we changed the
+		//** functionality we thought changing the name would be a wise thing to do
+		group Door {
+			//** @desc The state of the push button
+			type boolean DoorState with {
+				variant "DOOR,RESULT"
+			}
+
+			//** @desc Reads Button state and sends it's immediately to the port
+			type record ReadDoorStart {} with {
+				variant "DOOR,START"
+			}
+			type record ReadDoorStop {} with {
+				variant "DOOR,STOP"
+			}
+
+			//** @desc Read the state of the push button
+			type port PhyDoor message {
+				in DoorState;
+				out ReadDoorStart, ReadDoorStop;
+				map param (DeviceID deviceID, SensorID sensorID);
+			}
+		}
+    
+		group ColorSensor {
+
+			/**
+			 * @desc RGB value having red, green, blue values between 0..255
+			 * @member red values between 0..255
+			 * @member green values between 0..255
+			 * @member blue values between 0..255
+			 */
+			type record RGB {
+				unsignedbyte red,
+				unsignedbyte green,
+				unsignedbyte blue
+			} with {
+				variant "RGB,RESULT"
+			}
+
+			//** @desc Reads RGB Sensor data and sends it's immediately to the port
+			type record ReadRGB {} with {
+				variant "RGB,READ"
+			}
+      
+			//** @desc Read the current color detected by the color sensor
+			type port PhyColorSensor message {
+				in RGB;
+				out ReadRGB;
+				map param (DeviceID deviceID, SensorID sensorID, UpdateFrequency updateFrequency);
+			}
+		}
+        
+		group Relay {
+			type boolean RelaySwith with {
+				variant "RELAY,SET"
+			}
+			template RelaySwith switchRelay_ON := true;
+			template RelaySwith switchRelay_OFF := false;
+      
+			//** @desc Drive the relay to switch a contact on and off
+			type port PhyRelay message {
+				out RelaySwith;
+				map param (DeviceID deviceID, SensorID sensorID);
+			}
+		}
+    
+		group LightSensor {
+			type integer Brightness(0..1023);
+			type record State {Brightness brightness, Timestamp time} with {
+				variant "LIGHTSENSOR,RESULT"
+			}
+			
+			type float Frequency with {
+				variant "LIGHTSENSOR,RESULT"
+			}
+      
+			//** @desc if false requests brightness and timestamp, if true requests current blink frequency estimate
+			type boolean ReadLightSensorState with {
+				variant "LIGHTSENSOR,READ"
+			}
+			
+			const ReadLightSensorState READ_BRIGHTNESS := false;
+			const ReadLightSensorState READ_FREQUENCY := true;
+		
+			//** @desc start reading timestamps of LED on/off switching, incl. minDiff
+			type integer ReadLightSwitchStart with {
+				variant "LIGHTSENSOR,START"
+			}
+			
+			//** @desc start measuring frequency incl. minDiff
+			type integer ReadFrequencyStart with {
+				variant "LIGHTSENSOR,START"
+			}
+			
+			//** @desc stop reading timestamps of LED on/off switching
+			type record ReadLightSwitchStop {} with {
+				variant "LIGHTSENSOR,STOP"
+			}
+			
+			//** @desc stop reading timestamps of LED on/off switching
+			type record ReadFrequencyStop {} with {
+				variant "LIGHTSENSOR,STOP"
+			}
+			
+			//** @desc Drive the relay to switch a contact on and off
+			type port PhyLightSensor message {
+				in State, Frequency;
+				out ReadLightSensorState,
+					ReadLightSwitchStart,
+					ReadFrequencyStart,
+					ReadLightSwitchStop,
+					ReadFrequencyStop;
+        	
+				map param (DeviceID deviceID, SensorID sensorID);
+			}
+		}
+		
+		group RFIDSensor {
+			type record RFID {unsignedbyte id1, unsignedbyte id2, unsignedbyte id3, unsignedbyte id4} with {
+				variant "RFID,SETUP"
+			}
+			
+			type record ReadRFIDStart {} with {
+				variant "RFID,START"
+			}
+			type record ReadRFIDStop {} with {
+				variant "RFID,STOP"
+			}
+			
+			type port PhyRFIDSensor message {
+				in RFID;
+				out RFID, ReadRFIDStart, ReadRFIDStop;
+        	
+				map param (DeviceID deviceID, SensorID sensorID);
+			}
+		}
+    
+	}
 } with {
-  encode "PhyIO"
+	encode "PhyIO"
 }

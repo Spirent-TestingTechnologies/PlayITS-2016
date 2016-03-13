@@ -1,17 +1,15 @@
 package com.testingtech.tt3rt.phyio.phyioRuntimePlugin;
 
-import static com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOConstants.RESULT;
-import static com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOConstants.READ;
-import static com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOConstants.SET;
+import static com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOConstants.*;
 
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 
 import org.etsi.ttcn.tci.BooleanValue;
 import org.etsi.ttcn.tci.FloatValue;
 import org.etsi.ttcn.tci.IntegerValue;
 import org.etsi.ttcn.tci.RecordValue;
 import org.etsi.ttcn.tci.TciCDProvided;
-import org.etsi.ttcn.tci.TciTypeClass;
 import org.etsi.ttcn.tci.Type;
 import org.etsi.ttcn.tci.Value;
 import org.etsi.ttcn.tri.TriMessage;
@@ -27,107 +25,185 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 
 	private static final String COMMA_DELIM = ",";
 	private static final Charset UTF8Charset = Charset.forName("UTF-8");
+	
+	/**
+	 * Simple counter, needed because decodeParameters() needs a counter of which only a reference is passed over. 
+	 */
+	private class Counter {
+		private int i = 0;
+		public int inc() { return i++; }
+	}
 
 	@Override
 	public Value decode(TriMessage message, Type decodingHypothesis) {
+		String str = bytes2str(message.getEncodedMessage());
+		if (str.startsWith("#"))
+			return null;
+		
 		Value value = decodingHypothesis.newInstance();
 		
-		String typeName = decodingHypothesis.getName();
-		String str = bytes2str(message.getEncodedMessage());
-		if (str.startsWith("#")) {
+		String[] variantElements = value.getType().getTypeEncodingVariant().split(COMMA_DELIM);
+		
+		int moduleIdHypothesis = getModuleID(variantElements[0].trim());
+		//functionID not needed
+		
+		String[] elements = str.split(COMMA_DELIM);
+		Counter idx = new Counter();
+		int moduleIdMessage = Integer.parseInt(elements[idx.inc()].trim());
+		int functionIdMessage = Integer.parseInt(elements[idx.inc()].trim());
+		
+		if(moduleIdMessage != moduleIdHypothesis || functionIdMessage != RESULT)
+			return null;
+		
+		return decodeParameters(value, elements, idx);
+	}
+	
+	Value decodeParameters(Value value, String[] elements,  Counter idx)
+	{
+		if(value instanceof IntegerValue){
+			int v = Integer.parseInt(elements[idx.inc()].trim());
+			((IntegerValue)value).setInt(v);
+		} else if(value instanceof FloatValue){
+			float v = Float.parseFloat(elements[idx.inc()].trim());
+			((FloatValue)value).setFloat(v);
+		} else if(value instanceof BooleanValue){
+			int v = Integer.parseInt(elements[idx.inc()].trim());
+			((BooleanValue)value).setBoolean(v != 0);
+		} else if(value instanceof RecordValue){
+			String[] names = ((RecordValue)value).getFieldNames();
+			
+			for(String name : names) {
+				Value field = ((RecordValue)value).getField(name);
+				field = decodeParameters(field, elements, idx);
+				((RecordValue)value).setField(name, field);
+			}
+		} else {
+			logWarn("Could not decode: type " + value.getType().getName() + " not supported.");
 			return null;
 		}
 		
-		String[] elements = str.split(COMMA_DELIM);
-		int idx = 0;
-		int moduleId = Integer.parseInt(elements[idx++].trim());
-		int functionId = Integer.parseInt(elements[idx++].trim());
-		PhyModule module = PhyModule.valueFromId(moduleId);
-		switch (functionId) {
-		case RESULT:
-			if (module == PhyModule.PingEcho01 && "Distance".equals(typeName)) {
-				int distance = Integer.parseInt(elements[idx++].trim());
-				((FloatValue)value).setDouble(distance*1.0/100.0);
-				return value;
-			} else if (module == PhyModule.ColorView01 && "RGB".equals(typeName)) {
-				// format 10, 101, 81009, 114, 68, 188, 109, 120, 80
-				//   CV01,R1,<timestamp:unit16>,<r:unit16>, <g:unit16>, <b:unit16>, <c:unit16>, <colorTemp:unit16>, <lux:unit16>
-				int timestamp = Integer.parseInt(elements[idx++].trim());
-				int r = Integer.parseInt(elements[idx++].trim());
-				int g = Integer.parseInt(elements[idx++].trim());
-				int b = Integer.parseInt(elements[idx++].trim());
-				int c = Integer.parseInt(elements[idx++].trim());
-				int colorTemp = Integer.parseInt(elements[idx++].trim());
-				int lux = Integer.parseInt(elements[idx++].trim());
-				int r256 = Integer.parseInt(elements[idx++].trim());
-				int g256 = Integer.parseInt(elements[idx++].trim());
-				int b256 = Integer.parseInt(elements[idx++].trim());
-				RecordValue rv = (RecordValue) value;
-				IntegerValue redField = (IntegerValue) rv.getField("red");
-				IntegerValue greenField = (IntegerValue) rv.getField("green");
-				IntegerValue blueField = (IntegerValue) rv.getField("blue");
-				redField.setInt(r256);
-				greenField.setInt(g256);
-				blueField.setInt(b256);
-				rv.setField("red", redField);
-				rv.setField("green", greenField);
-				rv.setField("blue", blueField);
-				return value;
-			} else if (module == PhyModule.LightSensor01 && "Brightness".equals(typeName)) {
-				int distance = Integer.parseInt(elements[idx++].trim());
-				((IntegerValue)value).setInt(distance);
-			}
-			break;
-
-		default:
-			break;
-		}
-		if (decodingHypothesis.getTypeClass() == TciTypeClass.INTEGER) {
-			((IntegerValue)value).setInt(Integer.parseInt(new String(message.getEncodedMessage())));
-			return value;
-		}
-		logWarn("Could not decode: "+str);
-		return null;
+		return value;
 	}
 
 	@Override
 	public TriMessage encode(Value value) {
-		String typeName = value.getType().getName();
-		String outStr = null;
+		String typeEncoding = value.getType().getTypeEncoding();
 		
-		if ("SwitchLED".equals(typeName)) {
-			int on = ((BooleanValue)value).getBoolean() ? 1 : 0;
-			outStr = value(PhyModule.LED01, SET, on);
-		
-		} else if ("RelaySwith".equals(typeName)) {
-			int on = ((BooleanValue)value).getBoolean() ? 1 : 0;
-			outStr = value(PhyModule.Relay01, SET, on);
-		
-		} else if ("Velocity".equals(typeName)) {
-			int velocity = ((IntegerValue)value).getInt();
-			outStr = value(PhyModule.Motor01, SET, velocity);
-		
-		} else if ("ReadDistance".equals(typeName)) {
-			outStr = value(PhyModule.PingEcho01, READ);
-		
-		} else if ("ReadButtonState".equals(typeName)) {
-			outStr = value(PhyModule.PushButton01, READ);
-
-		} else if ("ReadRGB".equals(typeName)) {
-			outStr = value(PhyModule.ColorView01, READ);
-			
-		} else if ("ReadBrightness".equals(typeName)) {
-			outStr = value(PhyModule.LightSensor01, READ);
-			
-		// map parameters
-		} else if (
-				value.getType().getTypeClass() == TciTypeClass.INTEGER ||
-				value.getType().getTypeClass() == TciTypeClass.FLOAT) {
-			outStr = value(PhyModule.LED01, value);
+		if (!"PhyIO".equals(typeEncoding)) {
+			TciCDProvided codec = getCodec(typeEncoding);
+			if (codec != null) {
+				return codec.encode(value);
+			} else {
+				tciErrorReq(MessageFormat.format("Unknown encoding '{0}' for type {1}", typeEncoding, value.getType()));
+				return null;
+			}
 		}
-
-		if (outStr != null) {
-			return TriMessageImpl.valueOf(str2bytes(outStr));
+		
+		String moduleFunction = translateVariant(value.getType().getTypeEncodingVariant());
+		String parameters = encodeParameters(value);
+		
+		if (moduleFunction != null && parameters != null) {
+			String out = moduleFunction;
+			if(!parameters.equals(""))
+				out += ", " + parameters;
+			return TriMessageImpl.valueOf(str2bytes(out));
+		} else {
+			tciErrorReq(MessageFormat.format("Unable to encode '{0}' for type {1}", value, value.getType()));
+			return null;
+		}
+	}
+	
+	String translateVariant(String variant) {
+		if (variant == null)
+			return null;
+		
+		String[] elements = variant.split(COMMA_DELIM);
+		
+		int module = getModuleID(elements[0].trim());
+		int function = getFunctionID(elements[1].trim());
+		
+		if(module == -1 || function == -1)
+			return null;
+		
+		return module + ", " + function;
+	}
+	
+	int getModuleID(String moduleIdentifier) {
+		switch(moduleIdentifier){
+		case "CONFIG":
+			return PhyModule.GeneralConfig01.getId();
+		case "COLOR":
+			return PhyModule.ColorView01.getId();
+		case "ECHO":
+			return PhyModule.PingEcho01.getId();
+		case "DISTANCE":
+			return PhyModule.PingEcho02.getId();
+		case "LED":
+			return PhyModule.LED01.getId();
+		case "RELAY":
+			return PhyModule.Relay01.getId();
+		case "MOTOR":
+			return PhyModule.Motor01.getId();
+		case "BUTTON":
+			return PhyModule.PushButton01.getId();
+		case "DOOR":
+			return PhyModule.Door01.getId();
+		case "LIGHTSENSOR":
+			return PhyModule.LightSensor01.getId();
+		case "RFID":
+			return PhyModule.RFIDSensor01.getId();
+		default:
+			logWarn("Module identifier unknown: " + moduleIdentifier);
+			return -1;
+		}
+	}
+	
+	int getFunctionID(String functionIdentifier) {
+		switch(functionIdentifier){
+		case "SETUP":
+		case "SET":
+			return SET;
+		case "START":
+			return START;
+		case "STOP":
+			return STOP;
+		case "READ":
+			return READ;
+		case "BLINK":
+			return BLINK;
+		case "RESULT":
+			return RESULT;
+		default:
+			logWarn("Function identifier unknown: " + functionIdentifier);
+			return -1;
+		}
+	}
+	
+	String encodeParameters(Value value) {
+		if(value instanceof IntegerValue) {
+			return ((IntegerValue)value).getInt() + "";
+		} else if(value instanceof FloatValue) {
+			return ((FloatValue)value).getFloat() + "";
+		} else if(value instanceof BooleanValue) {
+			return ((BooleanValue)value).getBoolean() ? "1" : "0";
+		} else if(value instanceof RecordValue) {
+			String[] names = ((RecordValue)value).getFieldNames();
+			String result = "";
+			
+			for(String name : names) {
+				Value field = ((RecordValue)value).getField(name);
+				String encodedField = encodeParameters(field);
+				
+				if(encodedField == null)
+					return null;
+				
+				if("".equals(result))
+					result = encodedField;
+				else if(!"".equals(encodedField))
+					result += ", " + encodedField;
+			}
+			
+			return result;
 		} else {
 			logWarn("Not encoded "+value+" of type "+value.getType().getName());
 			return null;

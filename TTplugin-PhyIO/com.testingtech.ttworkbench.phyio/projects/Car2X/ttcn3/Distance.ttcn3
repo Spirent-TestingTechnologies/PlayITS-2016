@@ -1,0 +1,87 @@
+module Distance{
+	import from PhyIOAUX all;
+	
+	import from Components all;
+	import from Functions all;
+	import from Parameters all;
+
+	/**
+	 * @shortdesc Single Distance
+	 * @desc Move object a certain distance in front of the sensor and measure it
+	 * @verdict pass if the distance sensor yields the expected distance else fail
+	 */
+	testcase SingleDistanceTestcase() runs on me system System {
+		setverdict(internalDistancesTestcase(SINGLE_DISTANCE));
+	}
+	
+	/**
+	 * @shortdesc Various Distances
+	 * @desc Move object a certain distance in front of the sensor and measure it. Repeat this for a number of values.
+	 * @verdict pass if the distance sensor yields the expected distances else fail
+	 */
+	testcase VariousDistancesTestcase() runs on me system System {
+		setverdict(internalDistancesTestcase(VARIOUS_DISTANCES));
+	}
+	
+	/**
+	 * @desc turns on the distance sensor. Then receives a series of measurements which it tries to match to the first
+	 * 		 element of the list. If this succeeds before the timeout, the function moves on the next list element
+	 * 		 until all distances matched or a timeout happens.
+	 * @param list list of expected distances
+	 * @return verdict
+	 * @verdict pass if all distances match before timeout, fail otherwise.
+	 *
+	 */
+	function internalDistancesTestcase(DistancesToCheck list) runs on me system System return verdicttype {
+		// TODO should yield inconc if no answers come from the sensor
+		 
+		var verdicttype result := none;
+		var DistanceSensorState state;
+		var integer i := 0;
+		
+		timer singleMeasurementTimer;
+		
+		setup();
+		
+		distanceSensor.send(ReadDistanceStart:{});
+		
+		while(i < lengthof(list) and result == none) {
+
+			t.start(TIME_DISTANCE);
+			singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
+			
+			alt {
+				[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state {
+					if(compareDist(state.distance, list[i])){
+						t.start(TIME_DISTANCE);
+						i := i + 1;
+					}
+					// else continue with same index since the we're not in the desired range
+					
+					singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
+				}
+				[]singleMeasurementTimer.timeout {
+					result := inconc;
+				}
+				[]t.timeout {
+					result := fail;
+				}
+			}
+		}
+		
+		if(result == none) {
+			result := pass;
+		}
+		
+		distanceSensor.send(ReadDistanceStop:{});
+		
+		tearDown();
+		
+		return result;
+	}
+	
+	function executeDistanceTestcases() {
+		execute(SingleDistanceTestcase());
+		execute(VariousDistancesTestcase());
+	}
+}

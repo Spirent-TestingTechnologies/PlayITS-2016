@@ -1,0 +1,75 @@
+module RFIDModule {
+	import from PhyIOAUX all;
+	
+	import from Components all;
+	import from Functions all;
+	import from Parameters all; 
+	
+	/**
+	 * @shortdesc Correct RFID
+	 * @desc Receives detected RFID which ought to be the correct one.
+	 * @verdict pass if RFID is currect else fail
+	 */
+	testcase CorrectRFIDTestcase() runs on me system System {
+		setverdict(internalRFIDTestcase(OWNER_RFID, true));
+	}
+	
+	/**
+	 * @shortdesc False RFID
+	 * @desc Receives detected RFID which ought to be a false one.
+	 * @verdict pass if RFID is detected and does NOT match. fail if there is NO RFID or the correct one.
+	 */
+	testcase FalseRFIDTestcase() runs on me system System {
+		setverdict(internalRFIDTestcase(FALSE_RFID, false));
+	}
+	
+	/**
+	 * @desc tests whether the code on the RFID chip is valid
+	 * @param rfid, the RFID code that is to be verified
+	 * @param expectCorrectRFID true if match for correct RFID, false if a false one is expected
+	 */
+	function internalRFIDTestcase(RFID correctRFID, boolean expectCorrectRFID)
+			runs on me system System return verdicttype {
+		var boolean hasRFID := false;
+		var boolean isRFIDCorrect := false;
+		
+		setup();
+		
+		rfidSensor.send(ReadRFIDStart:{});
+		t.start(TIME_RFID);
+		
+		alt{
+			[]rfidSensor.receive(RFID: correctRFID){
+				hasRFID := true;
+				isRFIDCorrect := true;
+			}
+			[]rfidSensor.receive(RFID: ?) {
+				hasRFID := true;
+				isRFIDCorrect := false;
+			}
+			[]t.timeout {
+				hasRFID := false;
+			}
+			[] any port.receive {
+				hasRFID := false;
+			}
+		}
+		
+		rfidSensor.send(ReadRFIDStop:{});
+		
+		tearDown();
+		
+		if(not hasRFID) {
+			return inconc;
+		} else if(isRFIDCorrect == expectCorrectRFID) {
+			return pass;
+		} else {
+			return fail;
+		}
+	}
+	
+	function executeRFIDTestcases() {
+		execute(CorrectRFIDTestcase());
+		execute(FalseRFIDTestcase());
+	}
+}

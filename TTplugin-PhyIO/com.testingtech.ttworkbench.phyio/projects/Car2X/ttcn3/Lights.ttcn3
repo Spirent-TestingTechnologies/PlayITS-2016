@@ -26,90 +26,164 @@
  *  OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
  * ----------------------------------------------------------------------------
  */
-
+//** @desc Testing Lightsensor data
 module Lights {
+	import from PhyIOAUX all;
 
-	import from Header all;
+	import from Components all;
+	import from Functions all;
+	import from Parameters all;
 	
-	const integer RED := 0;
-	const integer YELLOW := 1;
-	const integer A := 0;
-	const integer B := 1;
+	/**
+	 * @shortdesc Headlights On
+	 * @desc Turns the LED on then checks using the light sensor if it really is turned on.
+	 */
+	testcase HeadLightsOnTestcase() runs on me system System{
+		setverdict(internalHeadLightsTestcase(true));
+	}
+
+	/**
+	 * @shortdesc Headlights Off
+	 * @desc Turns the LED off then checks using the light sensor if it really is turned off.
+	 */
+	testcase HeadLightsOffTestcase() runs on me system System{
+		setverdict(internalHeadLightsTestcase(false));
+	}
 	
-	const float LED_REFRESH_RATE := 1.0; // seconds
-	const float RGB_REFRESH_RATE := 1.0; // seconds
-	
-	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
-	
-	testcase HeadLightsOn() runs on me system SUT{
-		timer t;
-		map(self:config, system:config);
-		map(self:lightSensor, system:lightSensor);
+	/**
+	 * @desc Set LED in desired state, then measure its brightness.
+	 * @param expectLEDOn the expected state of the LED
+	 * @return verdict
+	 * @verdict to pass the measurement has to reveal the LED to be in the desired state. If it's not, then it fails.
+	 * 			The verdict is inconc if we get not result or a message of an unexpected type.
+	 */
+	function internalHeadLightsTestcase(boolean expectLEDOn) runs on me system System return verdicttype{
+		var template State LED_OFF := {(0..BRIGHTNESS_THRESHOLD), ?};
+		var boolean isLEDOn := false;
+		var boolean measuredLED := false;
 		
-		lightSensor.send(ReadBrightness:{});
-		t.start(5.0);
+		setup();
+		
+		if(expectLEDOn) {
+			led.send(switchLED_ON);
+		} else {
+			// should be off already but we want to be sure
+			led.send(switchLED_ON);
+		}
+		
+		// wait a bit to make sure that the LED really has the desired state by now
+		t.start(0.5);
+		t.timeout;
+		
+		lightSensor.send(READ_BRIGHTNESS);
+		
+		t.start(TIME_HEADLIGHTS);
+		
 		alt{
-			[]lightSensor.receive(Brightness: (0..BRIGHTNESS_THRESHOLD)){
-				log("LED aus.");
+			[]lightSensor.receive(LED_OFF){
+				measuredLED := true;
+				isLEDOn := false;
+			}
+			[]lightSensor.receive(State: {?, ?}) {
+				measuredLED := true;
+				isLEDOn := true;
+			}
+			[] t.timeout {
+				measuredLED := false;
+			}
+			[] config.receive {
+				// config port sends some data in some of the Arduino files
+				// TODO make sure that it doesn't
+				repeat;
+			}
+			[] any port.receive {
+				// some unexpected message arrived
+				measuredLED := false;
+			}
+		}
+		
+		if(expectLEDOn) {
+			led.send(switchLED_OFF);
+		}
+		
+		tearDown();
+		
+		if(not measuredLED) {
+			return inconc;
+		} else if(expectLEDOn != isLEDOn) {
+			return fail;
+		} else {
+			return pass;
+		}
+	}
+	
+	/**
+	 * @shortdesc Emergency Lights (old)
+	 * @desc reads on/off switches of LED to dertermin if emergency lights are on
+	 * @verdict pass when emergency light blink with expected frequency, fail otherwise
+	 */
+	testcase OldEmergencyLightsTestcase() runs on me system System {
+		setup();
+		
+		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
+		
+		setverdict(checkEmergencyLights(
+				SWITCH_TIME_TARGET,
+				ALLOWED_SWITCH_TIME_DEVIATION,
+				MIN_SWITCH_BRIGHTNESS_DIFFERENCE,
+				5, 10.0));
+			
+		led.send(BlinkLEDStop: {});
+		tearDown();
+	}
+	
+	/**
+	 * @shortdesc Emergency Lights
+	 * @desc sends an expected switch time target to the SUT.
+	 * 		 reads the sensors output, which is the average time elapsed between
+	 * 		 switches. These have to be near the expected value.
+	 * @verdict pass when emergency light blink with expected frequency, fail otherwise
+	 */
+	testcase EmergencyLightsTestcase() runs on me system System {
+		var Frequency frequency;
+		
+		setup();
+		
+		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
+		
+		// wait a bit to make sure that arduino had enough time to react
+		t.start(0.25);
+		
+		lightSensor.send(ReadFrequencyStart: MIN_SWITCH_BRIGHTNESS_DIFFERENCE);
+		
+		t.start(TIME_EMERGENCY_LIGHTS);
+		lightSensor.send(ReadFrequencyStop: {});
+		
+		alt {
+			
+			[]lightSensor.receive(Frequency: 0.0) -> value frequency {
+				log("Emergency lights are not on.");
 				setverdict(fail);
 			}
-			[]lightSensor.receive(Brightness: *) {
-				log("LED an.");
+			[]lightSensor.receive(CORRECT_FREQUENCY) -> value frequency {
 				setverdict(pass);
-			
 			}
-			[]t.timeout{
+			[]lightSensor.receive(Frequency: ?) -> value frequency {
+				setverdict(fail);
+			}
+			[]t.timeout {
 				setverdict(inconc);
 			}
 		}
+		
+		led.send(BlinkLEDStop: {});
+		
+		tearDown();
 	}
-
-	testcase HeadLightsOff() runs on me system SUT{
-			timer t;
-			
-			map(self:config, system:config);
-			map(self:lightSensor, system:lightSensor);
-		
-			lightSensor.send(ReadBrightness:{});
-			t.start(5.0);
-			alt{
-				[]lightSensor.receive(Brightness: (0..BRIGHTNESS_THRESHOLD)){
-					log("LED aus.");
-					setverdict(pass);
-				}
-				[]lightSensor.receive(Brightness: *) {
-					log("LED an.");
-					setverdict(fail);
-			
-				}
-				[]t.timeout{
-					setverdict(inconc);
-				}
-			}
-		}
-	//** @desc Testet Warnblinker
-	//  Sollwert ms von Abständen Zustandsänderung
-	//  +- 100ms Abweichung
-	//  bei receive compare zeit jetzt und von letztemal
-	 	
-	testcase EmergencyLights() runs on me system SUT{
-		timer t;
-		timer intervall;
-		
-		map(self:config, system:config);
-		map(self:lightSensor, system:lightSensor);
-		
-		lightSensor.send(ReadState:{});
-		t.start(10.0);
-		while(true){
-			alt{
-				[]t.timeout{
-				setverdict(inconc);//verdict muss noch angepasst werden
-				break;
-				}
-				//Statewechsel timestampvergleich
-				[]lightSensor.receive{}
-			}
-		}
+	
+	function executeLightsTestcases() {
+		execute(HeadLightsOnTestcase());
+		execute(HeadLightsOffTestcase());
+		execute(EmergencyLightsTestcase());
 	}
 }

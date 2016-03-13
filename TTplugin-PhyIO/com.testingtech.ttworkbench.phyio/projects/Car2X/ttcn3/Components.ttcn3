@@ -1,25 +1,42 @@
+//**@desc Component Module, defines Ports of SUT and Tester
 module Components {
 	import from PhyIOAUX all;
 	
-	type component me {
-		port PhyConfig config;
-		port PhyLED leds[2]; // TODO remove
-		port PhyRelay relays[2]; // TODO remove 
-		port PhyLightSensor lightSensor;
-		port PhyColorSensor rgbSensor; // TODO remove
-		port PhyPushButton buttonSensor;
-		
-		// TODO add speed sensor
-		// TODO add RFID sensor
+	type record StopThread {};
+	type port InternalVerdictPort message {
+		inout verdicttype, StopThread;
 	}
-	type component SUT {
+	
+	type record Verdict {verdicttype v, charstring r};
+
+	//**@desc Component port definition System measuring the SUT (Arduino)
+	type component TesterPorts {
 		port PhyConfig config;
-		port PhyEcho echoSensor;
+		port DistanceSensor distanceSensor;
 		port PhyLightSensor lightSensor;
-		port PhyPushButton buttonSensor;
 	}
-	type component Simulator {	
+	
+	//**@desc Component  port definition System under Test (Arduino)
+	type component SUTPorts {
 		port PhyLED led;
-		//TODO add sound
+		port PhyDoor doorSensor;
+		port PhyRFIDSensor rfidSensor;
+	}
+	
+	//**@desc me = System running the tests
+	type component me extends SUTPorts, TesterPorts {
+		timer t;
+		
+		port InternalVerdictPort rfidPort;
+		port InternalVerdictPort emergencyLightPort;
+	}
+	
+
+	/**
+	 * @desc Component port definition System under Test (Arduino) and
+	 * System measuring the System under Test (Arduino)
+	 * used to run tests on a single Arduino
+	 */
+	type component System extends SUTPorts, TesterPorts {
 	}
 }

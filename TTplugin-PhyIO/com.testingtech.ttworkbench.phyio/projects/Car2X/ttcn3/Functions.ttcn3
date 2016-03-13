@@ -1,0 +1,139 @@
+module Functions {
+	import from PhyIOAUX all;
+	
+	import from Components all;
+	import from Parameters all;
+	import from TTlibrary all;
+	
+	/**
+	 * @desc Test to check for valid rfid
+	 * @param RFID in question, time until timeout
+	 * @deprecated should be removed
+	 */
+	function checkRFID(RFID rfid, float time) runs on me system System return verdicttype {
+		var verdicttype result := none;
+		
+		rfidSensor.send(ReadRFIDStart:{});
+		t.start(time);
+		
+		alt{
+			[]rfidSensor.receive(RFID: rfid){
+				result := pass;
+			}
+			[]rfidSensor.receive(RFID: ?) {
+				result := fail;
+			}
+			[]t.timeout {
+				result := inconc;
+			}
+		}
+		
+		rfidSensor.send(ReadRFIDStop:{});
+		
+		if(result != none) {
+			return result;
+		}
+		
+		return inconc;
+	}
+	/** @desc checks if EmergencyLights are working correctly
+	 *  @param 	switchTimetarget: time to next status change
+	 *  		allowedSwitchTimeDeviation: allowed delay between status changes
+	 *  		time: time until timeout
+	 *  @deprecated communication with light sensor isn't up-to-date, protocol has changed
+	 */
+	function checkEmergencyLights(float switchTimeTarget,
+		float allowedSwitchTimeDeviation,
+		integer minDiff,
+		integer minSwitches,
+		float time)
+	runs on me system System return verdicttype{
+		var verdicttype result := none;
+		
+		var State state;
+		var float lastTimestamp := -1.0;
+		var float thisTimestamp := -1.0;
+		var boolean isTimeout;
+		var integer switchCount := 0;
+		
+		lightSensor.send(ReadLightSwitchStart: minDiff);
+		
+		t.start(time);
+
+		while(result == none){
+			alt{
+				[]lightSensor.receive(State: {?, ?}) -> value state {
+					switchCount := switchCount + 1;
+					
+					thisTimestamp := int2float(state.time) / 1000.0;
+					
+					if(lastTimestamp == -1.0){
+						lastTimestamp := thisTimestamp;
+					} else {
+						if(abs_float(thisTimestamp - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
+							result := fail;
+						} else {
+							lastTimestamp := thisTimestamp;
+						}
+					}
+				}
+				[]t.timeout {
+					isTimeout := true;
+					result := inconc;
+				}
+			}
+		}
+		
+		if(result != none){
+			lightSensor.send(ReadLightSwitchStop:{});
+			return result;
+		}
+		
+		lightSensor.receive(State: {?, ?}) -> value state;
+		thisTimestamp := int2float(state.time) / 1000.0;
+		
+		lightSensor.send(ReadLightSwitchStop:{});
+			
+		if(thisTimestamp - lastTimestamp <= switchTimeTarget + allowedSwitchTimeDeviation
+			and switchCount >= minSwitches){
+			return pass;
+		} else{
+			return fail;
+		}
+		
+	}
+	
+	/**
+	 * @desc checks if the measured distance is within a certain range of an expected value
+	 */
+	function compareDist(integer measuredDistance, integer expectedDistance) return boolean {
+		return abs_int(measuredDistance - expectedDistance) <= ALLOWED_DISTANCE_DEVIATION;
+	}
+	
+	/**
+	 * @desc maps all ports  
+	 */
+	function setup() runs on me system System {
+		map(self:config,			system:config)			param (SUT_RS232_CONFIG, DeviceID_1);
+		
+		// TODO currently all sensors ports are mapped to device 1 since that's how we were testing the system
+		// once we changed that, the device IDs must be updated
+		map(self:led, 				system:led) 			param (DeviceID_1, SensorID_1);
+		map(self:lightSensor,		system:lightSensor)		param (DeviceID_1, SensorID_2);
+		map(self:rfidSensor,		system:rfidSensor)		param (DeviceID_1, SensorID_3);
+		map(self:doorSensor,		system:doorSensor)		param (DeviceID_1, SensorID_4);
+		map(self:distanceSensor,	system:distanceSensor)	param (DeviceID_1, SensorID_5);
+	}
+	
+	/**
+	 * @desc unmaps all ports 
+	 */
+	function tearDown() runs on me system System {
+		unmap(self:led, 			system:led);
+		unmap(self:lightSensor,		system:lightSensor);
+		unmap(self:rfidSensor,		system:rfidSensor);
+		unmap(self:doorSensor,		system:doorSensor);
+		unmap(self:distanceSensor,	system:distanceSensor);
+	}
+	
+}
