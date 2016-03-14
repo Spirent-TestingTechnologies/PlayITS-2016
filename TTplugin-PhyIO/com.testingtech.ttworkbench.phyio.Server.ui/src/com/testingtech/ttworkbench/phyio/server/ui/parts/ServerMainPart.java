@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
+import com.testingtech.ttworkbench.phyio.server.ui.Utils.ServiceProvider;
 import com.testingtech.ttworkbench.phyio.server.ui.Utils.TestModule;
 import com.testingtech.ttworkbench.phyio.server.ui.Utils.Testcase;
 import com.testingtech.tworkbench.ttman.server.api.IExecutionServer;
@@ -45,6 +46,11 @@ public class ServerMainPart {
 	private String GROUPANNOT= "group";
 	private String TITEL_ANNOT= "shortdesc";
 	private String STATE_ANNOT= "state";
+	
+	private String MODULES_REQ = "getModulesFromFolder";
+	private String TESTCASES_REQ = "getTestcasesFromModule";
+	private String ANNOT_VALUES_REQ = "getAnnotationValuesForTestcase";
+
 
 
 	private String DEFAULT_GROUPNAME= "tests";
@@ -110,9 +116,8 @@ public class ServerMainPart {
 				String serverPath =null;
 				String workspacePath =null;
 				
-			    try {
-			    	
-			    	
+			    try {		    	
+				
 			    	
 			    	serverPath = textServerPath.getText();
 			    	workspacePath = textWorkspacePath.getText();
@@ -132,15 +137,37 @@ public class ServerMainPart {
 			    	}
 	    
 			    	while(true){
+			    			ServiceProvider provider = new ServiceProvider();
 			    			ServerSocket servsock = new ServerSocket(PORT);
 			    		    while (true) {
 				    		      Socket sock = servsock.accept();
 				    		      InputStream is = sock.getInputStream();
 				    		      BufferedReader br = new BufferedReader(new InputStreamReader(is));
-				    		      String projectPath = br.readLine();
-				    		      if(projectPath!=null){
-				    		    	  	TestModule tm= new TestModule(workspacePath+"\\"+projectPath);
-				    		    	  	sendTestInfo(tm,sock);
+				    			  OutputStream os = sock.getOutputStream();
+				    			  
+				    			  BufferedWriter bWriter = new BufferedWriter(new OutputStreamWriter(os));
+				    		      String request ;
+				    		      while((request = br.readLine())!=null){
+				    		    	  	if(request.equals(MODULES_REQ)){
+				    		    	  		String relPath = br.readLine();				// client sends relative path
+				    		    	  		if(relPath!=null){
+				    		    	  			provider.sendModuleNames(bWriter,workspacePath+"\\"+relPath);
+				    		    	  		}
+				    		    	  	}else if(request.endsWith(TESTCASES_REQ)){
+				    		    	  		String modName = br.readLine();				// client sends modulename
+				    		    	  		if(modName!=null){
+				    		    	  			provider.sendTestcases(bWriter,modName);
+				    		    	  		}
+				    		    	  	}else if(request.endsWith(ANNOT_VALUES_REQ)){
+				    		    	  		String modName = br.readLine();				// client sends modulename testcasename and annotation
+				    		    	  		if(modName!=null){
+				    		    	  			provider.sendAnnotationValuesForTestcase(bWriter,modName);
+				    		    	  		}
+				    		    	  	}
+				    		    	  	
+				    		    	  
+//				    		    	  	TestModule tm= new TestModule(workspacePath+"\\"+projectPath);
+//				    		    	  	sendTestInfo(tm,sock);
 				    		      }
 				    		      sock.close();
 		
@@ -149,7 +176,7 @@ public class ServerMainPart {
 			    		  
 			    				    
 			    } catch(Exception ex) {
-			    	System.out.println(ex.getMessage());
+			    	ex.printStackTrace();
 			    } 
 			    
 			}
@@ -170,82 +197,5 @@ public class ServerMainPart {
 		btnStop.setText("Stop");
 		//TODO Your code here
 	}
-	
-	
-	public void sendTestInfo(TestModule tm, Socket sock){
-
-		
-			List<Testcase> testcases = tm.getTestcases();
-			Map<String,List<Testcase>> groups = sortByGroups(testcases);
-			sendGroups(sock,groups);
-			
-			
-	
-	}
-	
-	private Map<String,List<Testcase>> sortByGroups(List<Testcase> testcases){
-		Map<String,List<Testcase>> groups = new HashMap<String,List<Testcase>>();
-		for(Testcase tc : testcases){
-			// get all group annotations 
-			List<String> groupNames = tc.getAnnotationValues(GROUPANNOT);
-			
-			// add test to all groups or create new group
-			for(String groupName:groupNames){
-				List<Testcase> group = groups.get(groupName);
-				if(group==null){
-					List<Testcase> newGroupList = new ArrayList<Testcase>();
-					newGroupList.add(tc);
-					groups.put(groupName, newGroupList);
-				}else{
-					group.add(tc);
-				}
-			}
-			if(groupNames.isEmpty()){
-				List<Testcase> group = groups.get(DEFAULT_GROUPNAME);
-				if(group==null){
-					List<Testcase> newGroupList = new ArrayList<Testcase>();
-					newGroupList.add(tc);
-					groups.put(DEFAULT_GROUPNAME, newGroupList);
-				}else{
-					group.add(tc);
-				}
-			}
-		}
-		return groups;
-	}
-	
-	
-	private void sendGroups(Socket sock,Map<String,List<Testcase>> groups){
-	     OutputStream os;
-		try {
-			os = sock.getOutputStream();
-			BufferedWriter br = new BufferedWriter(new OutputStreamWriter(os));	
-			for(String groupName: groups.keySet()){
-				br.write(GROUP_FLAG+groupName+"\n");
-				List<Testcase> testcases = groups.get(groupName);
-				for(Testcase tc:testcases){
-					br.write(TEST_FLAG+tc.getTestcaseID()+"\n");
-					List<String> title = tc.getAnnotationValues(TITEL_ANNOT);		
-					if(title.isEmpty()){	
-						br.write(TITLE_FLAG+tc.getTestcaseID()+"\n");
-					}else{
-						br.write(TITLE_FLAG+title.get(0)+"\n");
-					}
-					List<String> states = tc.getAnnotationValues(STATE_ANNOT);		
-					for(String state:states){
-						br.write(STATE_FLAG+state+"\n");
-					}
-				}	
-				br.write(END_TEST_FLAG+"\n");
-			}
-			br.write(END_GROUP_FLAG+"\n");
-			br.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
 	
 }

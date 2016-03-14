@@ -16,6 +16,7 @@ public class TestModule {
 	
 	private String TESTCASE= "testcase";
 	private String MODULE= "module";
+	private String path;
 
 	private List<Testcase> testcases;
 	private Map<String,List<String>> moduleAnnotations ;
@@ -23,6 +24,7 @@ public class TestModule {
 	private File file;
 	
 	public TestModule(String path){
+		this.path=path;
 		this.file = new File(path);
 		if(file==null){
 			System.out.println("File not found");
@@ -63,13 +65,13 @@ public class TestModule {
 			    	}
 			    	
 			    	// parse all annotations
-			    	while(myLine!=null && myLine.startsWith("*")){
+			    	while(myLine!=null && myLine.startsWith("*")&& myLine.length()>1){
 			    		
-			    		// remove"*"
+			    		// remove"*"			    		
 			    		myLine=myLine.substring(1);
 			    		
 			    		//remove whitespaces
-			    		myLine=myLine.substring(1);
+			    		myLine=myLine.trim();
 					    
 					    if(myLine.startsWith("@")){
 				    		// remove"@"
@@ -148,6 +150,10 @@ public class TestModule {
 	
 	public List<Testcase> getTestcases(){
 		return new ArrayList(testcases);
+	}
+	
+	public String getName(){
+		return file.getName();
 	}
 
 
