@@ -43,7 +43,7 @@ public class ServerMainPart {
 	private int PORT=22782;
 	
 	private String GROUPANNOT= "group";
-	private String TITEL_ANNOT= "desc";
+	private String TITEL_ANNOT= "shortdesc";
 	private String STATE_ANNOT= "state";
 
 
@@ -107,22 +107,17 @@ public class ServerMainPart {
 		btnStart.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String serverPath = "C:\\Program Files (x86)\\TTworkbenchProfessional\\TTmanServer.bat";
-				String workspacePath = "C:\\Users\\Work\\workspace";
+				String serverPath =null;
+				String workspacePath =null;
 				
 			    try {
 			    	
 			    	
 			    	
-//			    	serverPath = textServerPath.getText();
-//			    	workspacePath = textWorkspacePath.getText();
+			    	serverPath = textServerPath.getText();
+			    	workspacePath = textWorkspacePath.getText();
 			    	System.out.println("start server ...");
-			    	
-	
-			    	 
-//    	    		ttmanProcess = new ProcessBuilder(
-//					serverPath,"--data",workspacePath).start();
-//					Process ttmanProcess= Runtime.getRuntime().exec("cmd.exe /c "+serverPath+" --data "+workspacePath);
+			    			    
 				
 			    	
 			    	Process ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();

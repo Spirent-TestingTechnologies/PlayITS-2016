@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -14,7 +15,10 @@ import java.util.Scanner;
 public class TestModule {
 	
 	private String TESTCASE= "testcase";
+	private String MODULE= "module";
+
 	private List<Testcase> testcases;
+	private Map<String,List<String>> moduleAnnotations ;
 	
 	private File file;
 	
@@ -24,6 +28,7 @@ public class TestModule {
 			System.out.println("File not found");
 			return;
 		}
+		moduleAnnotations = new HashMap<String,List<String>>();
 		parseFile();
 	}
 	
@@ -43,7 +48,7 @@ public class TestModule {
 			    if(myLine.startsWith("/**")){
 			    	
 			    	String tcID= null;
-			    	Map<String, List<String>> parameter = new HashMap<String, List<String>>();
+			    	LinkedHashMap<String, String> parameter = new LinkedHashMap<String, String>();
 			    	Map<String, List<String>> annotations = new HashMap<String, List<String>>();
 
 			    	
@@ -112,17 +117,9 @@ public class TestModule {
 				    				String varType = s2.next();
 				    				if(varType.isEmpty()){break;}		//empty brackets
 				    				if(s2.hasNext()){
-				    					String varName =s2.next();
+				    					String varName =s2.next();			    				
+				    					parameter.put(varType, varName);
 				    					
-				    					//get list of variables if it exist for type
-				    					List<String> values = parameter.get(varType);
-				    					if(values==null){
-				    						List<String> varNameList = new ArrayList<String>();			
-				    						varNameList.add(varName);
-				    						parameter.put(varType,varNameList);
-				    					}else{
-				    						parameter.get(varType).add(varName);
-				    					}
 				    				}
 				    			}
 				    		}
@@ -130,6 +127,11 @@ public class TestModule {
 				    	
 				    	
 				    }
+			    	// parse testcase declaration 
+			    	if(myLine!=null && myLine.startsWith(MODULE)){
+			    		moduleAnnotations = annotations;
+			    		
+			    	}
 			    	if(tcID!=null){
 			    		testcases.add(new Testcase(tcID, parameter,annotations));
 			    	}
