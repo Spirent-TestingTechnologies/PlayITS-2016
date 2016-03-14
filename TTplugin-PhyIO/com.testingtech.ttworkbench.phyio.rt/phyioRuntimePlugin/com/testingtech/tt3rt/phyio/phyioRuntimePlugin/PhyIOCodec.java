@@ -129,7 +129,44 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 	}
 	
 	int getModuleID(String moduleIdentifier) {
-		switch(moduleIdentifier){
+		if(moduleIdentifier.equals("CONFIG")){
+			return PhyModule.GeneralConfig01.getId();
+		}
+		else if (moduleIdentifier.equals("COLOR")){
+			return PhyModule.ColorView01.getId();
+		}
+		else if (moduleIdentifier.equals("ECHO")){
+			return PhyModule.PingEcho01.getId();
+		}
+		else if (moduleIdentifier.equals("DISTANCE")){
+			return PhyModule.PingEcho02.getId();
+		}
+		else if (moduleIdentifier.equals("LED")){
+			return PhyModule.LED01.getId();
+		}
+		else if (moduleIdentifier.equals("RELAY")){
+			return PhyModule.Relay01.getId();
+		}
+		else if (moduleIdentifier.equals("MOTOR")){
+			return PhyModule.Motor01.getId();
+		}
+		else if (moduleIdentifier.equals("BUTTON")){
+			return PhyModule.PushButton01.getId();
+		}
+		else if (moduleIdentifier.equals("DOOR")){
+			return PhyModule.Door01.getId();
+		}
+		else if (moduleIdentifier.equals("LIGHTSENSOR")){
+			return PhyModule.LightSensor01.getId();
+		}
+		else if (moduleIdentifier.equals("RFID")){
+			return PhyModule.RFIDSensor01.getId();
+		}
+		else{
+			logWarn("Module identifier unknown: " + moduleIdentifier);
+			return -1;
+		}
+		/*switch(moduleIdentifier){
 		case "CONFIG":
 			return PhyModule.GeneralConfig01.getId();
 		case "COLOR":
@@ -155,11 +192,33 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		default:
 			logWarn("Module identifier unknown: " + moduleIdentifier);
 			return -1;
-		}
+		}*/
 	}
 	
 	int getFunctionID(String functionIdentifier) {
-		switch(functionIdentifier){
+		if(functionIdentifier.equals("SET")){
+			return SET;
+		}
+		else if(functionIdentifier.equals("START")){
+			return START;
+		}
+		else if(functionIdentifier.equals("STOP")){
+			return STOP;
+		}
+		else if(functionIdentifier.equals("READ")){
+			return READ;
+		}
+		else if(functionIdentifier.equals("BLINK")){
+			return BLINK;
+		}
+		else if(functionIdentifier.equals("RESULT")){
+			return RESULT;
+		}
+		else{
+			logWarn("Function identifier unknown: " + functionIdentifier);
+			return -1;
+		}
+		/*switch(functionIdentifier){
 		case "SETUP":
 		case "SET":
 			return SET;
@@ -176,7 +235,7 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		default:
 			logWarn("Function identifier unknown: " + functionIdentifier);
 			return -1;
-		}
+		}*/
 	}
 	
 	String encodeParameters(Value value) {
