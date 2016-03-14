@@ -19,6 +19,7 @@ import com.testingtech.ttcn.tri.AbstractCodecPlugin;
 import com.testingtech.ttcn.tri.TriMessageImpl;
 import com.testingtech.util.StringUtil;
 
+import de.tu_berlin.cs.uebb.muttcn.runtime.Anytype;
 import de.tu_berlin.cs.uebb.muttcn.runtime.RB;
 
 public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
@@ -87,7 +88,13 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 
 	@Override
 	public TriMessage encode(Value value) {
-		String typeEncoding = value.getType().getTypeEncoding();
+		
+		if(value instanceof Anytype) {
+			Anytype v = (Anytype)value;
+			value = v.getVariant(v.getPresentVariant());
+		}
+		
+		String typeEncoding = value.getType().getTypeEncoding(); // ""
 		
 		if (!"PhyIO".equals(typeEncoding)) {
 			TciCDProvided codec = getCodec(typeEncoding);
@@ -98,6 +105,10 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 				return null;
 			}
 		}
+		String typeEncodingVariant = value.getType().getTypeEncodingVariant();
+		
+		if(typeEncodingVariant == null)
+			return null;
 		
 		String moduleFunction = translateVariant(value.getType().getTypeEncodingVariant());
 		String parameters = encodeParameters(value);
