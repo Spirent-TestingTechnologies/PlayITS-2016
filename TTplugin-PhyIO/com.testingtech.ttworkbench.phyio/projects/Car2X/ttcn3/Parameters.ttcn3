@@ -1,9 +1,7 @@
 module Parameters {
 	import from PhyIOAUX all;
-	import from RS232ConfigPortAux all
-	with {
-		encode "BASE"
-	}
+	import from RS232ConfigPortAux all with { encode "BASE" }
+	import from TTlibrary_UnitTest all;
 	
 	// ID Karte: 194, 96, 196, 169 (DEZ)
 	// ID Chip: 4, 226, 92, 235 (DEZ)
@@ -61,4 +59,7 @@ module Parameters {
 	template Frequency CORRECT_FREQUENCY :=
 		(SWITCH_TIME_TARGET - ALLOWED_SWITCH_TIME_DEVIATION ..
 		SWITCH_TIME_TARGET + ALLOWED_SWITCH_TIME_DEVIATION);
+		
+	// TTlibraryUnitTest defines verdictPass and verdictFail but not verdictInconc 'cause that's how the pros operate...
+	template VerdictDescription verdictInconc(in template charstring p_reason := omit) := {verdict := inconc, reason := p_reason}
 }

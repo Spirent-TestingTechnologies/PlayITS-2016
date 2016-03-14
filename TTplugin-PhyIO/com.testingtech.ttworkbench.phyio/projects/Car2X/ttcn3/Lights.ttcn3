@@ -29,6 +29,7 @@
 //** @desc Testing Lightsensor data
 module Lights {
 	import from PhyIOAUX all;
+	import from TTlibrary_UnitTest all;
 
 	import from Components all;
 	import from Functions all;
@@ -38,16 +39,18 @@ module Lights {
 	 * @shortdesc Headlights On
 	 * @desc Turns the LED on then checks using the light sensor if it really is turned on.
 	 */
-	testcase HeadLightsOnTestcase() runs on me system System{
-		setverdict(internalHeadLightsTestcase(true));
+	testcase HeadLightsOnTestcase() runs on me system System {
+		var VerdictDescription verdict := internalHeadLightsTestcase(true);
+		setverdict(verdict.verdict, verdict.reason);
 	}
 
 	/**
 	 * @shortdesc Headlights Off
 	 * @desc Turns the LED off then checks using the light sensor if it really is turned off.
 	 */
-	testcase HeadLightsOffTestcase() runs on me system System{
-		setverdict(internalHeadLightsTestcase(false));
+	testcase HeadLightsOffTestcase() runs on me system System {
+		var VerdictDescription verdict := internalHeadLightsTestcase(false);
+		setverdict(verdict.verdict, verdict.reason);
 	}
 	
 	/**
@@ -57,7 +60,7 @@ module Lights {
 	 * @verdict to pass the measurement has to reveal the LED to be in the desired state. If it's not, then it fails.
 	 * 			The verdict is inconc if we get not result or a message of an unexpected type.
 	 */
-	function internalHeadLightsTestcase(boolean expectLEDOn) runs on me system System return verdicttype{
+	function internalHeadLightsTestcase(boolean expectLEDOn) runs on me system System return VerdictDescription {
 		var template State LED_OFF := {(0..BRIGHTNESS_THRESHOLD), ?};
 		var boolean isLEDOn := false;
 		var boolean measuredLED := false;
@@ -109,11 +112,11 @@ module Lights {
 		tearDown();
 		
 		if(not measuredLED) {
-			return inconc;
+			return verdictInconc("No message received.");
 		} else if(expectLEDOn != isLEDOn) {
-			return fail;
+			return verdictFail("Unexpected LED state.");
 		} else {
-			return pass;
+			return verdictPass();
 		}
 	}
 	
@@ -162,17 +165,16 @@ module Lights {
 		alt {
 			
 			[]lightSensor.receive(Frequency: 0.0) -> value frequency {
-				log("Emergency lights are not on.");
-				setverdict(fail);
+				setverdict(fail, "Emergency lights are not on.");
 			}
 			[]lightSensor.receive(CORRECT_FREQUENCY) -> value frequency {
 				setverdict(pass);
 			}
 			[]lightSensor.receive(Frequency: ?) -> value frequency {
-				setverdict(fail);
+				setverdict(fail, "Wrong frequency", frequency);
 			}
 			[]t.timeout {
-				setverdict(inconc);
+				setverdict(inconc, "Timeout");
 			}
 		}
 		
