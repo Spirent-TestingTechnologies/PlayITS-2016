@@ -77,7 +77,7 @@ module Lights {
 			led.send(switchLED_ON);
 		} else {
 			// should be off already but we want to be sure
-			led.send(switchLED_ON);
+			led.send(switchLED_OFF);
 		}
 		
 		// wait a bit to make sure that the LED really has the desired state by now
