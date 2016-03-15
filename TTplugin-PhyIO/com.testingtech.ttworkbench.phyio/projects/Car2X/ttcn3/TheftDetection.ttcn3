@@ -115,14 +115,22 @@ module TheftDetection {
 					result := fail;
 				}
 				[]rfidSensor.receive(RFID: OWNER_RFID) {
+					if(not hasRFID) {
+						// restart timer here because we want to give extra time to push button
+						t.start(30.0);
+					}
+					
 					hasRFID := true;
 					isRFIDCorrect := true;
-					
-					// restart timer here because we want to give extra time to push button
-					t.start(30.0);
 				}
 				[]rfidSensor.receive(RFID: ?) {
 					// false RFID
+					
+					if(not hasRFID) {
+						// restart timer here because we want to give extra time to push button
+						t.start(30.0);
+					}
+					
 					hasRFID := true;
 					isRFIDCorrect := false;
 				}
