@@ -1,5 +1,6 @@
 module Distance{
 	import from PhyIOAUX all;
+	import from TTlibrary_UnitTest all;
 	
 	import from Components all;
 	import from Functions all;
@@ -33,17 +34,19 @@ module Distance{
 	 *
 	 */
 	function internalDistancesTestcase(DistancesToCheck list) runs on me system System return verdicttype {
-		// TODO should yield inconc if no answers come from the sensor
-		 
 		var verdicttype result := none;
 		var DistanceSensorState state;
 		var integer i := 0;
+		var boolean hasReceivedData := false;
 		
 		timer singleMeasurementTimer;
 		
 		setup();
 		
 		distanceSensor.send(ReadDistanceStart:{});
+		
+		t.start(TIME_DISTANCE_FIRST_MEASUREMENT);
+		singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
 		
 		while(i < lengthof(list) and result == none) {
 
@@ -52,19 +55,23 @@ module Distance{
 			
 			alt {
 				[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state {
-					if(compareDist(state.distance, list[i])){
+					if(compareDist(state.distance, list[i])) {
+						log("Success at " & int2str(list[i]) & "cm");
 						t.start(TIME_DISTANCE);
 						i := i + 1;
 					}
 					// else continue with same index since the we're not in the desired range
 					
+					hasReceivedData := true;
+					
 					singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
 				}
 				[]singleMeasurementTimer.timeout {
-					result := inconc;
+					result := verdictFail("Failed to match distance within given time span");
 				}
-				[]t.timeout {
-					result := fail;
+				[not hasReceivedData]t.timeout {
+					result := verdictFail("No data from sensor");
+					
 				}
 			}
 		}
