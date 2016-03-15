@@ -115,6 +115,7 @@ module Functions {
 	 */
 	function setup() runs on me system System {
 		map(self:config,			system:config)			param (SUT_RS232_CONFIG, 1);
+		map(self:config,			system:config)			param (SUT_RS232_CONFIG, 2);
 
 		// ports on simulation Arduino
 		map(self:led, 				system:led) 			param (1, 1);
