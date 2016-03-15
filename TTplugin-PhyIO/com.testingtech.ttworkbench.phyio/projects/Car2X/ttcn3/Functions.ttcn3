@@ -109,7 +109,16 @@ module Functions {
 	function compareDist(integer measuredDistance, integer expectedDistance) return boolean {
 		return abs_int(measuredDistance - expectedDistance) <= ALLOWED_DISTANCE_DEVIATION;
 	}
-	
+
+	/**
+	 * @desc notify UI about current stage
+	 * @param id stage number, make sure it's defined in the parameters of the testcase
+	 * @üaram timeWindow time in seconds, 0 == no time window
+	 */
+	function setStage(integer id, float timeWindow) {
+		action("stage" & int2str(id) & ",timeWindow:" & int2str(float2int(timeWindow)));
+	}
+
 	/**
 	 * @desc maps all ports  
 	 */
