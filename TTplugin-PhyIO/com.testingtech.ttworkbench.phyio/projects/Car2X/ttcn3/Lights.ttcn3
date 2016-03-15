@@ -38,6 +38,8 @@ module Lights {
 	/**
 	 * @shortdesc Headlights On
 	 * @desc Turns the LED on then checks using the light sensor if it really is turned on.
+	 * @stage 1:Switch on LED
+	 * @stage 2:Wait for light sensor
 	 */
 	testcase HeadLightsOnTestcase() runs on me system System {
 		var VerdictDescription verdict := internalHeadLightsTestcase(true);
@@ -47,6 +49,8 @@ module Lights {
 	/**
 	 * @shortdesc Headlights Off
 	 * @desc Turns the LED off then checks using the light sensor if it really is turned off.
+	 * @stage 1:Switch off LED
+	 * @stage 2:Wait for light sensor
 	 */
 	testcase HeadLightsOffTestcase() runs on me system System {
 		var VerdictDescription verdict := internalHeadLightsTestcase(false);
@@ -67,6 +71,8 @@ module Lights {
 		
 		setup();
 		
+		action("stage:1");
+		
 		if(expectLEDOn) {
 			led.send(switchLED_ON);
 		} else {
@@ -79,6 +85,8 @@ module Lights {
 		t.timeout;
 		
 		lightSensor.send(READ_BRIGHTNESS);
+		
+		action("stage:2,timeWindow:" & int2str(float2int(TIME_HEADLIGHTS)));
 		
 		t.start(TIME_HEADLIGHTS);
 		
@@ -151,11 +159,15 @@ module Lights {
 	 * 		 reads the sensors output, which is the average time elapsed between
 	 * 		 switches. These have to be near the expected value.
 	 * @verdict pass when emergency light blink with expected frequency, fail otherwise
+	 * @stage 1:Start to blink
+	 * @stage 2:Wait for frequency detection
 	 */
 	testcase EmergencyLightsTestcase() runs on me system System {
 		var Frequency frequency;
 		
 		setup();
+		
+		action("stage:1");
 		
 		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
 		
@@ -166,6 +178,8 @@ module Lights {
 		
 		t.start(TIME_EMERGENCY_LIGHTS);
 		lightSensor.send(ReadFrequencyStop: {});
+		
+		action("stage:2,timeWindow:" & int2str(float2int(TIME_EMERGENCY_LIGHTS)));
 		
 		alt {
 			
