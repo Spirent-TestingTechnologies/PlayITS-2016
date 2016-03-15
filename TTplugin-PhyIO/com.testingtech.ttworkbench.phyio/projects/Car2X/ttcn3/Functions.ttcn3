@@ -123,6 +123,7 @@ module Functions {
 		map(self:rfidSensor,		system:rfidSensor)		param (DeviceID_1, SensorID_3);
 		map(self:doorSensor,		system:doorSensor)		param (DeviceID_1, SensorID_4);
 		map(self:distanceSensor,	system:distanceSensor)	param (DeviceID_1, SensorID_5);
+		map(self:theftDetection,	system:theftDetection)	param (DeviceID_1, SensorID_1);
 	}
 	
 	/**
@@ -134,6 +135,7 @@ module Functions {
 		unmap(self:rfidSensor,		system:rfidSensor);
 		unmap(self:doorSensor,		system:doorSensor);
 		unmap(self:distanceSensor,	system:distanceSensor);
+		unmap(self:theftDetection,	system:theftDetection);
 	}
 	
 }

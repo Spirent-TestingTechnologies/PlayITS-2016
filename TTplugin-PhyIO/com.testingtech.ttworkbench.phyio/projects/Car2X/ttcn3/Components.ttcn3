@@ -20,6 +20,7 @@ module Components {
 		port PhyLED led;
 		port PhyDoor doorSensor;
 		port PhyRFIDSensor rfidSensor;
+		port PhyTheftDetection theftDetection;
 	}
 	
 	//**@desc me = System running the tests
