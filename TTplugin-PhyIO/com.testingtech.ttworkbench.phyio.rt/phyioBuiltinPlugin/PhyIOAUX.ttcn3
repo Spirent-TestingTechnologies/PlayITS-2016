@@ -30,11 +30,27 @@
  * @desc PhyIO Configuration module
  */
 module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
-	import from RS232ConfigPortAux all;
-
-	import from TTCN3AUX all;
+	public import from TTCN3AUX all;
 	public import from RS232ConfigPortAux all;
 
+	const SensorID SensorID_Configuration := 0;
+	const SensorID SensorID_1 := 1;
+	const SensorID SensorID_2 := 2;
+	const SensorID SensorID_3 := 3;
+	const SensorID SensorID_4 := 4;
+	const SensorID SensorID_5 := 5;
+	const SensorID SensorID_6 := 6;
+	const SensorID SensorID_7 := 7;
+	const SensorID SensorID_8 := 8;
+	const SensorID SensorID_9 := 9;
+	
+	const DeviceID DeviceID_0 := 0;
+	const DeviceID DeviceID_1 := 1;
+	const DeviceID DeviceID_2 := 2;
+	const DeviceID DeviceID_3 := 3;
+	const DeviceID DeviceID_4 := 4;
+	const DeviceID DeviceID_5 := 5;
+ 
 	type integer Timestamp;
 
 	group PhyIO {
