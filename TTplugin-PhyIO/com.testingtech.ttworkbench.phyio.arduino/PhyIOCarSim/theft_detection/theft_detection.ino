@@ -45,25 +45,14 @@ long randNumber; // random number for simulated parts
 #define Button1Pin 2
 int BUTTON_ENABLED = 0;
 
-struct ButtonConfig{
-  int ID;
-  int state;
-  int pin;
-
-  ButtonConfig(int cID, int buttonPin){
-    ID = cID;
-    pin = buttonPin;
-    pinMode(pin, INPUT);
-  }
-};
-
-ButtonConfig Button1(1, Button1Pin);
-
 //RFID 
 unsigned int RFID_ENABLED = 0; // Tells if rfid is enabled for scanning
 #define RFID_SS_PIN 10 
 #define RFID_RST_PIN 9
 MFRC522 mfrc522(RFID_SS_PIN, RFID_RST_PIN); // creates and holds mfrc522 data
+
+//Theft Detection
+int THEFT_ENABLED = 0; // Enables theft detection
 
 
 void setup() {
@@ -105,49 +94,69 @@ void loop() {
       functionType = XSERIAL.parseInt();
       command = XSERIAL.parseInt();
 
-      switch (functionType) {
-        case CV01:
-          DEBUG_PRINTLN("#Not supported.");
-          break;
-        case PE01:
-          DEBUG_PRINTLN("#Not supported. Use distance module");
-          break;
-        case LED01:
-          // LED
-          LEDFunction(id, command);
-          break;
-        case REL01:
-          DEBUG_PRINTLN("#Not supported.");
-          break;
-        case MM01:
-          DEBUG_PRINTLN("#Not supported.");
-          break;
-        case RF01:
-          // RFID Communication
-          RFIDFunction(id, command);
-          break;
-        case DR01:
-          // Door
-          ButtonFunction(id, command);
-          break;
-          
+      if(THEFT_ENABLED){
+        if(functionType == TD01 && command == STOP){
+          THEFT_ENABLED = 0;
+          DEBUG_PRINTLN("#Theft Detection stopped.");
+        }else{
+          DEBUG_PRINTLN("#Please exit theft mode first.");
+        }
+       
+      }
+      else{
+        switch (functionType) {
+          case CV01:
+            DEBUG_PRINTLN("#Not supported.");
+            break;
+          case PE01:
+            DEBUG_PRINTLN("#Not supported. Use distance module");
+            break;
+          case LED01:
+            // LED
+            LEDFunction(id, command);
+            break;
+          case REL01:
+            DEBUG_PRINTLN("#Not supported.");
+            break;
+          case MM01:
+            DEBUG_PRINTLN("#Not supported.");
+            break;
+          case RF01:
+            // RFID Communication
+            RFIDFunction(id, command);
+            break;
+          case DR01:
+            // Door
+            ButtonFunction(id, command);
+            break;
+         case TD01:
+            // Theft Detection 
+            TheftDetectionFunction(id, command);
+            break;
+        }
       }
       processCleanUp();
     }
   }
-  if(BUTTON_ENABLED){
-      // Add all buttons to be processed here
-      ButtonFunctionProcess(&Button1); 
-  }
-  if(RFID_ENABLED && mfrc522.PICC_IsNewCardPresent()){
-     //Card detected, process data...
-     RFIDFunctionProcess(RF01);
-  }
-  LEDshouldBlink();
-
+  ProcessHandling();
 }
 
 // -------- DoorFunction -----------
+struct ButtonConfig{
+  int ID;
+  int state;
+  int pin;
+
+  ButtonConfig(int cID, int buttonPin){
+    ID = cID;
+    pin = buttonPin;
+    pinMode(pin, INPUT);
+  }
+};
+
+ButtonConfig Button1(1, Button1Pin);
+
+
 void ButtonFunction(int id, int command){
   DEBUG_PRINT("#In ButtonFunction with function ");
   DEBUG_PRINTLN(command);
@@ -163,7 +172,8 @@ void ButtonFunction(int id, int command){
   }
 }
 
-void ButtonFunctionProcess(struct ButtonConfig *bt){
+// Function returns 1 if the state changed, 0 if not
+int ButtonFunctionProcess(struct ButtonConfig *bt){
   int current_state;
 
 #ifdef BT_PRESENT
@@ -188,12 +198,16 @@ void ButtonFunctionProcess(struct ButtonConfig *bt){
     XSERIAL.println(bt->state);
 
     XSERIAL.flush();
+    return 1;
   }
+  return 0;
 }
 
 // -------- RFIDFunction -----------
+// Needs to be refactored to support multiple rfid sensors using a rfid struct
 // ID Karte: 194, 96, 196, 169 (DEZ)
 // ID Chip: 4, 226, 92, 235 (DEZ)
+
 int rfid_format = DEC;
 int rfid_tag[4]; // Sollte noch in Struct umgewandelt werden
 // bin = 2; dec = 10; oct = 8; hex = 16;
@@ -236,13 +250,15 @@ void RFIDFunctionSetup(){
   DEBUG_PRINTLN("Tag erfolgreich gesetzt.");  
 }
 
-void RFIDFunctionProcess(int id){
+// Function returns 1 if the rfid read is matching the expected one, 0 if it does not match
+// and only if in simulating mode it can return -1 when no simulated card was found nearby
+int RFIDFunctionProcess(int id){
     DEBUG_PRINTLN("#In RFIDFunctionProcess...");
     int rfid_tag_tmp[4];
 
 #ifdef RFID_PRESENT    
     if(!mfrc522.PICC_ReadCardSerial()){
-      return; // nothing to read
+      return -1; // nothing to read
     }
 
     for (byte i = 0; i < mfrc522.uid.size; i++){
@@ -250,13 +266,17 @@ void RFIDFunctionProcess(int id){
     }
 #else
     randNumber = random(100);
-    if(randNumber >= 5){
-      return; // nothing to read
+    if(randNumber >= 2){
+      return -1; // nothing to read
     }
 
     // Generate random rfid uid
     for (byte i = 0; i < 4; i++){
-      rfid_tag_tmp[i] = random(256); 
+      if(randNumber == 0){
+        rfid_tag_tmp[i] = random(256); 
+      }else{
+        rfid_tag_tmp[i] = rfid_tag[i];
+      }
     }
 #endif
 
@@ -277,6 +297,20 @@ void RFIDFunctionProcess(int id){
     
     XSERIAL.println(time);
     XSERIAL.flush();
+
+     if(rfid_tag[0] != 0 && rfid_tag[1] != 0 && rfid_tag[2] != 0 && rfid_tag[3] != 0){
+      for(int i = 0; i < 4; i++){
+        if(rfid_tag[i] != rfid_tag_tmp[i]){
+          DEBUG_PRINT("#Tags stimmen nicht überein: ");
+          DEBUG_PRINT(rfid_tag[i]); DEBUG_PRINT(" != ");
+          DEBUG_PRINTLN(rfid_tag_tmp[i]);
+          return 0;
+        }
+      }
+      return 1;
+    }
+    return 0;
+
 }
 
 
@@ -402,6 +436,83 @@ void LEDSwitch(struct LEDFunctionConfig *led, int state){
     led->state = HIGH;
     digitalWrite(led->pin, HIGH);
   }
+}
+
+// ----------------- Theft Detection -----------
+
+struct TheftDetectionConfig{
+  int ID;
+  int bt_changed;
+  unsigned long bt_time;
+  int rfid_matched;
+  //LEDFunctionConfig* led;
+  //ButtonConfig* button;
+  //RFIDConfig* struct
+
+  TheftDetectionConfig(int cID){
+    ID = cID;
+    bt_changed = 0;
+    bt_time = 0;
+    rfid_matched = 0;
+    //led = &cLED;
+    //button = &cButton;
+  }
+};
+
+TheftDetectionConfig Theft01(1);
+
+//<ID>, <TD01>, START ,<int: tag1>,<int: tag2>,<int: tag3>,<int: tag4>
+void TheftDetectionFunction(int id, int command){
+  DEBUG_PRINT("#In the TheftDetectionFunction with function : '");
+  DEBUG_PRINT(command);
+
+  DEBUG_PRINT("' and with ID: ");
+  DEBUG_PRINTLN(id);
+
+  switch (command) {
+    case START:
+      RFIDFunctionSetup(); // Read and set rfid tag from serial
+      RFID_ENABLED = 1;
+      BUTTON_ENABLED = 1; // Enables button
+      THEFT_ENABLED = 1;
+      break;
+    case STOP:
+      BUTTON_ENABLED = 0; // Disable Button
+      LEDFunctionSet(1,0); // Turn of LED
+      RFID_ENABLED = 0;
+      THEFT_ENABLED = 0; // Disable Theft Mode
+      break;
+    default:
+      break;
+ 
+  }
+}
+
+// ----------------- PROCESS HANDLING ----------
+// No real multi threading or processes involved
+
+void ProcessHandling(){
+  if(BUTTON_ENABLED){
+      // Add all buttons to be processed here
+      Theft01.bt_changed = ButtonFunctionProcess(&Button1);
+      Theft01.bt_time = millis();
+  }
+  if(RFID_ENABLED && mfrc522.PICC_IsNewCardPresent()){
+     //Card detected, process data...
+     int res = RFIDFunctionProcess(RF01);
+     if(THEFT_ENABLED){
+      Theft01.rfid_matched = res;
+     }
+     
+  }
+  if(THEFT_ENABLED){
+    if(Theft01.bt_changed){
+      if(!Theft01.rfid_matched){
+        LEDFunctionBlink(1);
+      }
+    }
+  }
+  LEDshouldBlink();  
 }
 
 
