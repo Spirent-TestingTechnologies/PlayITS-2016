@@ -47,14 +47,13 @@ module Parameters {
 	modulepar float TIME_DOORS := 5.0;
 	modulepar float TIME_RFID := 10.0;
 	modulepar float TIME_THEFT_DETECTION := 30.0;
-	modulepar float TIME_DISTANCE := 5.0;
-	modulepar float TIME_DISTANCE_FIRST_MEASUREMENT := 3.0;
+	modulepar float TIME_DISTANCE_FIRST_MEASUREMENT := 5.0;
 	modulepar float TIME_DISTANCE_SINGLE_MEASUREMENT := 3.0;
 
 	type record of integer DistancesToCheck;
 	
 	modulepar DistancesToCheck SINGLE_DISTANCE := {10};
-	modulepar DistancesToCheck VARIOUS_DISTANCES := {30, 20, 10, 50};
+	// modulepar DistancesToCheck VARIOUS_DISTANCES := {30, 20, 10, 50};
 	
 	
 	template Frequency CORRECT_FREQUENCY :=

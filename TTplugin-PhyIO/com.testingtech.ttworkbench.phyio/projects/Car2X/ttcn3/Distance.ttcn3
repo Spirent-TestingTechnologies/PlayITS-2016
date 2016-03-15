@@ -10,6 +10,7 @@ module Distance{
 	 * @shortdesc Single Distance
 	 * @desc Move object a certain distance in front of the sensor and measure it
 	 * @verdict pass if the distance sensor yields the expected distance else fail
+	 * @stage 1: Distance: 10cm
 	 */
 	testcase SingleDistanceTestcase() runs on me system System {
 		var VerdictDescription verdict := internalDistancesTestcase(SINGLE_DISTANCE);
@@ -20,9 +21,16 @@ module Distance{
 	 * @shortdesc Various Distances
 	 * @desc Move object a certain distance in front of the sensor and measure it. Repeat this for a number of values.
 	 * @verdict pass if the distance sensor yields the expected distances else fail
+	 * @stage 1: Distance: 30cm
+	 * @stage 2: Distance: 10cm
+	 * @stage 3: Distance: 20cm
+	 * @stage 4: Distance: 50cm
 	 */
 	testcase VariousDistancesTestcase() runs on me system System {
-		var VerdictDescription verdict := internalDistancesTestcase(VARIOUS_DISTANCES);
+		// these values are hardcoded because UI can't handle parameters that are changend on runtime
+		// the number of elements in the list would affect the number of stages
+		var DistancesToCheck variousDistances := {30, 10, 20, 50};
+		var VerdictDescription verdict := internalDistancesTestcase(variousDistances);
 		setverdict(verdict.verdict, verdict.reason);
 	}
 	
@@ -33,7 +41,6 @@ module Distance{
 	 * @param list list of expected distances
 	 * @return verdict
 	 * @verdict pass if all distances match before timeout, fail otherwise.
-	 *
 	 */
 	function internalDistancesTestcase(DistancesToCheck list) runs on me system System return VerdictDescription {
 		var VerdictDescription result := {none} ;
@@ -50,16 +57,25 @@ module Distance{
 		t.start(TIME_DISTANCE_FIRST_MEASUREMENT);
 		singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
 		
+		action("stage" & int2str(i+1) & ",timeWindow:" & int2str(float2int(TIME_DISTANCE_SINGLE_MEASUREMENT)));
+		
 		while(i < lengthof(list) and result.verdict == none) {
 
-			t.start(TIME_DISTANCE);
+			t.start(TIME_DISTANCE_FIRST_MEASUREMENT);
 			singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
 			
 			alt {
 				[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state {
 					if(compareDist(state.distance, list[i])) {
 						log("Success at " & int2str(list[i]) & "cm");
-						t.start(TIME_DISTANCE);
+						
+						t.start(TIME_DISTANCE_FIRST_MEASUREMENT);
+						
+						if(i < lengthof(list) - 1) {
+							action("stage" & int2str(i+1) &
+								",timeWindow:" & int2str(float2int(TIME_DISTANCE_SINGLE_MEASUREMENT)));
+						}
+						
 						i := i + 1;
 					}
 					// else continue with same index since the we're not in the desired range
