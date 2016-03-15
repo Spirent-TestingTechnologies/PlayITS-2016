@@ -19,21 +19,18 @@ module Doors {
     	
 		alt{
 			[]doorSensor.receive(DoorState: true) {
-				log("Door was opened");
-				setverdict(pass);
+				setverdict(pass, "Door was opened");
 			}
 			[]doorSensor.receive(DoorState: false) {
 				// false should never be sent but if it is we don't bother.
-				log("Door is closed");
+				log("Door is closed -> repeat");
 				repeat;
 			}
 			[]t.timeout {
-				log("Sensor sent no data.");
-				setverdict(fail);
+				setverdict(fail, "Sensor sent no data");
 			}
 			[]any port.receive {
-				log("Unexpected Message");
-				setverdict(fail);
+				setverdict(inconc, "Unexpected message");
 			}
 		}
 
