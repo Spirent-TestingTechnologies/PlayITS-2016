@@ -68,7 +68,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			template SwitchLED switchLED_OFF := false;
 			
 			type float BlinkLEDStart with {
-				variant "LED,BLINK"
+				variant "LED,START"
 			}
 			type record BlinkLEDStop {} with {
 				variant "LED,STOP"

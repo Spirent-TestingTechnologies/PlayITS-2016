@@ -196,9 +196,6 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		else if(functionIdentifier.equals("READ")){
 			return READ;
 		}
-		else if(functionIdentifier.equals("BLINK")){
-			return BLINK;
-		}
 		else if(functionIdentifier.equals("RESULT")){
 			return RESULT;
 		}
