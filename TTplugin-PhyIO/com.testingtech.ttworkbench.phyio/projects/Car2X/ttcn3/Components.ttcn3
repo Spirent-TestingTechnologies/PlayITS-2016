@@ -10,13 +10,14 @@ module Components {
 
 	//**@desc Component port definition System measuring the SUT (Arduino)
 	type component TesterPorts {
-		port PhyConfig config;
+		port PhyConfig testerConfig;
 		port DistanceSensor distanceSensor;
 		port PhyLightSensor lightSensor;
 	}
 	
 	//**@desc Component  port definition System under Test (Arduino)
 	type component SUTPorts {
+		port PhyConfig sutConfig;
 		port PhyLED led;
 		port PhyDoor doorSensor;
 		port PhyRFIDSensor rfidSensor;

@@ -94,7 +94,12 @@ module Lights {
 			[] t.timeout {
 				measuredLED := false;
 			}
-			[] config.receive {
+			[] testerConfig.receive {
+				// config port sends some data in some of the Arduino files
+				// TODO make sure that it doesn't
+				repeat;
+			}
+			[] sutConfig.receive {
 				// config port sends some data in some of the Arduino files
 				// TODO make sure that it doesn't
 				repeat;
