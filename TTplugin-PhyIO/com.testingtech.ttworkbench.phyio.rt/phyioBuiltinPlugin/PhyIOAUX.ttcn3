@@ -288,10 +288,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			type port PhyLightSensor message {
 				in State, Frequency;
 				out ReadLightSensorState,
-					ReadLightSwitchStart,
-					ReadFrequencyStart,
-					ReadLightSwitchStop,
-					ReadFrequencyStop;
+				ReadLightSwitchStart,
+				ReadFrequencyStart,
+				ReadLightSwitchStop,
+				ReadFrequencyStop;
         	
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
@@ -312,6 +312,22 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			type port PhyRFIDSensor message {
 				in RFID;
 				out RFID, ReadRFIDStart, ReadRFIDStop;
+        	
+				map param (DeviceID deviceID, SensorID sensorID);
+			}
+		}
+		
+		group TheftDetection {
+			type RFID TheftStart with {
+				variant "THEFT,START"
+			}
+			
+			type record TheftStop {} with {
+				variant "THEFT,STOP"
+			}
+			
+			type port PhyTheftDetection message {
+				out TheftStart, TheftStop;
         	
 				map param (DeviceID deviceID, SensorID sensorID);
 			}

@@ -11,7 +11,8 @@ public enum PhyModule {
 	PushButton01(60),
 	Door01(60),
 	LightSensor01(70),
-	RFIDSensor01(80);
+	RFIDSensor01(80),
+	TheftDetection01(85);
 	
 	private int id;
 

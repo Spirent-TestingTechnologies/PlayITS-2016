@@ -38,7 +38,11 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		{{ReadFrequencyStop := {}},			"70, 3",					"Frequency stop"},
 		// ReadLightSwitchStart/Stop is not used anymore -> no tests
 		{{ReadLightSensorState := false},	"70, 4, 0",					"Read light sensor"},
-		{{ReadLightSensorState := true},	"70, 4, 1",					"Read frequency"}
+		{{ReadLightSensorState := true},	"70, 4, 1",					"Read frequency"},
+		
+		// Theft Detection
+		{{TheftStart := {255, 0, 2, 156}},	"85, 2, 255, 0, 2, 156",	"Start theft detection"},
+		{{TheftStop := {}},					"85, 3",					"Stop theft detection"}
 	};
 	
 	testcase EncodingTestcase() runs on me system me {

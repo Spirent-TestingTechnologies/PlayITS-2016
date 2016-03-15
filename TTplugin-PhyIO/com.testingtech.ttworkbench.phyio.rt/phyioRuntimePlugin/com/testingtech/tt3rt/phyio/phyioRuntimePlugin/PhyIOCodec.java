@@ -173,6 +173,9 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		else if (moduleIdentifier.equals("RFID")){
 			return PhyModule.RFIDSensor01.getId();
 		}
+		else if (moduleIdentifier.equals("THEFT")){
+			return PhyModule.TheftDetection01.getId();
+		}
 		else{
 			logWarn("Module identifier unknown: " + moduleIdentifier);
 			return -1;
