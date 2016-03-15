@@ -119,7 +119,7 @@ void loop() {
 
 // -------- DoorFunction -----------
 void ButtonFunction(int id, int command){
-  DEBUG_PRINT("#In ButtonFunction with function ");
+  DEBUG_PRINT("In ButtonFunction with function ");
   DEBUG_PRINTLN(command);
   switch(command){
     case START:

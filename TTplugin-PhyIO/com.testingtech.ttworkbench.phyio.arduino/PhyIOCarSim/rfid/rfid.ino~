@@ -123,10 +123,8 @@ void RFIDFunctionTagClear(){
 }
 
 void RFIDFunction(int id, int command){
-#ifdef DEBUG
-  DEBUG_PRINT("#In RFIDFunction with function ");
+  DEBUG_PRINT("In RFIDFunction with function ");
   DEBUG_PRINTLN(command);
-#endif
   switch(command){
     case SETUP:
       RFIDFunctionTagClear();
@@ -147,25 +145,17 @@ void RFIDFunction(int id, int command){
 
 void RFIDFunctionSetup(){
   // ID, RF01, SETUP, <tag1>, <tag2>, <tag3>, <tag4>
-#ifdef DEBUG
-  DEBUG_PRINTLN("#In RFIDFunctionSetup... ");
-  DEBUG_PRINT("#Tag wird gelesen: ");
-#endif
+  DEBUG_PRINTLN("In RFIDFunctionSetup... ");
+  DEBUG_PRINT("Tag wird gelesen: ");
   for(int i = 0; i < 4; i++){
      rfid_tag[i] = XSERIAL.parseInt();
-     #ifdef DEBUG
      DEBUG_PRINT(rfid_tag[i]); DEBUG_PRINT(" ");
-     #endif
   }
-  #ifdef DEBUG
-  DEBUG_PRINTLN("Tag erfolgreich gesetzt."); 
-  #endif
+  DEBUG_PRINTLN("Tag erfolgreich gesetzt.");  
 }
 
 void RFIDFunctionProcess(int id){
-    #ifdef DEBUG
-    DEBUG_PRINTLN("#In RFIDFunctionProcess...");
-    #endif
+    DEBUG_PRINTLN("In RFIDFunctionProcess...");
     int rfid_tag_tmp[4];
 
 #ifdef RFID_PRESENT    
@@ -192,7 +182,7 @@ void RFIDFunctionProcess(int id){
 //    if(rfid_tag[0] != 0 && rfid_tag[1] != 0 && rfid_tag[2] != 0 && rfid_tag[3] != 0){
 //      for(int i = 0; i < 4; i++){
 //        if(rfid_tag[i] != rfid_tag_tmp[i]){
-//          DEBUG_PRINT("#Tags stimmen nicht überein: ");
+//          DEBUG_PRINT("Tags stimmen nicht überein: ");
 //          DEBUG_PRINT(rfid_tag[i]); DEBUG_PRINT(" != ");
 //          DEBUG_PRINTLN(rfid_tag_tmp[i]);
 //          return;

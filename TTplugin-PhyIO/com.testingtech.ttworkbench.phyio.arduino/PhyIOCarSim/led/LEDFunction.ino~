@@ -133,8 +133,8 @@ unsigned long currentMillis; // keeps track of time to signal if blinking is nee
 void LEDFunction( int id, int command) {
   // chooses the function for the led
   
-  DEBUG_PRINT("#In the LEDFunction with function : '");
-  DEBUG_PRINT(command);
+  DEBUG_PRINT("\n#In the LEDFunction with function : '");
+  DEBUG_PRINTLN(command);
 
   DEBUG_PRINT("' and with ID: ");
   DEBUG_PRINTLN(id);
