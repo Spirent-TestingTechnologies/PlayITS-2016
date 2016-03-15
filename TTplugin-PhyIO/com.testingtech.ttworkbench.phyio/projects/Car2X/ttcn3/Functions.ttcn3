@@ -123,8 +123,8 @@ module Functions {
 	 * @desc maps all ports  
 	 */
 	function setup() runs on me system System {
-		map(self:testerConfig,		system:testerConfig)	param (SUT_RS232_CONFIG, DeviceID_1);
-		map(self:sutConfig,			system:sutConfig)		param (TESTER_RS232_CONFIG, DeviceID_2);
+		map(self:sutConfig,			system:sutConfig)		param (SUT_RS232_CONFIG, DeviceID_1);
+		map(self:testerConfig,		system:testerConfig)	param (TESTER_RS232_CONFIG, DeviceID_2);
 
 		// ports on simulation Arduino
 		map(self:led, 				system:led) 			param (DeviceID_1, SensorID_1);
