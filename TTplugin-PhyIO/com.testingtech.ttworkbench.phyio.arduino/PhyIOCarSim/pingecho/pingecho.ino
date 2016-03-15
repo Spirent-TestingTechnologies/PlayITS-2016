@@ -62,7 +62,7 @@ void setup() {
   establishContact();  // send a byte to establish contact until receiver responds
 
   //Easy testing
-  PingEchoFunctionSetup();
+  PingEchoFunctionSetup2();
   //Easy testing
   
   DEBUG_PRINTLN("#Entered loop");
@@ -141,16 +141,16 @@ void PingEchoFunction2( int id, int command) {
 
   switch (command) {
     case SETUP:
-      PingEchoFunctionSetup();
+      PingEchoFunctionSetup2();
       break;
     case START:
-      //TODO
+      PingEchoFunctionStart2();
       break;
     case STOP:
-      //TODO
+      PingEchoFunctionStop2();
       break;
     case READ:
-      PingEchoFunctionRead();
+      PingEchoFunctionRead2();
       break;
     default:
       break;
@@ -158,7 +158,7 @@ void PingEchoFunction2( int id, int command) {
   // Read parameters
 }
 
-void PingEchoFunctionSetup() {
+void PingEchoFunctionSetup2() {
   DEBUG_PRINTLN("#In the PingEchpFunctionSetup");
   // ID, PE01,SETUP,<timeBetweenSamples:unit16>[,<medianIterations:uint16 = 1>][,<maxDistance:uint16 = 200>][,<unit:string = cm>]
   //Configures the PingEcho Module - Hardcoded for testcases
@@ -184,7 +184,26 @@ void PingEchoFunctionSetup() {
   DEBUG_PRINTLN(pePoint.unit);
 }
 
-void PingEchoFunctionRead() {
+void PingEchoFunctionStart2(){
+  #ifdef DEBUG
+  DEBUG_PRINTLN("#Started constanst distance measuring.");
+  #endif
+  pe_enabled = true;
+}
+
+void PingEchoFunctionStop2(){
+  #ifdef DEBUG
+  DEBUG_PRINTLN("#Stopped constanst distance measuring.");
+  #endif
+  pe_enabled = false;
+}
+
+void pintEchoSensorFix(){
+  pinMode(ECHO_PIN,OUTPUT);
+  digitalWrite(ECHO_PIN,LOW);
+  pinMode(ECHO_PIN,INPUT);
+}
+void PingEchoFunctionRead2() {
 
   DEBUG_PRINTLN("#In the PingEchoFunctionRead");
 
@@ -227,7 +246,7 @@ void computeTimer(){
 
   if (pe_enabled && millis() >= peTimer){
     peTimer += PE_TIME_BETWEEN_SAMPLES;
-    PingEchoFunctionRead();
+    PingEchoFunctionRead2();
   }
     
 
