@@ -12,7 +12,8 @@ module Distance{
 	 * @verdict pass if the distance sensor yields the expected distance else fail
 	 */
 	testcase SingleDistanceTestcase() runs on me system System {
-		setverdict(internalDistancesTestcase(SINGLE_DISTANCE));
+		var VerdictDescription verdict := internalDistancesTestcase(SINGLE_DISTANCE);
+		setverdict(verdict.verdict, verdict.reason);
 	}
 	
 	/**
@@ -21,7 +22,8 @@ module Distance{
 	 * @verdict pass if the distance sensor yields the expected distances else fail
 	 */
 	testcase VariousDistancesTestcase() runs on me system System {
-		setverdict(internalDistancesTestcase(VARIOUS_DISTANCES));
+		var VerdictDescription verdict := internalDistancesTestcase(VARIOUS_DISTANCES);
+		setverdict(verdict.verdict, verdict.reason);
 	}
 	
 	/**
@@ -33,8 +35,8 @@ module Distance{
 	 * @verdict pass if all distances match before timeout, fail otherwise.
 	 *
 	 */
-	function internalDistancesTestcase(DistancesToCheck list) runs on me system System return verdicttype {
-		var verdicttype result := none;
+	function internalDistancesTestcase(DistancesToCheck list) runs on me system System return VerdictDescription {
+		var VerdictDescription result := {none} ;
 		var DistanceSensorState state;
 		var integer i := 0;
 		var boolean hasReceivedData := false;
@@ -48,7 +50,7 @@ module Distance{
 		t.start(TIME_DISTANCE_FIRST_MEASUREMENT);
 		singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
 		
-		while(i < lengthof(list) and result == none) {
+		while(i < lengthof(list) and result.verdict == none) {
 
 			t.start(TIME_DISTANCE);
 			singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
@@ -76,8 +78,8 @@ module Distance{
 			}
 		}
 		
-		if(result == none) {
-			result := pass;
+		if(result.verdict == none) {
+			result := verdictPass("");
 		}
 		
 		distanceSensor.send(ReadDistanceStop:{});
