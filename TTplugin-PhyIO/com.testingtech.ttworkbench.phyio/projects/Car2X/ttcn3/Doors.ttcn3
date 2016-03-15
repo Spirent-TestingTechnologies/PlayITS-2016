@@ -18,7 +18,7 @@ module Doors {
 		t.start(TIME_DOORS);
 		doorSensor.send(ReadDoorStart:{});
 		
-		action("stage:1,timeWindow:" & int2str(float2int(TIME_DOORS)));
+		setStage(1, TIME_DOORS);
     	
 		alt{
 			[]doorSensor.receive(DoorState: true) {

@@ -44,7 +44,7 @@ module RFIDModule {
 		rfidSensor.send(ReadRFIDStart:{});
 		t.start(TIME_RFID);
 		
-		action("stage:1,timeWindow:" & int2str(float2int(TIME_RFID)));
+		setStage(1, TIME_RFID);
 		
 		alt{
 			[]rfidSensor.receive(RFID: correctRFID) -> value tmp{

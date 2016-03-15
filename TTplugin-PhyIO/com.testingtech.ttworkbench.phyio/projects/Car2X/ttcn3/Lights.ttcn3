@@ -71,7 +71,7 @@ module Lights {
 		
 		setup();
 		
-		action("stage:1");
+		setStage(1, 0.0);
 		
 		if(expectLEDOn) {
 			led.send(switchLED_ON);
@@ -86,7 +86,7 @@ module Lights {
 		
 		lightSensor.send(READ_BRIGHTNESS);
 		
-		action("stage:2,timeWindow:" & int2str(float2int(TIME_HEADLIGHTS)));
+		setStage(2, TIME_HEADLIGHTS);
 		
 		t.start(TIME_HEADLIGHTS);
 		
@@ -167,7 +167,7 @@ module Lights {
 		
 		setup();
 		
-		action("stage:1");
+		setStage(1, 0.0);
 		
 		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
 		
@@ -179,7 +179,7 @@ module Lights {
 		t.start(TIME_EMERGENCY_LIGHTS);
 		lightSensor.send(ReadFrequencyStop: {});
 		
-		action("stage:2,timeWindow:" & int2str(float2int(TIME_EMERGENCY_LIGHTS)));
+		setStage(2, TIME_EMERGENCY_LIGHTS);
 		
 		alt {
 			

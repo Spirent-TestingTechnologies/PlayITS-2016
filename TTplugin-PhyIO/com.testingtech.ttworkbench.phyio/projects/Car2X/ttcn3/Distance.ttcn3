@@ -57,7 +57,7 @@ module Distance{
 		t.start(TIME_DISTANCE_FIRST_MEASUREMENT);
 		singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
 		
-		action("stage" & int2str(i+1) & ",timeWindow:" & int2str(float2int(TIME_DISTANCE_SINGLE_MEASUREMENT)));
+		setStage(1, TIME_DISTANCE_SINGLE_MEASUREMENT);
 		
 		while(i < lengthof(list) and result.verdict == none) {
 
@@ -72,8 +72,7 @@ module Distance{
 						t.start(TIME_DISTANCE_FIRST_MEASUREMENT);
 						
 						if(i < lengthof(list) - 1) {
-							action("stage" & int2str(i+1) &
-								",timeWindow:" & int2str(float2int(TIME_DISTANCE_SINGLE_MEASUREMENT)));
+							setStage(i + 1, TIME_DISTANCE_SINGLE_MEASUREMENT);
 						}
 						
 						i := i + 1;
