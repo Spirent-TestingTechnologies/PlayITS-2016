@@ -118,14 +118,14 @@ module Functions {
 		map(self:sutConfig,			system:sutConfig)		param (TESTER_RS232_CONFIG, DeviceID_2);
 
 		// ports on simulation Arduino
-		map(self:led, 				system:led) 			param (1, 1);
-		map(self:rfidSensor,		system:rfidSensor)		param (1, 1);
-		map(self:doorSensor,		system:doorSensor)		param (1, 1);
-		map(self:distanceSensor,	system:distanceSensor)	param (1, 1);
-		map(self:theftDetection,	system:theftDetection)	param (1, 1);
+		map(self:led, 				system:led) 			param (DeviceID_1, SensorID_1);
+		map(self:rfidSensor,		system:rfidSensor)		param (DeviceID_1, SensorID_1);
+		map(self:doorSensor,		system:doorSensor)		param (DeviceID_1, SensorID_1);
+		map(self:distanceSensor,	system:distanceSensor)	param (DeviceID_1, SensorID_1);
+		map(self:theftDetection,	system:theftDetection)	param (DeviceID_1, SensorID_1);
 		
 		// ports on tester Arduino
-		map(self:lightSensor,		system:lightSensor)		param (2, 1);
+		map(self:lightSensor,		system:lightSensor)		param (DeviceID_2, SensorID_1);
 	}
 	
 	/**
