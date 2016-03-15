@@ -177,37 +177,11 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			logWarn("Module identifier unknown: " + moduleIdentifier);
 			return -1;
 		}
-		/*switch(moduleIdentifier){
-		case "CONFIG":
-			return PhyModule.GeneralConfig01.getId();
-		case "COLOR":
-			return PhyModule.ColorView01.getId();
-		case "ECHO":
-			return PhyModule.PingEcho01.getId();
-		case "DISTANCE":
-			return PhyModule.PingEcho02.getId();
-		case "LED":
-			return PhyModule.LED01.getId();
-		case "RELAY":
-			return PhyModule.Relay01.getId();
-		case "MOTOR":
-			return PhyModule.Motor01.getId();
-		case "BUTTON":
-			return PhyModule.PushButton01.getId();
-		case "DOOR":
-			return PhyModule.Door01.getId();
-		case "LIGHTSENSOR":
-			return PhyModule.LightSensor01.getId();
-		case "RFID":
-			return PhyModule.RFIDSensor01.getId();
-		default:
-			logWarn("Module identifier unknown: " + moduleIdentifier);
-			return -1;
-		}*/
 	}
 	
 	int getFunctionID(String functionIdentifier) {
-		if(functionIdentifier.equals("SET")){
+		if(functionIdentifier.equals("SET") ||
+				functionIdentifier.equals("SETUP")){
 			return SET;
 		}
 		else if(functionIdentifier.equals("START")){
@@ -229,24 +203,6 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 			logWarn("Function identifier unknown: " + functionIdentifier);
 			return -1;
 		}
-		/*switch(functionIdentifier){
-		case "SETUP":
-		case "SET":
-			return SET;
-		case "START":
-			return START;
-		case "STOP":
-			return STOP;
-		case "READ":
-			return READ;
-		case "BLINK":
-			return BLINK;
-		case "RESULT":
-			return RESULT;
-		default:
-			logWarn("Function identifier unknown: " + functionIdentifier);
-			return -1;
-		}*/
 	}
 	
 	String encodeParameters(Value value) {
