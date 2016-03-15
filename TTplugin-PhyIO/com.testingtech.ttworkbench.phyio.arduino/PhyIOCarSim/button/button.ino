@@ -12,6 +12,8 @@
 #define LS01   70
 #define RF01   80
 
+#define TD01   85
+
 #define SETUP 1
 #define SET 1
 #define START 2
@@ -155,7 +157,7 @@ void ButtonFunctionProcess(struct ButtonConfig *bt){
     XSERIAL.print(bt->ID); XSERIAL.print(",");
     XSERIAL.print(DR01); XSERIAL.print(",");
     XSERIAL.print(R1); XSERIAL.print(",");
-    XSERIAL.print(bt->state); XSERIAL.print(",");
+    XSERIAL.println(bt->state);
 
     XSERIAL.flush();
   }
