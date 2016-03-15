@@ -1,9 +1,10 @@
 module RFIDModule {
 	import from PhyIOAUX all;
+	import from TTlibrary_UnitTest all;
 	
 	import from Components all;
 	import from Functions all;
-	import from Parameters all; 
+	import from Parameters all;
 	
 	/**
 	 * @shortdesc Correct RFID
@@ -11,7 +12,8 @@ module RFIDModule {
 	 * @verdict pass if RFID is currect else fail
 	 */
 	testcase CorrectRFIDTestcase() runs on me system System {
-		setverdict(internalRFIDTestcase(OWNER_RFID, true));
+		var VerdictDescription verdict := internalRFIDTestcase(OWNER_RFID, true);
+		setverdict(verdict.verdict, verdict.reason);
 	}
 	
 	/**
@@ -20,7 +22,8 @@ module RFIDModule {
 	 * @verdict pass if RFID is detected and does NOT match. fail if there is NO RFID or the correct one.
 	 */
 	testcase FalseRFIDTestcase() runs on me system System {
-		setverdict(internalRFIDTestcase(FALSE_RFID, false));
+		var VerdictDescription verdict := internalRFIDTestcase(OWNER_RFID, false);
+		setverdict(verdict.verdict, verdict.reason);
 	}
 	
 	/**
@@ -29,9 +32,10 @@ module RFIDModule {
 	 * @param expectCorrectRFID true if match for correct RFID, false if a false one is expected
 	 */
 	function internalRFIDTestcase(RFID correctRFID, boolean expectCorrectRFID)
-			runs on me system System return verdicttype {
+	runs on me system System return VerdictDescription {
 		var boolean hasRFID := false;
 		var boolean isRFIDCorrect := false;
+		var RFID tmp;
 		
 		setup();
 		
@@ -39,11 +43,23 @@ module RFIDModule {
 		t.start(TIME_RFID);
 		
 		alt{
-			[]rfidSensor.receive(RFID: correctRFID){
+			[]rfidSensor.receive(RFID: correctRFID) -> value tmp{
+				log("Received correct RFID: {" &
+					int2str(tmp.id1) & ", " &
+					int2str(tmp.id2) & ", " &
+					int2str(tmp.id3) & ", " &
+					int2str(tmp.id4) & "}");
+    				
 				hasRFID := true;
 				isRFIDCorrect := true;
 			}
-			[]rfidSensor.receive(RFID: ?) {
+			[]rfidSensor.receive(RFID: ?) -> value tmp {
+				log("Received false RFID: {" &
+					int2str(tmp.id1) & ", " &
+					int2str(tmp.id2) & ", " &
+					int2str(tmp.id3) & ", " &
+					int2str(tmp.id4) & "}");
+									
 				hasRFID := true;
 				isRFIDCorrect := false;
 			}
@@ -60,11 +76,11 @@ module RFIDModule {
 		tearDown();
 		
 		if(not hasRFID) {
-			return inconc;
+			return verdictInconc("Received no RFID");
 		} else if(isRFIDCorrect == expectCorrectRFID) {
-			return pass;
+			return verdictPass("");
 		} else {
-			return fail;
+			return verdictFail("");
 		}
 	}
 	
