@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="D:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.1-9792d51791d92eddc0d9758885c1364396bdbf7e.jar" />
+    </item>
+    <item
+        jar="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\libs\protobuf-socket-rpc-2.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="daaf0b3ed067955cc304f593340ca64b8fc523ac">
+        <dex dex="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\pre-dexed\debug\protobuf-socket-rpc-2.0-e162f949d5c273d404a64171df4664daf71ced9b.jar" />
+    </item>
+    <item
+        jar="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\libs\slf4j-api-1.7.7.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="949db5d6435aecdd6c2a61ce252edd2e9d582441">
+        <dex dex="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\pre-dexed\debug\slf4j-api-1.7.7-61f1e3bd3f8dde464c35c20fe3b2d201e0e775bb.jar" />
+    </item>
+    <item
+        jar="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\pre-dexed\debug\classes-fb3fc25c9a0c2bd1d1f93ae6512565c8f6dbee5d.jar" />
+    </item>
+    <item
+        jar="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.1-3e19daf992e89e8e4312333212312ad8726b9942.jar" />
+    </item>
+    <item
+        jar="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\libs\TTmanServerAPI.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="bd1526c41f77e76e880f859e5c92ed652d22b517">
+        <dex dex="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\pre-dexed\debug\TTmanServerAPI-ce99d394568f3e64932aa2b5d90928eb4749518f.jar" />
+    </item>
+    <item
+        jar="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\libs\TTlogging.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="124d7d9533bcc7b9f2d452d3788d425bf5816dd2">
+        <dex dex="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\pre-dexed\debug\TTlogging-d03c51199776df63ac7297ba57380e3c10227713.jar" />
+    </item>
+    <item
+        jar="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\libs\TTtools.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="195f32f57f0cce967f98f92321d0eabcfc671f5b">
+        <dex dex="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\pre-dexed\debug\TTtools-c91ea16d9a6e3d7a1359789a2b3a38f5610ee2b2.jar" />
+    </item>
+    <item
+        jar="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\libs\protobuf-java-2.4.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="e2bcce57de8d4c6670bb65562c23e3986203aabb">
+        <dex dex="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\pre-dexed\debug\protobuf-java-2.4.1-f20282f05cd534920180ac7d1c710ceff77159f5.jar" />
+    </item>
+    <item
+        jar="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex dex="C:\Users\dammd\Play-ITS-2015\Car2xHMI\app\build\intermediates\pre-dexed\debug\classes-868a20a8353e7b378813949e0187ee5faaba1698.jar" />
+    </item>
+
+</items>

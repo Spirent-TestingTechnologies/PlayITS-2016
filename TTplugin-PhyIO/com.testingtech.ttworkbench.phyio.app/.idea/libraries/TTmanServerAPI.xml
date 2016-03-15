@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="TTmanServerAPI">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/TTmanServerAPI.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
