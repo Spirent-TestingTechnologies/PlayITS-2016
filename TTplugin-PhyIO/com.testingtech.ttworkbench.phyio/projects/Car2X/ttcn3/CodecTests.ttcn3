@@ -50,7 +50,7 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		
 		for(var integer i := 0; i < lengthof(ENCODE_LIST); i := i  + 1) {
 			if(checkEncode(ENCODE_LIST[i])) {
-			// TODO log
+				log("Success: " & ENCODE_LIST[i].d);
 			} else {
 				setverdict(fail, "Fail at:", ENCODE_LIST[i].d);
 			}
@@ -59,22 +59,32 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		// sadly impossible to put these into a list
 		if(not checkDecode<RFID>(RFID: {255, 0, 2, 156},						"80, 101, 255, 0, 2, 156")) {
 			setverdict(fail, "Fail at: RFID answer");
+		} else {
+			log("Success: RFID answer");
 		}
 		
 		if(not checkDecode<DoorState>(DoorState: true,							"60, 101, 1")) {
 			setverdict(fail, "Fail at: Door answer");
+		} else {
+			log("Success: Door answer");
 		}
 		
 		if(not checkDecode<DistanceSensorState>(DistanceSensorState: {3, 1002},	"21, 101, 3, 1002")) {
 			setverdict(fail, "Fail at: Distance answer");
+		} else {
+			log("Success: Distance answer");
 		}
 				
 		if(not checkDecode<State>(State: {37, 1002},							"70, 101, 37, 1002")) {
 			setverdict(fail, "Fail at: Brightness answer");
+		} else {
+			log("Success: Brightness answer");
 		}
 				
 		if(not checkDecode<Frequency>(Frequency: 3.25,							"70, 101, 3.25")) {
 			setverdict(fail, "Fail at: Frequency answer");
+		} else {
+			log("Success: Frequency answer");
 		}
 
 		if(getverdict == none) {
