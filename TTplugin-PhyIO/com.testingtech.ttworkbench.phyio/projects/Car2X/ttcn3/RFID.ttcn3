@@ -10,6 +10,7 @@ module RFIDModule {
 	 * @shortdesc Correct RFID
 	 * @desc Receives detected RFID which ought to be the correct one.
 	 * @verdict pass if RFID is currect else fail
+	 * @stage 1:Wait for RFID
 	 */
 	testcase CorrectRFIDTestcase() runs on me system System {
 		var VerdictDescription verdict := internalRFIDTestcase(OWNER_RFID, true);
@@ -20,6 +21,7 @@ module RFIDModule {
 	 * @shortdesc False RFID
 	 * @desc Receives detected RFID which ought to be a false one.
 	 * @verdict pass if RFID is detected and does NOT match. fail if there is NO RFID or the correct one.
+	 * @stage 1:Wait for RFID
 	 */
 	testcase FalseRFIDTestcase() runs on me system System {
 		var VerdictDescription verdict := internalRFIDTestcase(OWNER_RFID, false);
@@ -41,6 +43,8 @@ module RFIDModule {
 		
 		rfidSensor.send(ReadRFIDStart:{});
 		t.start(TIME_RFID);
+		
+		action("stage:1,timeWindow:" & int2str(float2int(TIME_RFID)));
 		
 		alt{
 			[]rfidSensor.receive(RFID: correctRFID) -> value tmp{
