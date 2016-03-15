@@ -10,12 +10,15 @@ module Doors {
 	 * @shortdesc Open Door
 	 * @desc In this testcase the door should be opened once.
 	 * @verdict passes if the door is opened within the given time window otherwise it fails.
+	 * @stage 1:Open door
 	 */
 	testcase OpenDoorTestcase() runs on me system System {
 		setup();
     	
 		t.start(TIME_DOORS);
 		doorSensor.send(ReadDoorStart:{});
+		
+		action("stage:1,timeWindow:" & int2str(float2int(TIME_DOORS)));
     	
 		alt{
 			[]doorSensor.receive(DoorState: true) {
