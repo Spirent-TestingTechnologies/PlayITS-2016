@@ -105,7 +105,7 @@ module TheftDetection {
 		rfidSensor.send(RFID: OWNER_RFID);
 		rfidSensor.send(ReadRFIDStart: {});
 		
-		t.start(30.0);
+		t.start(TIME_THEFT_DETECTION);
 		requestELTimer.start(EL_CHECK_TIME);
 		
 		while(result.verdict == none) {
@@ -145,8 +145,8 @@ module TheftDetection {
 					if(not hasRFID) {
 						// restart timer here because we want to give extra time to push button
 						if(expectDoor) {
-							setStage(2, 30.0);
-							t.start(30.0);
+							setStage(2, TIME_THEFT_DETECTION);
+							t.start(TIME_THEFT_DETECTION);
 						} else {
 							setStage(3, WAIT_FOR_EL_TIME);
 							t.start(WAIT_FOR_EL_TIME);
@@ -165,8 +165,8 @@ module TheftDetection {
 					if(not hasRFID) {
 						// restart timer here because we want to give extra time to push button
 						if(expectDoor) {
-							setStage(2, 30.0);
-							t.start(30.0);
+							setStage(2, TIME_THEFT_DETECTION);
+							t.start(TIME_THEFT_DETECTION);
 						} else {
 							setStage(3, WAIT_FOR_EL_TIME);
 							t.start(WAIT_FOR_EL_TIME);
