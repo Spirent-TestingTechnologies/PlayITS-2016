@@ -27,8 +27,6 @@ module UnitTests {
 		timer distanceSweepTimer;
 		var boolean readDistance := false;
 		
-		timer tmpTimer;
-		
 		while(run) {
 			alt {
 				[]sutConfig.receive(TestcaseInfo: ?) -> value testcaseInfo {
@@ -40,9 +38,12 @@ module UnitTests {
 						sendRFID := true;
 					} else if(testcaseInfo == "No RFID") {
 						sendRFID := false;
-					} else if (testcaseInfo == "Distance Sweep On") {
+					} else if(testcaseInfo == "Distance Sweep On") {
 						isDistanceSweepOn := true;
 						distanceSweepTimer.start(DISTANCE_SWEEP_TIME);
+					} else if(testcaseInfo == "Theft Detection") {
+						theftDetect();
+						stop;
 					}
 				}
 				
@@ -123,4 +124,67 @@ module UnitTests {
 		stop;
 	}
 	
+	function theftDetect() runs on System {
+		var boolean run := true;
+		var charstring testcaseInfo := "";
+		
+		var boolean sendRFID := true;
+		var boolean correctRFID := false;
+		var RFID rfid := OWNER_RFID;
+		var RFID expectedRFID := OWNER_RFID;
+		var boolean openDoor := false;
+		
+		var boolean isAlarmOn := false;
+		
+		while(run) {
+			alt {
+				[]sutConfig.receive(TestcaseInfo: ?) -> value testcaseInfo {
+					if(testcaseInfo == "Correct RFID") {
+						rfid := OWNER_RFID;
+						correctRFID := true;
+						sendRFID := true;
+					} else if(testcaseInfo == "False RFID") {
+						correctRFID := false;
+						rfid := FALSE_RFID;
+						sendRFID := true;
+					} else if(testcaseInfo == "No RFID") {
+						sendRFID := false;
+					} else if(testcaseInfo == "Open Door") {
+						openDoor := true;
+					} else if(testcaseInfo == "No Door") {
+						openDoor := false;
+					}
+				}
+				
+				[]theftDetection.receive(TheftStart: ?) -> value expectedRFID {
+					//TODO deal with other RFID than OWNER_RFID
+					if(sendRFID) {
+						rfidSensor.send(rfid);
+					}
+					if(openDoor) {
+						doorSensor.send(DoorState: true);
+					}
+					
+					if(openDoor and (not sendRFID or not correctRFID)){
+						isAlarmOn := true;
+					} else {
+						isAlarmOn := false;
+					}
+				}
+				[]theftDetection.receive(TheftStop: ?) {
+				}
+				[]lightSensor.receive(READ_FREQUENCY) {
+					if(isAlarmOn) {
+						lightSensor.send(Frequency: SWITCH_TIME_TARGET);
+					} else {
+						lightSensor.send(Frequency: 0.0);
+					}
+				}
+								
+				[]sutConfig.receive(StopThread: {}) {
+					run := false;
+				}
+			}
+		}
+	}
 }

@@ -104,6 +104,24 @@ module TheftDetection {
 		
 		setup();
 		
+		if(SIMULATION) {
+			sutConfig.send(TestcaseInfo: "Theft Detection");
+			
+			if(expectRFID == pass) {
+				sutConfig.send(TestcaseInfo: "Correct RFID");
+			} else if(expectRFID == fail) {
+				sutConfig.send(TestcaseInfo: "False RFID");
+			} else {
+				sutConfig.send(TestcaseInfo: "No RFID");
+			}
+			
+			if(expectDoor) {
+				sutConfig.send(TestcaseInfo: "Open Door");
+			} else {
+				sutConfig.send(TestcaseInfo: "No Door");
+			}
+		}
+		
 		theftDetection.send(TheftStart: OWNER_RFID);
 		
 		t.start(TIME_THEFT_DETECTION);
