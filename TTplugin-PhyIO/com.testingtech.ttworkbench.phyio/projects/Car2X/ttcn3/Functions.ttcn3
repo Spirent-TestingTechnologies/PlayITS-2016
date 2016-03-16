@@ -123,7 +123,7 @@ module Functions {
 	}
 
 	/**
-	 * @desc maps all ports  
+	 * @desc maps all ports
 	 */
 	function setup() runs on me system System {
 		map(self:sutConfig,			system:sutConfig)		param (SUT_RS232_CONFIG, DeviceID_1);
@@ -141,15 +141,18 @@ module Functions {
 	}
 	
 	/**
-	 * @desc unmaps all ports 
+	 * @desc unmaps all ports
 	 */
 	function tearDown() runs on me system System {
-		unmap(self:led, 			system:led);
-		unmap(self:lightSensor,		system:lightSensor);
-		unmap(self:rfidSensor,		system:rfidSensor);
-		unmap(self:doorSensor,		system:doorSensor);
-		unmap(self:distanceSensor,	system:distanceSensor);
-		unmap(self:theftDetection,	system:theftDetection);
+		unmap(self:led);
+		unmap(self:lightSensor);
+		unmap(self:rfidSensor);
+		unmap(self:doorSensor);
+		unmap(self:distanceSensor);
+		unmap(self:theftDetection);
+		
+		unmap(self:sutConfig);
+		unmap(self:testerConfig);
 	}
 	
 }
