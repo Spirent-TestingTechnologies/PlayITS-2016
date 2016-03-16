@@ -46,6 +46,7 @@ long randNumber; // random number for simulated parts
 int BUTTON_ENABLED = 0;
 
 //RFID 
+#define RFID_PRESENT 1
 unsigned int RFID_ENABLED = 0; // Tells if rfid is enabled for scanning
 #define RFID_SS_PIN 10 
 #define RFID_RST_PIN 9
@@ -96,7 +97,7 @@ void loop() {
 
       if(THEFT_ENABLED){
         if(functionType == TD01 && command == STOP){
-          THEFT_ENABLED = 0;
+          TheftDetectionFunction(1,command);
           DEBUG_PRINTLN("#Theft Detection stopped.");
         }else{
           DEBUG_PRINTLN("#Please exit theft mode first.");
@@ -367,7 +368,7 @@ void LEDFunction( int id, int command) {
       LEDFunctionSet(id, XSERIAL.parseInt());
       break;
     case BLINK:
-      LEDFunctionBlink(id);
+      LEDFunctionBlink(id, XSERIAL.parseFloat());
       break;
     case STOP:
       LEDFunctionSet(id, 0);
@@ -379,9 +380,9 @@ void LEDFunction( int id, int command) {
 
 
 // LED should be refactored
-void LEDFunctionBlink(int id) {
+void LEDFunctionBlink(int id, float freq) {
   // tells the given led, that it now has to blink
-  float freq = XSERIAL.parseFloat();
+  //float freq = XSERIAL.parseFloat();
 
   switch (id){
     case 1:
@@ -477,10 +478,11 @@ void TheftDetectionFunction(int id, int command){
       THEFT_ENABLED = 1;
       break;
     case STOP:
-      BUTTON_ENABLED = 0; // Disable Button
-      LEDFunctionSet(1,0); // Turn of LED
-      RFID_ENABLED = 0;
       THEFT_ENABLED = 0; // Disable Theft Mode
+      BUTTON_ENABLED = 0; // Disable Button
+      LEDFunctionSet(1,0); // Turn off LED
+      RFID_ENABLED = 0;
+      
       break;
     default:
       break;
@@ -495,7 +497,7 @@ void ProcessHandling(){
   if(BUTTON_ENABLED){
       // Add all buttons to be processed here
       Theft01.bt_changed = ButtonFunctionProcess(&Button1);
-      Theft01.bt_time = millis();
+      Theft01.bt_time = millis(); // currently unused
   }
   if(RFID_ENABLED && mfrc522.PICC_IsNewCardPresent()){
      //Card detected, process data...
@@ -506,9 +508,16 @@ void ProcessHandling(){
      
   }
   if(THEFT_ENABLED){
+    //194, 96, 196, 169
     if(Theft01.bt_changed){
-      if(!Theft01.rfid_matched){
-        LEDFunctionBlink(1);
+      DEBUG_PRINT("#Process Handling   rfid_matched: ");
+      DEBUG_PRINTLN(Theft01.rfid_matched);
+      if(Theft01.rfid_matched <= 0){
+        DEBUG_PRINTLN("#Process Handling   Alarm!");
+        LEDFunctionBlink(1,0.5);
+      }else{
+        DEBUG_PRINTLN("#Car unlocked.");
+        LEDFunctionSet(1,0);
       }
     }
   }
