@@ -104,10 +104,7 @@ module TheftDetection {
 		
 		setup();
 		
-		doorSensor.send(ReadDoorStart: {});
-		lightSensor.send(ReadLightSwitchStart: MIN_SWITCH_BRIGHTNESS_DIFFERENCE);
-		rfidSensor.send(RFID: OWNER_RFID);
-		rfidSensor.send(ReadRFIDStart: {});
+		theftDetection.send(TheftStart: OWNER_RFID);
 		
 		t.start(TIME_THEFT_DETECTION);
 		requestELTimer.start(EL_CHECK_TIME);
@@ -187,9 +184,7 @@ module TheftDetection {
 			}
 		}
 		
-		doorSensor.send(ReadDoorStop: {});
-		lightSensor.send(ReadLightSwitchStop: {});
-		rfidSensor.send(ReadRFIDStop: {});
+		theftDetection.send(TheftStop: {});
 		
 		tearDown();
 		
