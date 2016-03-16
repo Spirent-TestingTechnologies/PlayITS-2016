@@ -1,4 +1,6 @@
-//** @desc Testing Door Status
+/**
+ * @desc Unit tests for the codec
+ */
 module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 	import from PhyIOAUX all;
 	

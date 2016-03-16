@@ -1,3 +1,7 @@
+/**
+ * @shortdesc RFID
+ * @desc Testcases that test the RFID sensor
+ */
 module RFIDModule {
 	import from PhyIOAUX all;
 	import from TTlibrary_UnitTest all;

@@ -1,4 +1,8 @@
-module Distance{
+/**
+ * @shortdesc Distance 
+ * @desc Testcases that test the distance sensor
+ */
+module Distance {
 	import from PhyIOAUX all;
 	import from TTlibrary_UnitTest all;
 	

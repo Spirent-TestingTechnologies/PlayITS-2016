@@ -1,4 +1,6 @@
-//**@desc Component Module, defines Ports of SUT and Tester
+/**
+ * @desc Defines components, most importantly the ports
+ */
 module Components {
 	import from PhyIOAUX all;
 	

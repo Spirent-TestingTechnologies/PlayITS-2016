@@ -1,3 +1,7 @@
+/**
+ * @shortdesc Theft Detection
+ * @desc Testcase that tests the theft detection
+ */
 module TheftDetection {
 	import from PhyIOAUX all;
 	import from TTlibrary_UnitTest all;

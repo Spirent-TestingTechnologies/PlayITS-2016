@@ -1,3 +1,6 @@
+/**
+ * @desc Parameters, mostly module parameters 
+ */
 module Parameters {
 	import from PhyIOAUX all;
 	import from RS232ConfigPortAux all with { encode "BASE" }

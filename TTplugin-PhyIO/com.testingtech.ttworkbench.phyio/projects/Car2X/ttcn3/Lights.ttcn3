@@ -26,7 +26,10 @@
  *  OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
  * ----------------------------------------------------------------------------
  */
-//** @desc Testing Lightsensor data
+/**
+ * @shortdesc Lights
+ * @desc Testcases concerning headlights and emergency lights
+ */
 module Lights {
 	import from PhyIOAUX all;
 	import from TTlibrary_UnitTest all;

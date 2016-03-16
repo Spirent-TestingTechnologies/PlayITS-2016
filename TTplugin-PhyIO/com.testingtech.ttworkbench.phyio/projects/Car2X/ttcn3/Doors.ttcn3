@@ -1,4 +1,7 @@
-//** @desc Testing Door Status
+/**
+ * @shortdesc Doors 
+ * @desc Testcase that tests opening the door
+ */
 module Doors {
 	import from PhyIOAUX all;
 	

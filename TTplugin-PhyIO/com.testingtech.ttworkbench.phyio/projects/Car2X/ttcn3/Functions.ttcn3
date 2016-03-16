@@ -1,3 +1,6 @@
+/**
+ * @desc Utility functions
+ */
 module Functions {
 	import from PhyIOAUX all;
 	
