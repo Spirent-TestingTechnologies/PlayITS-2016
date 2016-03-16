@@ -3,10 +3,12 @@
  */
 module Functions {
 	import from PhyIOAUX all;
+	import from TTlibrary all;
 	
 	import from Components all;
 	import from Parameters all;
-	import from TTlibrary all;
+	import from UnitTests all;
+	
 	
 	/**
 	 * @desc Test to check for valid rfid
@@ -121,38 +123,70 @@ module Functions {
 	function setStage(integer id, float timeWindow) {
 		action("stage" & int2str(id) & ",timeWindow:" & int2str(float2int(timeWindow)));
 	}
-
+	
 	/**
 	 * @desc maps all ports
 	 */
 	function setup() runs on me system System {
-		map(self:sutConfig,			system:sutConfig)		param (SUT_RS232_CONFIG, DeviceID_1);
-		map(self:testerConfig,		system:testerConfig)	param (TESTER_RS232_CONFIG, DeviceID_2);
+		if(not SIMULATION) {
+			// tests using real Arduinos
+			
+			map(self:sutConfig,				system:sutConfig)		param (SUT_RS232_CONFIG, DeviceID_1);
+			map(self:testerConfig,			system:testerConfig)	param (TESTER_RS232_CONFIG, DeviceID_2);
 
-		// ports on simulation Arduino
-		map(self:led, 				system:led) 			param (DeviceID_1, SensorID_1);
-		map(self:rfidSensor,		system:rfidSensor)		param (DeviceID_1, SensorID_1);
-		map(self:doorSensor,		system:doorSensor)		param (DeviceID_1, SensorID_1);
-		map(self:distanceSensor,	system:distanceSensor)	param (DeviceID_1, SensorID_1);
-		map(self:theftDetection,	system:theftDetection)	param (DeviceID_1, SensorID_1);
+			// ports on simulation Arduino
+			map(self:led, 					system:led) 			param (DeviceID_1, SensorID_1);
+			map(self:rfidSensor,			system:rfidSensor)		param (DeviceID_1, SensorID_1);
+			map(self:doorSensor,			system:doorSensor)		param (DeviceID_1, SensorID_1);
+			map(self:distanceSensor,		system:distanceSensor)	param (DeviceID_1, SensorID_1);
+			map(self:theftDetection,		system:theftDetection)	param (DeviceID_1, SensorID_1);
 		
-		// ports on tester Arduino
-		map(self:lightSensor,		system:lightSensor)		param (DeviceID_2, SensorID_1);
+			// ports on tester Arduino
+			map(self:lightSensor,			system:lightSensor)		param (DeviceID_2, SensorID_1);
+		} else {
+			// tests using simulated Arduino behaviour
+			
+			simulation := System.create;
+			
+			connect(self:led, 				simulation:led);
+			connect(self:rfidSensor,		simulation:rfidSensor);
+			connect(self:doorSensor,		simulation:doorSensor);
+			connect(self:distanceSensor,	simulation:distanceSensor);
+			connect(self:theftDetection,	simulation:theftDetection);
+			connect(self:lightSensor,		simulation:lightSensor);
+			
+			connect(self:stopPort,			simulation:stopPort);
+			
+			simulation.start(main());
+		}
 	}
 	
 	/**
 	 * @desc unmaps all ports
 	 */
 	function tearDown() runs on me system System {
-		unmap(self:led);
-		unmap(self:lightSensor);
-		unmap(self:rfidSensor);
-		unmap(self:doorSensor);
-		unmap(self:distanceSensor);
-		unmap(self:theftDetection);
+		if(not SIMULATION) {
+			unmap(self:led);
+			unmap(self:lightSensor);
+			unmap(self:rfidSensor);
+			unmap(self:doorSensor);
+			unmap(self:distanceSensor);
+			unmap(self:theftDetection);
 		
-		unmap(self:sutConfig);
-		unmap(self:testerConfig);
+			unmap(self:sutConfig);
+			unmap(self:testerConfig);
+		} else {
+			stopPort.send(StopThread: {});
+			
+			disconnect(self:led);
+			disconnect(self:lightSensor);
+			disconnect(self:rfidSensor);
+			disconnect(self:doorSensor);
+			disconnect(self:distanceSensor);
+			disconnect(self:theftDetection);
+			
+			disconnect(self:stopPort);
+			simulation.done;
+		}
 	}
-	
 }
