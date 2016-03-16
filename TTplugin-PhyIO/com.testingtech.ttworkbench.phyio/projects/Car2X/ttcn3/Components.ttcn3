@@ -5,8 +5,9 @@ module Components {
 	import from PhyIOAUX all;
 	
 	type record StopThread {};
+	type charstring TestcaseInfo;
 	type port InternalVerdictPort message {
-		inout verdicttype, StopThread;
+		inout verdicttype, StopThread, TestcaseInfo;
 	}
 	
 
