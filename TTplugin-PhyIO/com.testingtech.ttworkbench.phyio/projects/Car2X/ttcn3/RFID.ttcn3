@@ -71,12 +71,17 @@ module RFIDModule {
 				hasRFID := true;
 				isRFIDCorrect := false;
 			}
+			[] sutConfig.receive {
+				// config port sends some data in some of the Arduino files
+				// TODO make sure that it doesn't
+				repeat;
+			}
 			[]t.timeout {
 				hasRFID := false;
 			}
-			[] any port.receive {
-				hasRFID := false;
-			}
+			//[] any port.receive {
+			//	hasRFID := false;
+			//}
 		}
 		
 		rfidSensor.send(ReadRFIDStop:{});
