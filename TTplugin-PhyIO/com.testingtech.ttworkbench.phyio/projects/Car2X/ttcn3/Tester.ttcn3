@@ -1,0 +1,40 @@
+module Tester{
+	import from PhyIOAUX all;
+	import from TTlibrary_UnitTest all;
+
+	import from Components all;
+	import from Functions all;
+	import from Parameters all;
+	
+	testcase TesterTestcase() runs on me system System{
+		var boolean sutconfig := false;
+		var boolean testerconfig := false;
+		setup();
+		t.start(5.0);
+		alt{
+			[]testerConfig.receive{
+				testerconfig := true;
+				repeat;
+			}
+			[]sutConfig.receive{
+				sutconfig := true;
+				repeat;
+			}
+			[]t.timeout{
+				if(sutconfig and testerconfig){
+					setverdict(pass,"received responses");
+				}
+				else if (sutconfig and not testerconfig){
+					setverdict(fail, "received no testerconfig");
+				}
+				else if (not sutconfig and testerconfig){
+					setverdict(fail, "received no sutconfig");
+				}
+				else if (not sutconfig and not testerconfig){
+					setverdict(fail, "received nothing");
+				}
+			}
+		}
+		tearDown();
+	}
+}
