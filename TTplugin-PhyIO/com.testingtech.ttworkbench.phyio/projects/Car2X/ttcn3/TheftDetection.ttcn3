@@ -326,7 +326,9 @@ module TheftDetection {
 			}
 		}
 	}
-	
+	/**
+		 * @deprecated doesn't use latest communication standard with light sensor, also parameters are kinda meh...
+		 */
 	function executeEmergencyLightDetection(float switchTime, float allowedDeviation, integer minDiff, float checkRate) runs on me system System {
 		
 		var verdicttype result;
