@@ -32,6 +32,9 @@ module Components {
 		
 		port InternalVerdictPort rfidPort;
 		port InternalVerdictPort emergencyLightPort;
+		
+		port InternalVerdictPort stopPort;
+		var System simulation;
 	}
 	
 
@@ -41,5 +44,6 @@ module Components {
 	 * used to run tests on a single Arduino
 	 */
 	type component System extends SUTPorts, TesterPorts {
+		port InternalVerdictPort stopPort;
 	}
 }
