@@ -6,6 +6,8 @@ module Parameters {
 	import from RS232ConfigPortAux all with { encode "BASE" }
 	import from TTlibrary_UnitTest all;
 	
+	modulepar boolean SIMULATION := false;
+	
 	// ID Karte: 194, 96, 196, 169 (DEZ)
 	// ID Chip: 4, 226, 92, 235 (DEZ)
 	modulepar RFID OWNER_RFID := {194, 96, 196, 169};
