@@ -47,6 +47,12 @@ module UnitTests {
 					}
 					elFrequencyOn := false;
 				}
+				[]doorSensor.receive(ReadDoorStart:{}) {
+					doorSensor.send(DoorState: true);
+				}
+				[]doorSensor.receive(ReadDoorStop:{}) {
+					// nothing to do
+				}
 				
 				[]stopPort.receive(StopThread: {}) {
 					log("received stop");
