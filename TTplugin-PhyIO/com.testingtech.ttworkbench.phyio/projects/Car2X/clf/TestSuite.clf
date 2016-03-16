@@ -4,7 +4,7 @@
 <campaignloader>
   <campaign Name="TestSuite" Control="false">
     <testadapter Name="com.testingtech.ttcn.tri.PluginTestAdapter" File="">
-      <description>taconfig.xml</description>
+      <description>Tester_taconfig.xml</description>
     </testadapter>
     <module Name="TheftDetection" File="ttcn3build/TheftDetection.jar" Package="generated_ttcn"/>
     <module Name="RFIDModule" File="ttcn3build/RFIDModule.jar" Package="generated_ttcn"/>
