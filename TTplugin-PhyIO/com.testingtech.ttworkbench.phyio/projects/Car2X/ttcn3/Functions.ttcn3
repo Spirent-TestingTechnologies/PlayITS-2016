@@ -150,14 +150,14 @@ module Functions {
 			
 			simulation := System.create;
 			
+			connect(self:sutConfig,			simulation:sutConfig);
+			
 			connect(self:led, 				simulation:led);
 			connect(self:rfidSensor,		simulation:rfidSensor);
 			connect(self:doorSensor,		simulation:doorSensor);
 			connect(self:distanceSensor,	simulation:distanceSensor);
 			connect(self:theftDetection,	simulation:theftDetection);
 			connect(self:lightSensor,		simulation:lightSensor);
-			
-			connect(self:stopPort,			simulation:stopPort);
 			
 			simulation.start(main());
 		}
@@ -178,7 +178,7 @@ module Functions {
 			unmap(self:sutConfig);
 			unmap(self:testerConfig);
 		} else {
-			stopPort.send(StopThread: {});
+			sutConfig.send(StopThread: {});
 			
 			disconnect(self:led);
 			disconnect(self:lightSensor);
@@ -187,7 +187,6 @@ module Functions {
 			disconnect(self:distanceSensor);
 			disconnect(self:theftDetection);
 			
-			disconnect(self:stopPort);
 			simulation.done;
 		}
 	}

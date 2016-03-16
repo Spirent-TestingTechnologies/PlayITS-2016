@@ -6,11 +6,7 @@ module Components {
 	
 	type record StopThread {};
 	type charstring TestcaseInfo;
-	type port InternalVerdictPort message {
-		inout verdicttype, StopThread, TestcaseInfo;
-	}
 	
-
 	//**@desc Component port definition System measuring the SUT (Arduino)
 	type component TesterPorts {
 		port PhyConfig testerConfig;
@@ -31,10 +27,10 @@ module Components {
 	type component me extends SUTPorts, TesterPorts {
 		timer t;
 		
-		port InternalVerdictPort rfidPort;
-		port InternalVerdictPort emergencyLightPort;
+		// TODO only for backward compatibility, remove asap
+		port PhyConfig rfidPort;
+		port PhyConfig emergencyLightPort;
 		
-		port InternalVerdictPort stopPort;
 		var System simulation;
 	}
 	
@@ -45,6 +41,5 @@ module Components {
 	 * used to run tests on a single Arduino
 	 */
 	type component System extends SUTPorts, TesterPorts {
-		port InternalVerdictPort stopPort;
 	}
 }

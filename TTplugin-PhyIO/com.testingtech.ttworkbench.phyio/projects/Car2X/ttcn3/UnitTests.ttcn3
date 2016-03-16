@@ -22,7 +22,7 @@ module UnitTests {
 		
 		while(run) {
 			alt {
-				[]stopPort.receive(TestcaseInfo: ?) -> value testcaseInfo {
+				[]sutConfig.receive(TestcaseInfo: ?) -> value testcaseInfo {
 					if(testcaseInfo == "Correct RFID") {
 						rfid := OWNER_RFID;
 						sendRFID := true;
@@ -76,8 +76,7 @@ module UnitTests {
 				//nothing to do
 				}
 								
-				[]stopPort.receive(StopThread: {}) {
-					log("received stop");
+				[]sutConfig.receive(StopThread: {}) {
 					run := false;
 				}
 			}

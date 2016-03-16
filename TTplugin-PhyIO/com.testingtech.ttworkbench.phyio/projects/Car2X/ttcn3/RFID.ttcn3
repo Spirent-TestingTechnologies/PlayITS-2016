@@ -46,10 +46,11 @@ module RFIDModule {
 		setup();
 		
 		if(SIMULATION) {
+			// we abuse sutConfig because it's not otherwise used
 			if(expectCorrectRFID) {
-				stopPort.send(TestcaseInfo: "Correct RFID");
+				sutConfig.send(TestcaseInfo: "Correct RFID");
 			} else {
-				stopPort.send(TestcaseInfo: "False RFID");
+				sutConfig.send(TestcaseInfo: "False RFID");
 			}
 		}
 		
