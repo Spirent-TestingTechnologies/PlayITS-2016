@@ -9,6 +9,10 @@ module UnitTests {
 	
 	function main() runs on System {
 		var boolean run := true;
+		var charstring testcaseInfo := "";
+		
+		var boolean sendRFID := true;
+		var RFID rfid := OWNER_RFID;
 		
 		var Brightness ledBrightness := 0;
 		var boolean elFrequencyOn := false;
@@ -18,6 +22,18 @@ module UnitTests {
 		
 		while(run) {
 			alt {
+				[]stopPort.receive(TestcaseInfo: ?) -> value testcaseInfo {
+					if(testcaseInfo == "Correct RFID") {
+						rfid := OWNER_RFID;
+						sendRFID := true;
+					} else if(testcaseInfo == "False RFID") {
+						rfid := FALSE_RFID;
+						sendRFID := true;
+					} else if(testcaseInfo == "No RFID") {
+						sendRFID := false;
+					}
+				}
+				
 				[]led.receive(switchLED_ON) {
 					ledBrightness := 1023;
 				}
@@ -51,9 +67,15 @@ module UnitTests {
 					doorSensor.send(DoorState: true);
 				}
 				[]doorSensor.receive(ReadDoorStop:{}) {
-					// nothing to do
+				// nothing to do
 				}
-				
+				[]rfidSensor.receive(ReadRFIDStart: {}) {
+					rfidSensor.send(rfid);
+				}
+				[]rfidSensor.receive(ReadRFIDStop: {}) {
+				//nothing to do
+				}
+								
 				[]stopPort.receive(StopThread: {}) {
 					log("received stop");
 					run := false;

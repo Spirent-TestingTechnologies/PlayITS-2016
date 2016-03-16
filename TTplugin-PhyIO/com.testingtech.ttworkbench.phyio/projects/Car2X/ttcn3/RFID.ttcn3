@@ -45,6 +45,14 @@ module RFIDModule {
 		
 		setup();
 		
+		if(SIMULATION) {
+			if(expectCorrectRFID) {
+				stopPort.send(TestcaseInfo: "Correct RFID");
+			} else {
+				stopPort.send(TestcaseInfo: "False RFID");
+			}
+		}
+		
 		rfidSensor.send(ReadRFIDStart:{});
 		t.start(TIME_RFID);
 		
