@@ -110,7 +110,14 @@ module Functions {
 	 * @desc checks if the measured distance is within a certain range of an expected value
 	 */
 	function compareDist(integer measuredDistance, integer expectedDistance) return boolean {
-		return abs_int(measuredDistance - expectedDistance) <= ALLOWED_DISTANCE_DEVIATION;
+		// TODO tried to use abs_int() but no external implementation for abs()??
+		var integer diff := measuredDistance - expectedDistance;
+		
+		if(diff < 0) {
+			diff := -diff;
+		}
+		
+		return diff <= ALLOWED_DISTANCE_DEVIATION;
 	}
 
 	/**
@@ -119,7 +126,9 @@ module Functions {
 	 * @üaram timeWindow time in seconds, 0 == no time window
 	 */
 	function setStage(integer id, float timeWindow) {
-		action("stage" & int2str(id) & ",timeWindow:" & int2str(float2int(timeWindow)));
+		if(NOTIFY_UI) {
+			action("stage" & int2str(id) & ",timeWindow:" & int2str(float2int(timeWindow)));
+		}
 	}
 
 	/**

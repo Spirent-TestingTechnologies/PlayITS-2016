@@ -184,6 +184,8 @@ module Lights {
 		
 		setStage(2, TIME_EMERGENCY_LIGHTS);
 		
+		t.start(2.0);
+		
 		alt {
 			
 			[]lightSensor.receive(Frequency: 0.0) -> value frequency {
