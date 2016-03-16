@@ -7,6 +7,10 @@ module UnitTests {
 	import from Components all;
 	import from Parameters all;
 	
+	const integer DISTANCE_SWEEP_MAX := 250;
+	const integer DISTANCE_SWEEP_STEP := 5;
+	const float DISTANCE_SWEEP_TIME := 0.05;
+	
 	function main() runs on System {
 		var boolean run := true;
 		var charstring testcaseInfo := "";
@@ -17,6 +21,11 @@ module UnitTests {
 		var Brightness ledBrightness := 0;
 		var boolean elFrequencyOn := false;
 		var float elBlinkOn := 0.0;
+		
+		var boolean isDistanceSweepOn := false;
+		var integer distanceSweepState := 0;
+		timer distanceSweepTimer;
+		var boolean readDistance := false;
 		
 		timer tmpTimer;
 		
@@ -31,6 +40,9 @@ module UnitTests {
 						sendRFID := true;
 					} else if(testcaseInfo == "No RFID") {
 						sendRFID := false;
+					} else if (testcaseInfo == "Distance Sweep On") {
+						isDistanceSweepOn := true;
+						distanceSweepTimer.start(DISTANCE_SWEEP_TIME);
 					}
 				}
 				
@@ -74,6 +86,32 @@ module UnitTests {
 				}
 				[]rfidSensor.receive(ReadRFIDStop: {}) {
 				//nothing to do
+				}
+				[]distanceSensor.receive(ReadDistanceStart: {}) {
+					readDistance := true;
+				}
+				[]distanceSensor.receive(ReadDistanceStop: {}) {
+					readDistance := false;
+				}
+				[isDistanceSweepOn]distanceSweepTimer.timeout {
+					distanceSweepState := distanceSweepState + DISTANCE_SWEEP_STEP;
+					
+					if(distanceSweepState >= DISTANCE_SWEEP_MAX * 2) {
+						distanceSweepState := 0;
+					}
+					
+					if(readDistance) {
+						var integer tmpDistance := distanceSweepState;
+						
+						if(tmpDistance >= DISTANCE_SWEEP_MAX) {
+							tmpDistance := DISTANCE_SWEEP_MAX - (tmpDistance - DISTANCE_SWEEP_MAX);
+						}
+						
+						// TODO timestamps
+						distanceSensor.send(DistanceSensorState: {tmpDistance, 1000});
+					}
+					
+					distanceSweepTimer.start(DISTANCE_SWEEP_TIME);
 				}
 								
 				[]sutConfig.receive(StopThread: {}) {

@@ -56,6 +56,10 @@ module Distance {
 		
 		setup();
 		
+		if(SIMULATION) {
+			sutConfig.send(TestcaseInfo: "Distance Sweep On");
+		}
+		
 		distanceSensor.send(ReadDistanceStart:{});
 		
 		t.start(TIME_DISTANCE_FIRST_MEASUREMENT);
