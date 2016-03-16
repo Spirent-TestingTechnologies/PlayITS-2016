@@ -131,13 +131,13 @@ module Functions {
 
 		// ports on simulation Arduino
 		map(self:led, 				system:led) 			param (DeviceID_1, SensorID_1);
-		map(self:rfidSensor,		system:rfidSensor)		param (DeviceID_1, SensorID_1);
-		map(self:doorSensor,		system:doorSensor)		param (DeviceID_1, SensorID_1);
-		map(self:distanceSensor,	system:distanceSensor)	param (DeviceID_1, SensorID_1);
-		map(self:theftDetection,	system:theftDetection)	param (DeviceID_1, SensorID_1);
+		map(self:rfidSensor,		system:rfidSensor)		param (DeviceID_1, SensorID_3);
+		map(self:doorSensor,		system:doorSensor)		param (DeviceID_1, SensorID_4);
+		map(self:distanceSensor,	system:distanceSensor)	param (DeviceID_1, SensorID_5);
+		map(self:theftDetection,	system:theftDetection)	param (DeviceID_1, SensorID_6);
 		
 		// ports on tester Arduino
-		map(self:lightSensor,		system:lightSensor)		param (DeviceID_2, SensorID_1);
+		map(self:lightSensor,		system:lightSensor)		param (DeviceID_2, SensorID_2);
 	}
 	
 	/**
