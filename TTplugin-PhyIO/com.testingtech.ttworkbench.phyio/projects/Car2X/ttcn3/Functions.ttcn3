@@ -140,18 +140,18 @@ module Functions {
 		if(not SIMULATION) {
 			// tests using real Arduinos
 			
-			map(self:sutConfig,				system:sutConfig)		param (SUT_RS232_CONFIG, DeviceID_1);
-			map(self:testerConfig,			system:testerConfig)	param (TESTER_RS232_CONFIG, DeviceID_2);
-
-			// ports on simulation Arduino
-			map(self:led, 					system:led) 			param (DeviceID_1, SensorID_1);
-			map(self:rfidSensor,			system:rfidSensor)		param (DeviceID_1, SensorID_1);
-			map(self:doorSensor,			system:doorSensor)		param (DeviceID_1, SensorID_1);
-			map(self:distanceSensor,		system:distanceSensor)	param (DeviceID_1, SensorID_1);
-			map(self:theftDetection,		system:theftDetection)	param (DeviceID_1, SensorID_1);
-		
-			// ports on tester Arduino
-			map(self:lightSensor,			system:lightSensor)		param (DeviceID_2, SensorID_1);
+			map(self:sutConfig,			system:sutConfig)		param (SUT_RS232_CONFIG, DeviceID_1);
+    		
+			if(MAP_TESTER){
+				map(self:testerConfig,		system:testerConfig)	param (TESTER_RS232_CONFIG, DeviceID_2);
+				map(self:lightSensor,		system:lightSensor)		param (DeviceID_2, SensorID_2);
+			}
+    		
+			map(self:led, 				system:led) 			param (DeviceID_1, SensorID_1);
+			map(self:rfidSensor,		system:rfidSensor)		param (DeviceID_1, SensorID_3);
+			map(self:doorSensor,		system:doorSensor)		param (DeviceID_1, SensorID_4);
+			map(self:distanceSensor,	system:distanceSensor)	param (DeviceID_1, SensorID_5);
+			map(self:theftDetection,	system:theftDetection)	param (DeviceID_1, SensorID_6);
 		} else {
 			// tests using simulated Arduino behaviour
 			
@@ -176,14 +176,18 @@ module Functions {
 	function tearDown() runs on me system System {
 		if(not SIMULATION) {
 			unmap(self:led);
-			unmap(self:lightSensor);
+		
 			unmap(self:rfidSensor);
 			unmap(self:doorSensor);
 			unmap(self:distanceSensor);
 			unmap(self:theftDetection);
-		
 			unmap(self:sutConfig);
-			unmap(self:testerConfig);
+			
+			if(MAP_TESTER){
+				unmap(self:lightSensor);
+				unmap(self:testerConfig);
+			}
+			
 		} else {
 			sutConfig.send(StopThread: {});
 			

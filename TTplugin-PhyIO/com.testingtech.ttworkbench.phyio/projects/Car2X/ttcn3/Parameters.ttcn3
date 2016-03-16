@@ -8,6 +8,7 @@ module Parameters {
 	
 	modulepar boolean SIMULATION := false;
 	modulepar boolean NOTIFY_UI := false;
+	modulepar boolean MAP_TESTER := false;
 	
 	// ID Karte: 194, 96, 196, 169 (DEZ)
 	// ID Chip: 4, 226, 92, 235 (DEZ)
