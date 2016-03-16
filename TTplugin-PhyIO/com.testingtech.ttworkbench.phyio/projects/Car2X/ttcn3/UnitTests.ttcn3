@@ -1,0 +1,61 @@
+/**
+ * @desc Unit test for testcases
+ */
+module UnitTests {
+	import from PhyIOAUX all;
+	
+	import from Components all;
+	import from Parameters all;
+	
+	function main() runs on System {
+		var boolean run := true;
+		
+		var Brightness ledBrightness := 0;
+		var boolean elFrequencyOn := false;
+		var float elBlinkOn := 0.0;
+		
+		timer tmpTimer;
+		
+		while(run) {
+			alt {
+				[]led.receive(switchLED_ON) {
+					ledBrightness := 1023;
+				}
+				[]led.receive(switchLED_OFF) {
+					ledBrightness := 0;
+				}
+				[]led.receive(BlinkLEDStart: ?) -> value elBlinkOn {
+					if(elBlinkOn > 0.0) {
+						elBlinkOn := 1.0 / elBlinkOn;
+					}
+				}
+				[]led.receive(BlinkLEDStop: {}) {
+					elBlinkOn := 0.0;
+				}
+				[]lightSensor.receive(READ_BRIGHTNESS) {
+					//TODO timestamp
+					lightSensor.send(State: {ledBrightness, 1000});
+				}
+				[]lightSensor.receive(ReadFrequencyStart: ?) {
+					elFrequencyOn := true;
+				}
+				[]lightSensor.receive(ReadFrequencyStop: {}) {
+					if(elFrequencyOn) {
+						lightSensor.send(Frequency: elBlinkOn);
+					} else {
+						lightSensor.send(Frequency: 0.0);
+					}
+					elFrequencyOn := false;
+				}
+				
+				[]stopPort.receive(StopThread: {}) {
+					log("received stop");
+					run := false;
+				}
+			}
+		}
+		
+		stop;
+	}
+	
+}
