@@ -136,8 +136,9 @@ module Functions {
 	 */
 	function setup() runs on me system System {
 		map(self:sutConfig,			system:sutConfig)		param (SUT_RS232_CONFIG, DeviceID_1);
-		map(self:testerConfig,		system:testerConfig)	param (TESTER_RS232_CONFIG, DeviceID_2);
-
+		if(MAP_TESTER){
+			map(self:testerConfig,		system:testerConfig)	param (TESTER_RS232_CONFIG, DeviceID_2);
+		}
 		// ports on simulation Arduino
 		map(self:led, 				system:led) 			param (DeviceID_1, SensorID_1);
 		map(self:rfidSensor,		system:rfidSensor)		param (DeviceID_1, SensorID_3);
@@ -146,7 +147,9 @@ module Functions {
 		map(self:theftDetection,	system:theftDetection)	param (DeviceID_1, SensorID_6);
 		
 		// ports on tester Arduino
-		map(self:lightSensor,		system:lightSensor)		param (DeviceID_2, SensorID_2);
+		if(MAP_TESTER){
+			map(self:lightSensor,		system:lightSensor)		param (DeviceID_2, SensorID_2);
+		}
 	}
 	
 	/**
@@ -154,14 +157,17 @@ module Functions {
 	 */
 	function tearDown() runs on me system System {
 		unmap(self:led);
-		unmap(self:lightSensor);
+		
 		unmap(self:rfidSensor);
 		unmap(self:doorSensor);
 		unmap(self:distanceSensor);
 		unmap(self:theftDetection);
 		
 		unmap(self:sutConfig);
-		unmap(self:testerConfig);
+		if(MAP_TESTER){
+			unmap(self:lightSensor);
+			unmap(self:testerConfig);
+		}
 	}
 	
 }
