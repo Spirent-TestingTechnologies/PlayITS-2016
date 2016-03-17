@@ -88,7 +88,14 @@ module TheftDetection {
 		var VerdictDescription verdict := internalTheftDetection(inconc, false, false);
 		setverdict(verdict.verdict, verdict.reason);
 	}
-	
+	/**
+	 * 
+	 * @desc Checks states of RFID and Door and if necessary the Emergency Lights
+	 * @param expectRFID
+	 * @param expectDoor
+	 * @param expectEmergency
+	 * @return Verdict and reason of the present configuration
+	 */
 	function internalTheftDetection(verdicttype expectRFID, boolean expectDoor, boolean expectEmergency)
 	runs on me system System return VerdictDescription {
 		var VerdictDescription result := {none};
@@ -101,6 +108,7 @@ module TheftDetection {
 		var boolean hasRFID := false;
 		var boolean isRFIDCorrect := false;
 		var boolean isAlarmOn := false;
+		var boolean run := true;
 		
 		setup();
 		
@@ -127,7 +135,6 @@ module TheftDetection {
 		t.start(TIME_THEFT_DETECTION);
 		requestELTimer.start(EL_CHECK_TIME);
 		
-		var boolean run := true;
 		while(result.verdict == none and run) {
 			alt {
 				[not hasDoor]doorSensor.receive(DoorState: true) {
