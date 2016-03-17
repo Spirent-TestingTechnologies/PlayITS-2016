@@ -150,7 +150,7 @@ typedef struct LEDFunctionConfig{
 
 // Definitions of the needed functions
 void LEDFunctionSet(int id, int state);
-void LEDFunctionBlink(int id);
+void LEDFunctionBlink(int id, float freq);
 void LEDFunctionStop(int id);
 void LEDToggling(LEDFunctionConfig led);
 void LEDSwitch(LEDFunctionConfig led, int state);
@@ -183,7 +183,7 @@ void LEDFunction( int id, int command) {
       LEDFunctionSet(id, XSERIAL.parseInt());
       break;
     case BLINK:
-      LEDFunctionBlink(id);
+      LEDFunctionBlink(id, (1000/(XSERIAL.parseInt()*2)));
       break;
     case STOP:
       LEDFunctionSet(id, 0);
@@ -194,21 +194,17 @@ void LEDFunction( int id, int command) {
 }
 
 
-void LEDFunctionBlink(int id) {
-
+void LEDFunctionBlink(int id, float freq) {
   // tells the given led, that it now has to blink
 
   DEBUG_PRINT("\n# In the LEDFunctionBlink");
   DEBUG_PRINT("\n# With ID: ");
   DEBUG_PRINTLN(id);
-
-  float freq = XSERIAL.parseFloat();
-
   DEBUG_PRINT("\n# and with frequency: ");
   DEBUG_PRINTLN(freq);
 
   Dioden[(id - 1)].is_toggling = true;
-  Dioden[(id - 1)].toggling_time = (1000/(freq*2));
+  Dioden[(id - 1)].toggling_time = freq;
 
 }
 
