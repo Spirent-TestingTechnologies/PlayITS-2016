@@ -109,7 +109,7 @@ module UnitTests {
 						}
 						
 						// TODO timestamps
-						distanceSensor.send(DistanceSensorState: {tmpDistance, 1000});
+						distanceSensor.send(DistanceSensorState: {1000, tmpDistance});
 					}
 					
 					distanceSweepTimer.start(DISTANCE_SWEEP_TIME);

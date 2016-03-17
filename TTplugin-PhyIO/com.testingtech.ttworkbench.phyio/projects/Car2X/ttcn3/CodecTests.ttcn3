@@ -71,7 +71,7 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 			log("Success: Door answer");
 		}
 		
-		if(not checkDecode<DistanceSensorState>(DistanceSensorState: {3, 1002},	"21, 101, 3, 1002")) {
+		if(not checkDecode<DistanceSensorState>(DistanceSensorState: {1002, 3},	"21, 101, 1002, 3")) {
 			setverdict(fail, "Fail at: Distance answer");
 		} else {
 			log("Success: Distance answer");

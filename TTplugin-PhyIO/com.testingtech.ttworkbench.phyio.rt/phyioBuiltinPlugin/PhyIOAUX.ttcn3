@@ -121,7 +121,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 		
 		group DistanceSensorGroup {
 			//** @desc Current distance measured in cm
-			type record DistanceSensorState {integer distance, integer time} with {
+			type record DistanceSensorState {integer time, integer distance} with {
 				variant "DISTANCE,RESULT"
 			}
 
