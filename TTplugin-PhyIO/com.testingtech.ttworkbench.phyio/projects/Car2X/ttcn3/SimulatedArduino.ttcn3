@@ -200,14 +200,14 @@ module SimulatedArduino language "TTCN-3:2010 Real Time and Performance Testing"
 				}
 				[]lightSensor.receive(READ_FREQUENCY) {
 					if(isAlarmOn) {
-						lightSensor.send(Frequency: SWITCH_FREQUENCY_TARGET);
+						lightSensor.send(Frequency: BLINK_FREQUENCY_TARGET);
 					} else {
 						lightSensor.send(Frequency: 0.0);
 					}
 				}
 				[]lightSensor.receive(ReadFrequencyStop: {}) {
 					if(isAlarmOn) {
-						lightSensor.send(Frequency: SWITCH_FREQUENCY_TARGET);
+						lightSensor.send(Frequency: BLINK_FREQUENCY_TARGET);
 					} else {
 						lightSensor.send(Frequency: 0.0);
 					}
