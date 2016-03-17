@@ -21,8 +21,8 @@ module Parameters {
 	modulepar float TIME_EMERGENCY_LIGHTS := 10.0;
 	//**@desc Threshold to differentiate between on/off states of the LED
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
-	//**@desc Targeted number of switches per second for LED
-	modulepar float SWITCH_FREQUENCY_TARGET := 2.0;
+	//**@desc Targeted number of blinks per second for LED
+	modulepar float BLINK_FREQUENCY_TARGET := 2.0;
 	//**@desc Allowed Deviation of the blink frequency of the LED
 	  modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.3;
 	//**@desc minimal Brightness Difference for state change
