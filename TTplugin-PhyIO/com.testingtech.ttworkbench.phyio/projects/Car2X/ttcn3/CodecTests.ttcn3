@@ -8,7 +8,7 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 	
 	type record of boolean RecordList;
 	
-	type anytype TT  with {encode "PhyIO"};
+	type anytype TT with {encode "PhyIO"};
 	
 	type record CodecPair {TT v, charstring s, charstring d}
 	
@@ -18,7 +18,7 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		// LED
 		{{SwitchLED := true},				"30, 1, 1",					"LED on"},
 		{{SwitchLED := false},				"30, 1, 0",					"LED off"},
-		{{BlinkLEDStart := 0.4},			"30, 5, 0.4",				"LED blink start"},
+		{{BlinkLEDStart := 0.4},			"30, 2, 0.4",				"LED blink start"},
 		{{BlinkLEDStop := {}},				"30, 3",					"LED blink stop"},
 		
 		// RFID
