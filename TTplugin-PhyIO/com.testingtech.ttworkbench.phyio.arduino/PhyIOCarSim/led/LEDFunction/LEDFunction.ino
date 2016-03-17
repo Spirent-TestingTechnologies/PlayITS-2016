@@ -125,7 +125,7 @@ LEDFunctionConfig LED3(3, Led3Pin); // red
 void LEDFunctionSet(int id, int state);
 void LEDFunctionBlink(int id);
 void LEDFunctionStop(int id);
-void toggling(LEDFunctionConfig led);
+void LEDToggling(LEDFunctionConfig led);
 void LEDSwitch(LEDFunctionConfig led, int state);
 
 unsigned long currentMillis; // keeps track of time to signal if blinking is needed
@@ -182,13 +182,13 @@ void LEDshouldBlink(){
   // checks if a led has to blink
   currentMillis = millis();
 
-  if(LED1.is_toggling){toggling(&LED1);}
-  if(LED2.is_toggling){toggling(&LED2);}
-  if(LED3.is_toggling){toggling(&LED3);}  
+  if(LED1.is_toggling){LEDToggling(&LED1);}
+  if(LED2.is_toggling){LEDToggling(&LED2);}
+  if(LED3.is_toggling){LEDToggling(&LED3);}  
 }
 
 
-void toggling(struct LEDFunctionConfig *led){
+void LEDToggling(struct LEDFunctionConfig *led){
   // toggles between the on and off state of the given led
   if((currentMillis - led->previousMillis) >= led->toggling_time){
       led->previousMillis = currentMillis;
