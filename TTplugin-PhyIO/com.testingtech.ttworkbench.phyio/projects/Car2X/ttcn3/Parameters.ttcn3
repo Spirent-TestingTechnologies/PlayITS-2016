@@ -55,7 +55,7 @@ module Parameters {
 	modulepar float TIME_RFID := 10.0;
 	modulepar float TIME_THEFT_DETECTION := 30.0;
 	modulepar float TIME_DISTANCE_FIRST_MEASUREMENT := 5.0;
-	modulepar float TIME_DISTANCE_SINGLE_MEASUREMENT := 3.0;
+	modulepar float TIME_DISTANCE_SINGLE_MEASUREMENT := 10.0;
 
 	type record of integer DistancesToCheck;
 	
