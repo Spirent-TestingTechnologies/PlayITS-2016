@@ -7,10 +7,21 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 	import from Components all;
 	import from Parameters all;
 	
+	/* Distance sweep "sweeps" across the range of possible distances in small steps.
+	 * It goes from zero to maximum and back. distanceSweepState goes from 0 to 2*maximum, where everything above
+	 * maximum is interpreted as on the way back from maximum to zero.
+	 */
+	//** @desc maximum distance of distance sweep in cm
 	const integer DISTANCE_SWEEP_MAX := 250;
+	//** @desc step distance of distance sweep in cm
 	const integer DISTANCE_SWEEP_STEP := 5;
+	//** @desc step inteval of distance sweep in s
 	const float DISTANCE_SWEEP_TIME := 0.05;
 	
+	/**
+	 * @desc Simulates an arduino and quickly responds when messages are sent.
+	 * 		 Anything concerning the theft detectio is handled in theftDetect().
+	 */
 	function main() runs on System {
 		var boolean run := true;
 		var charstring testcaseInfo := "";
@@ -31,6 +42,7 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 		while(run) {
 			alt {
 				[]sutConfig.receive(TestcaseInfo: ?) -> value testcaseInfo {
+					// various config strings that describe the behaviour
 					if(testcaseInfo == "Correct RFID") {
 						rfid := OWNER_RFID;
 						sendRFID := true;
@@ -46,6 +58,7 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 						isDistanceSweepOn := false;
 					} else if(testcaseInfo == "Theft Detection") {
 						theftDetect();
+						// stop to make sure we don't run into anything else
 						stop;
 					}
 				}
@@ -121,10 +134,11 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 				}
 			}
 		}
-		
-		stop;
 	}
 	
+	/**
+	 * @desc Simulates the theft detection functionality of an Arduino. Is called from main()
+	 */
 	function theftDetect() runs on System {
 		var boolean run := true;
 		var charstring testcaseInfo := "";
@@ -139,6 +153,7 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 		while(run) {
 			alt {
 				[]sutConfig.receive(TestcaseInfo: ?) -> value testcaseInfo {
+					// config happens here
 					if(testcaseInfo == "Correct RFID") {
 						correctRFID := true;
 						sendRFID := true;
@@ -155,6 +170,9 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 				}
 				
 				[]theftDetection.receive(TheftStart: ?) -> value expectedRFID {
+					// everything interesting happens here
+					
+					// send rfid if expected
 					if(sendRFID) {
 						if(correctRFID) {
 							rfidSensor.send(expectedRFID);
@@ -167,10 +185,13 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 							}
 						}
 					}
+					
+					// open door if expected
 					if(openDoor) {
 						doorSensor.send(DoorState: true);
 					}
 					
+					// start alarm if expected
 					if(openDoor and (not sendRFID or not correctRFID)){
 						isAlarmOn := true;
 					} else {
@@ -178,8 +199,16 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 					}
 				}
 				[]theftDetection.receive(TheftStop: ?) {
+				// nothing to do here
 				}
 				[]lightSensor.receive(READ_FREQUENCY) {
+					if(isAlarmOn) {
+						lightSensor.send(Frequency: SWITCH_TIME_TARGET);
+					} else {
+						lightSensor.send(Frequency: 0.0);
+					}
+				}
+				[]lightSensor.receive(ReadFrequencyStop: {}) {
 					if(isAlarmOn) {
 						lightSensor.send(Frequency: SWITCH_TIME_TARGET);
 					} else {
