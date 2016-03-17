@@ -180,16 +180,21 @@ void LightSensorFunction( int id, int command){
   
   DEBUG_PRINT("' and with ID: ");
   DEBUG_PRINTLN(id);
-
+  int variable = XSERIAL.parseInt();
+  
   switch(command){
     case READ:{
-      LightFunctionRead(id);
+      if(variable == 0){
+        LightFunctionPrint(id,analogRead(LS1PIN),millis());
+      }
+      else if(variable == 1){
+        LightFunctionPrint2(id,0.0,millis());
+      }
       break;
     }
     case START:{
-      int valueDiff = XSERIAL.parseInt();
       int valueNow = analogRead(LS1PIN);
-      LightFunctionStart(id,valueDiff,valueNow);
+      LightFunctionStart(id,variable,valueNow);
       break;
     }
     case STOP:{
@@ -213,7 +218,7 @@ void LightFunctionPrint(int id,int value,unsigned long time){
     XSERIAL.println(time);
     XSERIAL.flush();
   }
-  //print funktion für die Frequenz
+  //print funktion fÃ¼r die Frequenz
   void LightFunctionPrint2(int id,float value,unsigned long time){
     DEBUG_PRINTLN("# In the sub-function LightFunctionPrint of LightSensorFunction");
     DEBUG_PRINT("# with id");
@@ -226,19 +231,9 @@ void LightFunctionPrint(int id,int value,unsigned long time){
     XSERIAL.println(time);
     XSERIAL.flush();
   }
-  void LightFunctionRead(int id){
-    //gibt dauerhaft die aktuelle Helligkeit und Zeit zurück
-    DEBUG_PRINTLN("# In the sub-function LightFunctionRead of LightSensorFunction");
-    DEBUG_PRINT("# with id");
-    DEBUG_PRINTLN(id);
-    
-    while(Serial.available()<=0){
-      LightFunctionPrint(id,analogRead(LS1PIN),millis());
-    }
-  }
   void LightFunctionStart(int id,int valueDiff,int valueDown){
-    //gibt sobald sich die Helligkeit um valueMax geändert hat die Helligkeit und Zeit
-    //zurück
+    //gibt sobald sich die Helligkeit um valueMax geÃ¤ndert hat die Helligkeit und Zeit
+    //zurÃ¼ck
     DEBUG_PRINTLN("# In the sub-function LightFunctionStart of LightSensorFunction");
     DEBUG_PRINT("# with id");
     DEBUG_PRINTLN(id);
@@ -246,32 +241,32 @@ void LightFunctionPrint(int id,int value,unsigned long time){
     unsigned long startTime;
     boolean AnAus;
     int valueNow;
-    
     while(Serial.available()<=0){  
+      
       //auf wechsel warten, je nach dem ob wir bei hell oder dunkel angefangen haben
       valueNow = analogRead(LS1PIN); 
       if(valueNow>=valueDown+valueDiff){
         startTime = millis();
         counter++;
         AnAus = true;
-        LightFunctionFrequenz(id,valueDown,0.0,valueDiff,AnAus,startTime,counter,millis());
+        LightFunctionFrequenz(id,valueDown,valueDiff,AnAus,startTime,counter,millis(),0,false,0);
         return;
       }
-      //falls auf die wartende helligkeit ins negative gehen würde setze sie auf 0
+      //falls auf die wartende helligkeit ins negative gehen wÃ¼rde setze sie auf 0
       int valueX = valueDown-valueDiff;
       if(valueX < 0){
         valueX = 0;
       }
-       if(valueNow <= valueX){
+      if(valueNow <= valueX){
         startTime = millis();
         counter++;
         AnAus = false; 
-        LightFunctionFrequenz(id,valueNow,0.0,valueDiff,AnAus,startTime,counter,millis());
+        LightFunctionFrequenz(id,valueNow,valueDiff,AnAus,startTime,counter,millis(),0,false,0);
         return;
       }
     }
     ////////wenn hier abfrage kommt ist die frequenz 0.0 da es noch keinen wechsel gab
-    int functionType, command;
+    int functionType, command,variable;
     if (millis() >= readTimer) {
       readTimer += readSpeed;      // Set the next ping time.
     if (XSERIAL.available() > 0) {
@@ -279,6 +274,8 @@ void LightFunctionPrint(int id,int value,unsigned long time){
       id = XSERIAL.parseInt();
       functionType = XSERIAL.parseInt();
       command = XSERIAL.parseInt();
+      variable = XSERIAL.parseInt();
+      
       switch (functionType) {
         case CV01:
         //  ColorViewFunction(id, command);
@@ -298,14 +295,14 @@ void LightFunctionPrint(int id,int value,unsigned long time){
         case LS01:
           switch(command){
             case READ:{       
-              if(XSERIAL.parseInt()==1){
-                //gib die aktuelle frequenz zurück und mache weiter
+              if(variable==1){
+                //gib die aktuelle frequenz zurÃ¼ck und mache weiter
                 LightFunctionPrint2(id,0.0,millis());
                 LightFunctionStart(id,valueDiff,valueDown);
               }
-              else{
-                //starte neu, rufe normale Read auf
-                 LightFunctionRead(id);
+              else if(variable == 0){
+                 LightFunctionPrint(id,analogRead(LS1PIN),millis());
+                 LightFunctionStart(id,valueDiff,valueDown);            
               }  
                break;}
             case START:{
@@ -324,37 +321,60 @@ void LightFunctionPrint(int id,int value,unsigned long time){
     } 
   }
   }
- void LightFunctionFrequenz(int id,int valueDown,float frequenz,int valueDiff,boolean highDown,unsigned long startZeit,int counter,unsigned long endZeit){
+ void LightFunctionFrequenz(int id,int valueDown,int valueDiff,boolean highDown,unsigned long startZeit,int counter,unsigned long endZeit,int timeIntervall,boolean error,int spielraum){
+    float frequenz;
     int valueNow;
-    float frequenzNow;
   while(Serial.available()<=0){
     valueNow = analogRead(LS1PIN);
+   
     if(valueNow>=valueDown+valueDiff && highDown == false){
       highDown = true;
+         if(timeIntervall == 0){
+            timeIntervall = millis() - startZeit;
+            spielraum = timeIntervall * 0.1;
+             Serial.println(spielraum);
+          }
+         else if((int)(millis()-endZeit) < timeIntervall-spielraum || (int)(millis()-endZeit) > timeIntervall+spielraum ){
+            Serial.print("error");
+            error = true;
+          
+          }
       endZeit = millis();
       counter++;
     }
+    
+    Serial.println(valueDown);
+    Serial.println(valueDiff);
+    
     int valueX = valueDown-valueDiff;
     if(valueX < 0){
         valueX = 0;
     }
     if(valueNow <=valueX && highDown == true){
-      endZeit = millis();
       highDown = false;
-      counter++;
+      counter++; 
+          if(timeIntervall == 0.0){
+            timeIntervall = millis() - startZeit;
+            spielraum = timeIntervall * 0.1;
+            Serial.println("spielraum2"+spielraum);
+          }
+         else if((int)(millis()-endZeit) < timeIntervall-spielraum || (int)(millis()-endZeit) > timeIntervall+spielraum ){
+            error = true;     
+            Serial.println("error");
+          }
+          endZeit = millis();
     }
+
+    
   }
 
   //////////Berechne Frequenz//////////////////
-  frequenzNow = counter*1000/(endZeit-startZeit);
-  if(frequenz != 0){
-     frequenz = (frequenz+frequenzNow)/2;
-  }
-  else{
-    frequenz = frequenzNow;
-  }
+  frequenz = (float)(counter*1000)/(float)(endZeit-startZeit);
+
+
+  
   ///////////ReadInput//////////////////
-  int functionType, command;
+  int functionType,command,variable;
      if (millis() >= readTimer) {
     readTimer += readSpeed;      // Set the next ping time.
     if (XSERIAL.available() > 0) {
@@ -362,7 +382,8 @@ void LightFunctionPrint(int id,int value,unsigned long time){
       id = XSERIAL.parseInt();
       functionType = XSERIAL.parseInt();
       command = XSERIAL.parseInt();
-
+      variable = XSERIAL.parseInt();
+      
       switch (functionType) {
         case CV01:
         //  ColorViewFunction(id, command);
@@ -381,25 +402,34 @@ void LightFunctionPrint(int id,int value,unsigned long time){
           break;
         case LS01:
           switch(command){
-            case READ:{       
-              if(XSERIAL.parseInt()==1){
-                //gib die aktuelle frequenz zurück und mache weiter
-                LightFunctionPrint2(id,frequenz,millis());
-                LightFunctionFrequenz(id,valueDown,frequenz,valueDiff,highDown,millis(),counter,endZeit);
+            case READ:{
+              if(error == true){
+                Serial.print("Error");
+                LightFunctionPrint2(id,0.0,millis());
+                LightFunctionFrequenz(id,valueDown,valueDiff,highDown,startZeit,counter,endZeit,timeIntervall,error,spielraum);
               }
-              else{
-                //starte neu, rufe normale Read auf
-                 LightFunctionRead(id);
+              else if(variable==1){
+                //gib die aktuelle frequenz zurÃ¼ck und mache weiter
+                LightFunctionPrint2(id,frequenz,millis());
+                LightFunctionFrequenz(id,valueDown,valueDiff,highDown,startZeit,counter,endZeit,timeIntervall,error,spielraum);
+              }
+              if(variable == 0){    
+                 LightFunctionPrint(id,analogRead(LS1PIN),millis());
+                 LightFunctionFrequenz(id,valueDown,valueDiff,highDown,startZeit,counter,endZeit,timeIntervall,error,spielraum);
               }  
                break;}
             case START:{
                // starte neu 
-                int valueMax = XSERIAL.parseInt();
                 int value = analogRead(LS1PIN);
-                LightFunctionStart(id,valueMax,value);  
+                LightFunctionStart(id,variable,value);  
                 break;}
             case STOP:{
-                LightFunctionStop(id,frequenz);
+                if(error == true){
+                  LightFunctionStop(id,0.0);
+                }
+                else{
+                  LightFunctionStop(id,frequenz);
+                }
                break;}
           }
           break;
@@ -410,7 +440,7 @@ void LightFunctionPrint(int id,int value,unsigned long time){
   
  }
  void LightFunctionStop(int id,float frequenz){
-    //gibt die Helligkeit und Zeit zurück
+    //gibt die Helligkeit und Zeit zurÃ¼ck
     DEBUG_PRINTLN("# In the sub-function LightFunctionRead of LightSensorFunction");
     DEBUG_PRINT("# with id");
     DEBUG_PRINTLN(id);
@@ -435,3 +465,4 @@ void processCleanUp () {
     i = XSERIAL.read();
   }
 }
+
