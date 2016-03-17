@@ -44,7 +44,10 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		
 		// Theft Detection
 		{{TheftStart := {255, 0, 2, 156}},	"85, 2, 255, 0, 2, 156",	"Start theft detection"},
-		{{TheftStop := {}},					"85, 3",					"Stop theft detection"}
+		{{TheftStop := {}},					"85, 3",					"Stop theft detection"},
+		
+		// things we don't need but test anyways to ensure backward compatibility
+		{{ReadRGB := {}},					"10, 4",					"Read RGB"}
 	};
 	
 	testcase EncodingTestcase() runs on me system me {
@@ -87,6 +90,13 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 			setverdict(fail, "Fail at: Frequency answer");
 		} else {
 			log("Success: Frequency answer");
+		}
+		
+		// things we don't need but test anyways for backward compatibility
+		if(not checkDecode<RGB>(RGB: {0, 128, 255},								"10, 101, 0, 128, 255")) {
+			setverdict(fail, "Fail at: RGB answer");
+		} else {
+			log("Success: RGB answer");
 		}
 
 		if(getverdict == none) {
