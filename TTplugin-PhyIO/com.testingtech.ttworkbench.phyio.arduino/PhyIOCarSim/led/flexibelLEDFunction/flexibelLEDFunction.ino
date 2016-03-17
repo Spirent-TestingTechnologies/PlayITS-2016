@@ -151,6 +151,9 @@ typedef struct LEDFunctionConfig{
 // Definitions of the needed functions
 void LEDFunctionSet(int id, int state);
 void LEDFunctionBlink(int id);
+void LEDFunctionStop(int id);
+void LEDToggling(LEDFunctionConfig led);
+void LEDSwitch(LEDFunctionConfig led, int state);
 LEDFunctionConfig Dioden[LedCount];  // <-- array von Stracts scheint falsch zu sein
 
 unsigned long currentMillis; // keeps track of time to signal if blinking is needed
@@ -219,13 +222,13 @@ void LEDshouldBlink(){
   currentMillis = millis();
 
   for(int i = 0; i < LedCount; i++){
-    if(Dioden[i].is_toggling){toggling(&Dioden[i]);}
+    if(Dioden[i].is_toggling){LEDToggling(&Dioden[i]);}
   }
 
 }
 
 
-void toggling(struct LEDFunctionConfig *led){
+void LEDToggling(struct LEDFunctionConfig *led){
   // toggles between the on and off state of the given led
 
   // no debug print here, as it would clutter the readybillity
