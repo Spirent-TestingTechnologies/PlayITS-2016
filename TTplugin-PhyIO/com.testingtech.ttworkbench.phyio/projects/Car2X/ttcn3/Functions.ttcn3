@@ -7,7 +7,7 @@ module Functions {
 	
 	import from Components all;
 	import from Parameters all;
-	import from UnitTests all;
+	import from SimulatedArduino all;
 	
 	
 	/**

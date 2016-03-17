@@ -1,7 +1,7 @@
 /**
  * @desc Unit test for testcases
  */
-module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
+module SimulatedArduino language "TTCN-3:2010 Real Time and Performance Testing" {
 	import from PhyIOAUX all;
 	
 	import from Components all;
