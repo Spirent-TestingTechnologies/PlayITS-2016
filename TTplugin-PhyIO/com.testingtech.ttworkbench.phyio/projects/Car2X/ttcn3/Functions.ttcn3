@@ -41,73 +41,7 @@ module Functions {
 		
 		return inconc;
 	}
-	/** @desc checks if EmergencyLights are working correctly
-	 *  @param 	switchTimetarget: time to next status change
-	 *  		allowedSwitchTimeDeviation: allowed delay between status changes
-	 *  		time: time until timeout
-	 *  @deprecated communication with light sensor isn't up-to-date, protocol has changed
-	 */
-	function checkEmergencyLights(float switchTimeTarget,
-		float allowedSwitchTimeDeviation,
-		integer minDiff,
-		integer minSwitches,
-		float time)
-	runs on me system System return verdicttype{
-		var verdicttype result := none;
 		
-		var State state;
-		var float lastTimestamp := -1.0;
-		var float thisTimestamp := -1.0;
-		var boolean isTimeout;
-		var integer switchCount := 0;
-		
-		lightSensor.send(ReadLightSwitchStart: minDiff);
-		
-		t.start(time);
-
-		while(result == none){
-			alt{
-				[]lightSensor.receive(State: {?, ?}) -> value state {
-					switchCount := switchCount + 1;
-					
-					thisTimestamp := int2float(state.time) / 1000.0;
-					
-					if(lastTimestamp == -1.0){
-						lastTimestamp := thisTimestamp;
-					} else {
-						if(abs_float(thisTimestamp - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
-							result := fail;
-						} else {
-							lastTimestamp := thisTimestamp;
-						}
-					}
-				}
-				[]t.timeout {
-					isTimeout := true;
-					result := inconc;
-				}
-			}
-		}
-		
-		if(result != none){
-			lightSensor.send(ReadLightSwitchStop:{});
-			return result;
-		}
-		
-		lightSensor.receive(State: {?, ?}) -> value state;
-		thisTimestamp := int2float(state.time) / 1000.0;
-		
-		lightSensor.send(ReadLightSwitchStop:{});
-			
-		if(thisTimestamp - lastTimestamp <= switchTimeTarget + allowedSwitchTimeDeviation
-			and switchCount >= minSwitches){
-			return pass;
-		} else{
-			return fail;
-		}
-		
-	}
-	
 	/**
 	 * @desc checks if the measured distance is within a certain range of an expected value
 	 */
