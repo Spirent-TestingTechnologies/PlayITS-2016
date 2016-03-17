@@ -20,8 +20,8 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 		var RFID rfid := OWNER_RFID;
 		
 		var Brightness ledBrightness := 0;
-		var boolean elFrequencyOn := false;
-		var float elBlinkOn := 0.0;
+		var boolean isBlinkOn := false;
+		var float blinkFrequency := 0.0;
 		
 		var boolean isDistanceSweepOn := false;
 		var integer distanceSweepState := 0;
@@ -42,6 +42,8 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 					} else if(testcaseInfo == "Distance Sweep On") {
 						isDistanceSweepOn := true;
 						distanceSweepTimer.start(DISTANCE_SWEEP_TIME);
+					} else if(testcaseInfo == "Distance Sweep Off") {
+						isDistanceSweepOn := false;
 					} else if(testcaseInfo == "Theft Detection") {
 						theftDetect();
 						stop;
@@ -54,27 +56,27 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 				[]led.receive(switchLED_OFF) {
 					ledBrightness := 0;
 				}
-				[]led.receive(BlinkLEDStart: ?) -> value elBlinkOn {
-					if(elBlinkOn > 0.0) {
-						elBlinkOn := 1.0 / elBlinkOn;
+				[]led.receive(BlinkLEDStart: ?) -> value blinkFrequency {
+					if(blinkFrequency > 0.0) {
+						blinkFrequency := 1.0 / blinkFrequency;
 					}
 				}
 				[]led.receive(BlinkLEDStop: {}) {
-					elBlinkOn := 0.0;
+					blinkFrequency := 0.0;
 				}
 				[]lightSensor.receive(READ_BRIGHTNESS) {
 					lightSensor.send(State: {ledBrightness, float2int((now - startTime) * 1000.0)});
 				}
 				[]lightSensor.receive(ReadFrequencyStart: ?) {
-					elFrequencyOn := true;
+					isBlinkOn := true;
 				}
 				[]lightSensor.receive(ReadFrequencyStop: {}) {
-					if(elFrequencyOn) {
-						lightSensor.send(Frequency: elBlinkOn);
+					if(isBlinkOn) {
+						lightSensor.send(Frequency: blinkFrequency);
 					} else {
 						lightSensor.send(Frequency: 0.0);
 					}
-					elFrequencyOn := false;
+					isBlinkOn := false;
 				}
 				[]doorSensor.receive(ReadDoorStart:{}) {
 					doorSensor.send(DoorState: true);
@@ -129,7 +131,6 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 		
 		var boolean sendRFID := true;
 		var boolean correctRFID := false;
-		var RFID rfid := OWNER_RFID;
 		var RFID expectedRFID := OWNER_RFID;
 		var boolean openDoor := false;
 		
@@ -139,12 +140,10 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 			alt {
 				[]sutConfig.receive(TestcaseInfo: ?) -> value testcaseInfo {
 					if(testcaseInfo == "Correct RFID") {
-						rfid := OWNER_RFID;
 						correctRFID := true;
 						sendRFID := true;
 					} else if(testcaseInfo == "False RFID") {
 						correctRFID := false;
-						rfid := FALSE_RFID;
 						sendRFID := true;
 					} else if(testcaseInfo == "No RFID") {
 						sendRFID := false;
@@ -156,9 +155,17 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 				}
 				
 				[]theftDetection.receive(TheftStart: ?) -> value expectedRFID {
-					//TODO deal with other RFID than OWNER_RFID
 					if(sendRFID) {
-						rfidSensor.send(rfid);
+						if(correctRFID) {
+							rfidSensor.send(expectedRFID);
+						} else {
+							if(expectedRFID == FALSE_RFID) {
+								// by accident the RFID which we usually use as the false one was expected here
+								rfidSensor.send(OWNER_RFID);
+							} else {
+								rfidSensor.send(FALSE_RFID);
+							}
+						}
 					}
 					if(openDoor) {
 						doorSensor.send(DoorState: true);
