@@ -47,7 +47,9 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		{{TheftStop := {}},					"85, 3",					"Stop theft detection"},
 		
 		// things we don't need but test anyways to ensure backward compatibility
-		{{ReadRGB := {}},					"10, 4",					"Read RGB"}
+		{{ReadRGB := {}},					"10, 4",					"Read RGB"},
+		{{RelaySwith := true},				"40, 1, 1",					"Switch relay on"},
+		{{RelaySwith := false},				"40, 1, 0",					"Switch relay off"}
 	};
 	
 	testcase EncodingTestcase() runs on me system me {
