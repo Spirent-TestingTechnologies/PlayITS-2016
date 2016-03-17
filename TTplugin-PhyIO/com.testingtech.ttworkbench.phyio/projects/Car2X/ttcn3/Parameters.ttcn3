@@ -10,22 +10,43 @@ module Parameters {
 	modulepar boolean NOTIFY_UI := false;
 	modulepar boolean MAP_TESTER := false;
 	
+
+	//**@desc LED/Lightsensor Parameters
+	modulepar float TIME_HEADLIGHTS := 5.0;
+	modulepar float TIME_EMERGENCY_LIGHTS := 10.0;
+	
+	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
+	modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.1;
+	modulepar float SWITCH_TIME_TARGET := 0.5;
+	modulepar integer MIN_SWITCH_BRIGHTNESS_DIFFERENCE := 100;
+ 
+	//**@desc Door Parameter	
+	modulepar float TIME_DOORS := 5.0;
+	
+	//**@desc Theft Detection Parameter
+	modulepar float TIME_THEFT_DETECTION := 30.0;
+	
+	//**@desc RFID Parameters
+	modulepar float TIME_RFID := 10.0;
+	modulepar float THEFT_RFID_CHECK_RATE := 0.1;
+	
 	// ID Karte: 194, 96, 196, 169 (DEZ)
 	// ID Chip: 4, 226, 92, 235 (DEZ)
 	modulepar RFID OWNER_RFID := {194, 96, 196, 169};
 	modulepar RFID FALSE_RFID := {34, 55, 89, 144};
 
-	modulepar float THEFT_RFID_CHECK_RATE := 0.1;
-
-	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
-	modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.1;
-	modulepar float SWITCH_TIME_TARGET := 0.5;
-	modulepar integer MIN_SWITCH_BRIGHTNESS_DIFFERENCE := 100;
-
+	//**@desc Distance Parameters
+	modulepar float TIME_DISTANCE_SINGLE_MEASUREMENT := 10.0;
+	//Distances in cm
 	modulepar integer ALLOWED_DISTANCE_DEVIATION := 3;
 	modulepar integer EXPECTED_DISTANCE_10 := 10;
 	modulepar integer EXPECTED_DISTANCE_20 := 20;
-		
+	
+	type record of integer DistancesToCheck;
+	modulepar DistancesToCheck SINGLE_DISTANCE := {10};
+	// modulepar DistancesToCheck VARIOUS_DISTANCES := {30, 20, 10, 50};
+	
+	
 	//**@desc moduleparameters of the system under test
 	modulepar RS232Config SUT_RS232_CONFIG := {
 		serialPortName := "COM3",
@@ -47,21 +68,6 @@ module Parameters {
 		flowControl := c_FlowControlNone,
 		checkDSR := false
 	};
-
-	//timerparams for different testcases
-	modulepar float TIME_HEADLIGHTS := 5.0;
-	modulepar float TIME_EMERGENCY_LIGHTS := 10.0;
-	modulepar float TIME_DOORS := 5.0;
-	modulepar float TIME_RFID := 10.0;
-	modulepar float TIME_THEFT_DETECTION := 30.0;
-	modulepar float TIME_DISTANCE_FIRST_MEASUREMENT := 5.0;
-	modulepar float TIME_DISTANCE_SINGLE_MEASUREMENT := 10.0;
-
-	type record of integer DistancesToCheck;
-	
-	modulepar DistancesToCheck SINGLE_DISTANCE := {10};
-	// modulepar DistancesToCheck VARIOUS_DISTANCES := {30, 20, 10, 50};
-	
 	
 	template Frequency CORRECT_FREQUENCY :=
 		(SWITCH_TIME_TARGET - ALLOWED_SWITCH_TIME_DEVIATION ..
