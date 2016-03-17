@@ -84,7 +84,7 @@ module Distance {
 				}
 				[]t.timeout {
 					if(not hasReceivedData) {
-						result := verdictFail("No data from sensor");
+						result := verdictInconc("No data from sensor");
 					} else {
 						result := verdictFail("Failed to match distance within given time span");
 					}
