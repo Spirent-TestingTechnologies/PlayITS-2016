@@ -1,7 +1,7 @@
 /**
  * @desc Unit test for testcases
  */
-module UnitTests {
+module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 	import from PhyIOAUX all;
 	
 	import from Components all;
@@ -14,6 +14,7 @@ module UnitTests {
 	function main() runs on System {
 		var boolean run := true;
 		var charstring testcaseInfo := "";
+		var float startTime := now;
 		
 		var boolean sendRFID := true;
 		var RFID rfid := OWNER_RFID;
@@ -62,8 +63,7 @@ module UnitTests {
 					elBlinkOn := 0.0;
 				}
 				[]lightSensor.receive(READ_BRIGHTNESS) {
-					//TODO timestamp
-					lightSensor.send(State: {ledBrightness, 1000});
+					lightSensor.send(State: {ledBrightness, float2int((now - startTime) * 1000.0)});
 				}
 				[]lightSensor.receive(ReadFrequencyStart: ?) {
 					elFrequencyOn := true;
@@ -108,8 +108,7 @@ module UnitTests {
 							tmpDistance := DISTANCE_SWEEP_MAX - (tmpDistance - DISTANCE_SWEEP_MAX);
 						}
 						
-						// TODO timestamps
-						distanceSensor.send(DistanceSensorState: {1000, tmpDistance});
+						distanceSensor.send(DistanceSensorState: {float2int((now - startTime) * 1000.0), tmpDistance});
 					}
 					
 					distanceSweepTimer.start(DISTANCE_SWEEP_TIME);
