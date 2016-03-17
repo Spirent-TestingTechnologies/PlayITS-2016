@@ -47,13 +47,13 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		{{TheftStop := {}},					"85, 3",					"Stop theft detection"},
 		
 		// things we don't need but test anyways to ensure backward compatibility
+		// these only include things that were implemented in the beginning
 		{{ReadRGB := {}},					"10, 4",					"Read RGB"},
 		{{RelaySwith := true},				"40, 1, 1",					"Switch relay on"},
 		{{RelaySwith := false},				"40, 1, 0",					"Switch relay off"},
-		{{ReadDistance := {}},				"20, 4",					"Read Ping Echo"}
-	// TODO Config
-	// TODO Motor
-	// TODO PushButton
+		{{ReadDistance := {}},				"20, 4",					"Read Ping Echo"},
+		{{Velocity := -34},					"50, 1, -34",				"Set motor negative"},
+		{{Velocity := 68},					"50, 1, 68",				"Set motor positive"}
 	};
 	
 	testcase EncodingTestcase() runs on me system me {
@@ -98,7 +98,7 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 			log("Success: Frequency answer");
 		}
 		
-		// things we don't need but test anyways for backward compatibility
+		// things we don't need but test anyways to ensure backward compatibility
 		if(not checkDecode<RGB>(RGB: {0, 128, 255},								"10, 101, 0, 128, 255")) {
 			setverdict(fail, "Fail at: RGB answer");
 		} else {
