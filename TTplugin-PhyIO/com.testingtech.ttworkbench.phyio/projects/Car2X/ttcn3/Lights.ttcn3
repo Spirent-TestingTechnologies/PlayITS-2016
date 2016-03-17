@@ -136,25 +136,6 @@ module Lights {
 		}
 	}
 	
-	/**
-	 * @shortdesc Emergency Lights (old)
-	 * @desc reads on/off switches of LED to dertermin if emergency lights are on
-	 * @verdict pass when emergency light blink with expected frequency, fail otherwise
-	 */
-	testcase OldEmergencyLightsTestcase() runs on me system System {
-		setup();
-		
-		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
-		
-		setverdict(checkEmergencyLights(
-				SWITCH_TIME_TARGET,
-				ALLOWED_SWITCH_TIME_DEVIATION,
-				MIN_SWITCH_BRIGHTNESS_DIFFERENCE,
-				5, 10.0));
-			
-		led.send(BlinkLEDStop: {});
-		tearDown();
-	}
 	
 	/**
 	 * @shortdesc Emergency Lights
