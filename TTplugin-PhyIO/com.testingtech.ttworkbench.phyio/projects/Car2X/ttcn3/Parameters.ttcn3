@@ -6,6 +6,7 @@ module Parameters {
 	import from RS232ConfigPortAux all with { encode "BASE" }
 	import from TTlibrary_UnitTest all;
 	
+	modulepar boolean SIMULATION := false;
 	modulepar boolean NOTIFY_UI := false;
 	modulepar boolean MAP_TESTER := false;
 	

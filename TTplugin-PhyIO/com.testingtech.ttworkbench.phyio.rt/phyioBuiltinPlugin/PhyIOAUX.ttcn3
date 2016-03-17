@@ -92,7 +92,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 
 			//** @desc Read the LED state and switch LED on/off
 			type port PhyLED message {
-				out SwitchLED, BlinkLEDStart, BlinkLEDStop;
+				//out
+				inout SwitchLED, BlinkLEDStart, BlinkLEDStop;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -110,8 +111,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
       
 			//** @desc Read the current distance (in cm) measured by the Ultrasonic sensor
 			type port PhyEcho message {
-				in Distance;
-				out ReadDistance;
+				//in
+				inout Distance;
+				//out
+				inout ReadDistance;
 				map param (DeviceID deviceID, SensorID sensorID, UpdateFrequency updateFrequency);
 			}
 		}
@@ -135,8 +138,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
       
 			//** @desc Read the current distance (in cm) measured by the Ultrasonic sensor
 			type port DistanceSensor message {
-				in DistanceSensorState;
-				out DistanceSensorSetup, ReadDistanceStart, ReadDistanceStop;
+				//in
+				inout DistanceSensorState;
+				//out
+				inout DistanceSensorSetup, ReadDistanceStart, ReadDistanceStop;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -148,7 +153,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			}
       
 			type port PhyMotor message {
-				out Velocity;
+				//out
+				inout Velocity;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -172,8 +178,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 
 			//** @desc Read the state of the push button
 			type port PhyPushButton message {
-				in PushButtonState;
-				out ReadButtonState, ReadButtonStateStart, ReadButtonStateStop;
+				//in
+				inout PushButtonState;
+				//out
+				inout ReadButtonState, ReadButtonStateStart, ReadButtonStateStop;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -196,8 +204,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 
 			//** @desc Read the state of the push button
 			type port PhyDoor message {
-				in DoorState;
-				out ReadDoorStart, ReadDoorStop;
+				//in
+				inout DoorState;
+				//out
+				inout ReadDoorStart, ReadDoorStop;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -225,8 +235,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
       
 			//** @desc Read the current color detected by the color sensor
 			type port PhyColorSensor message {
-				in RGB;
-				out ReadRGB;
+				//in
+				inout RGB;
+				//out
+				inout ReadRGB;
 				map param (DeviceID deviceID, SensorID sensorID, UpdateFrequency updateFrequency);
 			}
 		}
@@ -240,7 +252,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
       
 			//** @desc Drive the relay to switch a contact on and off
 			type port PhyRelay message {
-				out RelaySwith;
+				//out
+				inout RelaySwith;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -285,8 +298,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			
 			//** @desc Drive the relay to switch a contact on and off
 			type port PhyLightSensor message {
-				in State, Frequency;
-				out ReadLightSensorState,
+				//in
+				inout State, Frequency;
+				//out
+				inout ReadLightSensorState,
 				ReadLightSwitchStart,
 				ReadFrequencyStart,
 				ReadLightSwitchStop,
@@ -309,8 +324,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			}
 			
 			type port PhyRFIDSensor message {
-				in RFID;
-				out RFID, ReadRFIDStart, ReadRFIDStop;
+				//in
+				inout RFID;
+				//out
+				inout RFID, ReadRFIDStart, ReadRFIDStop;
         	
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
@@ -326,7 +343,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			}
 			
 			type port PhyTheftDetection message {
-				out TheftStart, TheftStop;
+				//out
+				inout TheftStart, TheftStop;
         	
 				map param (DeviceID deviceID, SensorID sensorID);
 			}

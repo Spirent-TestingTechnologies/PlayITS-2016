@@ -5,11 +5,8 @@ module Components {
 	import from PhyIOAUX all;
 	
 	type record StopThread {};
-	type port InternalVerdictPort message {
-		inout verdicttype, StopThread;
-	}
+	type charstring TestcaseInfo;
 	
-
 	//**@desc Component port definition System measuring the SUT (Arduino)
 	type component TesterPorts {
 		port PhyConfig testerConfig;
@@ -30,8 +27,11 @@ module Components {
 	type component me extends SUTPorts, TesterPorts {
 		timer t;
 		
-		port InternalVerdictPort rfidPort;
-		port InternalVerdictPort emergencyLightPort;
+		// TODO only for backward compatibility, remove asap
+		port PhyConfig rfidPort;
+		port PhyConfig emergencyLightPort;
+		
+		var System simulation;
 	}
 	
 

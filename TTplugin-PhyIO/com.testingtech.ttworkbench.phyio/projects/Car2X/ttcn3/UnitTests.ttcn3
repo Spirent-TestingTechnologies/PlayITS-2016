@@ -1,0 +1,190 @@
+/**
+ * @desc Unit test for testcases
+ */
+module UnitTests {
+	import from PhyIOAUX all;
+	
+	import from Components all;
+	import from Parameters all;
+	
+	const integer DISTANCE_SWEEP_MAX := 250;
+	const integer DISTANCE_SWEEP_STEP := 5;
+	const float DISTANCE_SWEEP_TIME := 0.05;
+	
+	function main() runs on System {
+		var boolean run := true;
+		var charstring testcaseInfo := "";
+		
+		var boolean sendRFID := true;
+		var RFID rfid := OWNER_RFID;
+		
+		var Brightness ledBrightness := 0;
+		var boolean elFrequencyOn := false;
+		var float elBlinkOn := 0.0;
+		
+		var boolean isDistanceSweepOn := false;
+		var integer distanceSweepState := 0;
+		timer distanceSweepTimer;
+		var boolean readDistance := false;
+		
+		while(run) {
+			alt {
+				[]sutConfig.receive(TestcaseInfo: ?) -> value testcaseInfo {
+					if(testcaseInfo == "Correct RFID") {
+						rfid := OWNER_RFID;
+						sendRFID := true;
+					} else if(testcaseInfo == "False RFID") {
+						rfid := FALSE_RFID;
+						sendRFID := true;
+					} else if(testcaseInfo == "No RFID") {
+						sendRFID := false;
+					} else if(testcaseInfo == "Distance Sweep On") {
+						isDistanceSweepOn := true;
+						distanceSweepTimer.start(DISTANCE_SWEEP_TIME);
+					} else if(testcaseInfo == "Theft Detection") {
+						theftDetect();
+						stop;
+					}
+				}
+				
+				[]led.receive(switchLED_ON) {
+					ledBrightness := 1023;
+				}
+				[]led.receive(switchLED_OFF) {
+					ledBrightness := 0;
+				}
+				[]led.receive(BlinkLEDStart: ?) -> value elBlinkOn {
+					if(elBlinkOn > 0.0) {
+						elBlinkOn := 1.0 / elBlinkOn;
+					}
+				}
+				[]led.receive(BlinkLEDStop: {}) {
+					elBlinkOn := 0.0;
+				}
+				[]lightSensor.receive(READ_BRIGHTNESS) {
+					//TODO timestamp
+					lightSensor.send(State: {ledBrightness, 1000});
+				}
+				[]lightSensor.receive(ReadFrequencyStart: ?) {
+					elFrequencyOn := true;
+				}
+				[]lightSensor.receive(ReadFrequencyStop: {}) {
+					if(elFrequencyOn) {
+						lightSensor.send(Frequency: elBlinkOn);
+					} else {
+						lightSensor.send(Frequency: 0.0);
+					}
+					elFrequencyOn := false;
+				}
+				[]doorSensor.receive(ReadDoorStart:{}) {
+					doorSensor.send(DoorState: true);
+				}
+				[]doorSensor.receive(ReadDoorStop:{}) {
+				// nothing to do
+				}
+				[]rfidSensor.receive(ReadRFIDStart: {}) {
+					rfidSensor.send(rfid);
+				}
+				[]rfidSensor.receive(ReadRFIDStop: {}) {
+				//nothing to do
+				}
+				[]distanceSensor.receive(ReadDistanceStart: {}) {
+					readDistance := true;
+				}
+				[]distanceSensor.receive(ReadDistanceStop: {}) {
+					readDistance := false;
+				}
+				[isDistanceSweepOn]distanceSweepTimer.timeout {
+					distanceSweepState := distanceSweepState + DISTANCE_SWEEP_STEP;
+					
+					if(distanceSweepState >= DISTANCE_SWEEP_MAX * 2) {
+						distanceSweepState := 0;
+					}
+					
+					if(readDistance) {
+						var integer tmpDistance := distanceSweepState;
+						
+						if(tmpDistance >= DISTANCE_SWEEP_MAX) {
+							tmpDistance := DISTANCE_SWEEP_MAX - (tmpDistance - DISTANCE_SWEEP_MAX);
+						}
+						
+						// TODO timestamps
+						distanceSensor.send(DistanceSensorState: {tmpDistance, 1000});
+					}
+					
+					distanceSweepTimer.start(DISTANCE_SWEEP_TIME);
+				}
+								
+				[]sutConfig.receive(StopThread: {}) {
+					run := false;
+				}
+			}
+		}
+		
+		stop;
+	}
+	
+	function theftDetect() runs on System {
+		var boolean run := true;
+		var charstring testcaseInfo := "";
+		
+		var boolean sendRFID := true;
+		var boolean correctRFID := false;
+		var RFID rfid := OWNER_RFID;
+		var RFID expectedRFID := OWNER_RFID;
+		var boolean openDoor := false;
+		
+		var boolean isAlarmOn := false;
+		
+		while(run) {
+			alt {
+				[]sutConfig.receive(TestcaseInfo: ?) -> value testcaseInfo {
+					if(testcaseInfo == "Correct RFID") {
+						rfid := OWNER_RFID;
+						correctRFID := true;
+						sendRFID := true;
+					} else if(testcaseInfo == "False RFID") {
+						correctRFID := false;
+						rfid := FALSE_RFID;
+						sendRFID := true;
+					} else if(testcaseInfo == "No RFID") {
+						sendRFID := false;
+					} else if(testcaseInfo == "Open Door") {
+						openDoor := true;
+					} else if(testcaseInfo == "No Door") {
+						openDoor := false;
+					}
+				}
+				
+				[]theftDetection.receive(TheftStart: ?) -> value expectedRFID {
+					//TODO deal with other RFID than OWNER_RFID
+					if(sendRFID) {
+						rfidSensor.send(rfid);
+					}
+					if(openDoor) {
+						doorSensor.send(DoorState: true);
+					}
+					
+					if(openDoor and (not sendRFID or not correctRFID)){
+						isAlarmOn := true;
+					} else {
+						isAlarmOn := false;
+					}
+				}
+				[]theftDetection.receive(TheftStop: ?) {
+				}
+				[]lightSensor.receive(READ_FREQUENCY) {
+					if(isAlarmOn) {
+						lightSensor.send(Frequency: SWITCH_TIME_TARGET);
+					} else {
+						lightSensor.send(Frequency: 0.0);
+					}
+				}
+								
+				[]sutConfig.receive(StopThread: {}) {
+					run := false;
+				}
+			}
+		}
+	}
+}

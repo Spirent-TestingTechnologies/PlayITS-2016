@@ -45,6 +45,15 @@ module RFIDModule {
 		
 		setup();
 		
+		if(SIMULATION) {
+			// we abuse sutConfig because it's not otherwise used
+			if(expectCorrectRFID) {
+				sutConfig.send(TestcaseInfo: "Correct RFID");
+			} else {
+				sutConfig.send(TestcaseInfo: "False RFID");
+			}
+		}
+		
 		rfidSensor.send(ReadRFIDStart:{});
 		t.start(TIME_RFID);
 		
