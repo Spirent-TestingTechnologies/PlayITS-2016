@@ -38,7 +38,6 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		// Light Sensor
 		{{ReadFrequencyStart := 8},			"70, 2, 8",					"Frequency start"},
 		{{ReadFrequencyStop := {}},			"70, 3",					"Frequency stop"},
-		// ReadLightSwitchStart/Stop is not used anymore -> no tests
 		{{ReadLightSensorState := false},	"70, 4, 0",					"Read light sensor"},
 		{{ReadLightSensorState := true},	"70, 4, 1",					"Read frequency"},
 		

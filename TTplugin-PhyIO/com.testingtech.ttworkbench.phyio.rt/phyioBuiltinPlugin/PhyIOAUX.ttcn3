@@ -275,20 +275,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			
 			const ReadLightSensorState READ_BRIGHTNESS := false;
 			const ReadLightSensorState READ_FREQUENCY := true;
-		
-			//** @desc start reading timestamps of LED on/off switching, incl. minDiff
-			type integer ReadLightSwitchStart with {
-				variant "LIGHTSENSOR,START"
-			}
 			
 			//** @desc start measuring frequency incl. minDiff
 			type integer ReadFrequencyStart with {
 				variant "LIGHTSENSOR,START"
-			}
-			
-			//** @desc stop reading timestamps of LED on/off switching
-			type record ReadLightSwitchStop {} with {
-				variant "LIGHTSENSOR,STOP"
 			}
 			
 			//** @desc stop reading timestamps of LED on/off switching
@@ -302,9 +292,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 				inout State, Frequency;
 				//out
 				inout ReadLightSensorState,
-				ReadLightSwitchStart,
 				ReadFrequencyStart,
-				ReadLightSwitchStop,
 				ReadFrequencyStop;
         	
 				map param (DeviceID deviceID, SensorID sensorID);
