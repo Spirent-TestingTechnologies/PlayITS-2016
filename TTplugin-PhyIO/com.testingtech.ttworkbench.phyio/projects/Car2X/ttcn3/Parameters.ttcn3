@@ -20,10 +20,10 @@ module Parameters {
 	modulepar float TIME_EMERGENCY_LIGHTS := 10.0;
 	//**@desc Threshold to differentiate between on/off states of the LED
 	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
+	//**@desc Targeted number of switches per second for LED
+	modulepar float SWITCH_FREQUENCY_TARGET := 2.0;
 	//**@desc Allowed Deviation of the blink frequency of the LED
-	modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.1;
-	//**@desc Targeted time between changes of LED states 
-	modulepar float SWITCH_TIME_TARGET := 0.5;
+	  modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.3;
 	//**@desc minimal Brightness Difference for state change
 	modulepar integer MIN_SWITCH_BRIGHTNESS_DIFFERENCE := 100;
  
@@ -84,8 +84,8 @@ module Parameters {
 	};
 	//**@desc Type for storing the expected Frequency
 	template Frequency CORRECT_FREQUENCY :=
-		(SWITCH_TIME_TARGET - ALLOWED_SWITCH_TIME_DEVIATION ..
-		SWITCH_TIME_TARGET + ALLOWED_SWITCH_TIME_DEVIATION);
+		(SWITCH_FREQUENCY_TARGET - ALLOWED_SWITCH_TIME_DEVIATION ..
+	SWITCH_FREQUENCY_TARGET + ALLOWED_SWITCH_TIME_DEVIATION);
 		
 	// TTlibraryUnitTest defines verdictPass and verdictFail but not verdictInconc 'cause that's how the pros operate...
 	template VerdictDescription verdictInconc(in template charstring p_reason := omit) := {verdict := inconc, reason := p_reason}

@@ -153,7 +153,7 @@ module Lights {
 		
 		setStage(1, 0.0);
 		
-		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
+		led.send(BlinkLEDStart: SWITCH_FREQUENCY_TARGET);
 		
 		// wait a bit to make sure that arduino had enough time to react
 		t.start(0.25);

@@ -70,9 +70,6 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 					ledBrightness := 0;
 				}
 				[]led.receive(BlinkLEDStart: ?) -> value blinkFrequency {
-					if(blinkFrequency > 0.0) {
-						blinkFrequency := 1.0 / blinkFrequency;
-					}
 				}
 				[]led.receive(BlinkLEDStop: {}) {
 					blinkFrequency := 0.0;
@@ -203,14 +200,14 @@ module UnitTests language "TTCN-3:2010 Real Time and Performance Testing" {
 				}
 				[]lightSensor.receive(READ_FREQUENCY) {
 					if(isAlarmOn) {
-						lightSensor.send(Frequency: SWITCH_TIME_TARGET);
+						lightSensor.send(Frequency: SWITCH_FREQUENCY_TARGET);
 					} else {
 						lightSensor.send(Frequency: 0.0);
 					}
 				}
 				[]lightSensor.receive(ReadFrequencyStop: {}) {
 					if(isAlarmOn) {
-						lightSensor.send(Frequency: SWITCH_TIME_TARGET);
+						lightSensor.send(Frequency: SWITCH_FREQUENCY_TARGET);
 					} else {
 						lightSensor.send(Frequency: 0.0);
 					}
