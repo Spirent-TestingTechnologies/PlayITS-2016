@@ -9,39 +9,7 @@ module Functions {
 	import from Parameters all;
 	import from SimulatedArduino all;
 	
-	
-	/**
-	 * @desc Test to check for valid rfid
-	 * @param RFID in question, time until timeout
-	 * @deprecated should be removed
-	 */
-	function checkRFID(RFID rfid, float time) runs on me system System return verdicttype {
-		var verdicttype result := none;
-		
-		rfidSensor.send(ReadRFIDStart:{});
-		t.start(time);
-		
-		alt{
-			[]rfidSensor.receive(RFID: rfid){
-				result := pass;
-			}
-			[]rfidSensor.receive(RFID: ?) {
-				result := fail;
-			}
-			[]t.timeout {
-				result := inconc;
-			}
-		}
-		
-		rfidSensor.send(ReadRFIDStop:{});
-		
-		if(result != none) {
-			return result;
-		}
-		
-		return inconc;
-	}
-		
+			
 	/**
 	 * @desc checks if the measured distance is within a certain range of an expected value
 	 */
