@@ -143,7 +143,7 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		if(moduleIdentifier.equals("CONFIG")){
 			return PhyModule.GeneralConfig01.getId();
 		}
-		else if (moduleIdentifier.equals("COLOR")){
+		else if (moduleIdentifier.equals("RGB")){
 			return PhyModule.ColorView01.getId();
 		}
 		else if (moduleIdentifier.equals("ECHO")){
