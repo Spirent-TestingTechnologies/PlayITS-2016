@@ -131,18 +131,17 @@ module TheftDetection {
 		}
 		
 		theftDetection.send(TheftStart: OWNER_RFID);
+		lightSensor.send(ReadFrequencyStart: MIN_SWITCH_BRIGHTNESS_DIFFERENCE);
 		
 		t.start(TIME_THEFT_DETECTION);
 		requestELTimer.start(EL_CHECK_TIME);
 		
-		if(expectRFID != inconc){
+		if(expectRFID != inconc) {
 			setStage(1, TIME_THEFT_DETECTION);
-		}
-		else if(expectDoor){
+		} else if(expectDoor) {
 			setStage(2, TIME_THEFT_DETECTION);
 			
-		}
-		else if(not expectDoor){
+		} else if(not expectDoor) {
 			setStage(3, WAIT_FOR_EL_TIME);
 		}
 		
@@ -222,6 +221,7 @@ module TheftDetection {
 		}
 		
 		theftDetection.send(TheftStop: {});
+		lightSensor.send(ReadFrequencyStop: {});
 		
 		tearDown();
 		
