@@ -135,6 +135,17 @@ module TheftDetection {
 		t.start(TIME_THEFT_DETECTION);
 		requestELTimer.start(EL_CHECK_TIME);
 		
+		if(expectRFID != inconc){
+			setStage(1, TIME_THEFT_DETECTION);
+		}
+		else if(expectDoor){
+			setStage(2, TIME_THEFT_DETECTION);
+			
+		}
+		else if(not expectDoor){
+			setStage(3, WAIT_FOR_EL_TIME);
+		}
+		
 		while(result.verdict == none and run) {
 			alt {
 				[not hasDoor]doorSensor.receive(DoorState: true) {
