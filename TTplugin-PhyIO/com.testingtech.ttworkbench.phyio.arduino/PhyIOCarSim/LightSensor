@@ -277,6 +277,7 @@ void LightFunctionPrint(int id,int value,unsigned long time){
    DEBUG_PRINT("# with id");
    DEBUG_PRINTLN(id);
    boolean error=false;
+   boolean inPut = false;
    unsigned long timeDiff= 0;
    int counter = 1;
    int lightValueNow;
@@ -292,11 +293,12 @@ void LightFunctionPrint(int id,int value,unsigned long time){
           timeDiff = endTime - startTime;
         }
         else{
-          if(checkError(timeDiff,millis()-endTime)==false){
+          if(checkError(timeDiff,millis()-endTime)==false && inPut == false){
             error = true;
           }
           endTime = millis();
         }
+        inPut = false;
       }
     else if(lightValueNow<=down && upOrDown == true){
         upOrDown = false;
@@ -306,27 +308,30 @@ void LightFunctionPrint(int id,int value,unsigned long time){
           timeDiff = endTime - startTime;
         }
         else{
-          if(checkError(timeDiff,millis()-endTime)==false){
+          if(checkError(timeDiff,millis()-endTime)==false && inPut == false){
+            Serial.println("Error");
             error = true;
           }
           endTime = millis();
         }
+        inPut = false;
       }
     if(Serial.available()> 0 ) {
+      inPut = true;
       if(readInput(getFrequency(endTime-startTime,counter),error)==true){
         return;  
       }
+      
     }
    }
  }
  
  boolean checkError(unsigned long timeDiff,unsigned long timeDiffNow){
   //überprüft ob die Abstände gleich sind
- 
-  if(timeDiffNow > (timeDiff+(timeDiff*1))){
+  if(timeDiffNow > (timeDiff+(timeDiff*0.1))){
     return false;
   }
-  else if(timeDiffNow < (timeDiff-(timeDiff*1))){
+  else if(timeDiffNow < (timeDiff-(timeDiff*0.1))){
     return false;
   }
   else{
