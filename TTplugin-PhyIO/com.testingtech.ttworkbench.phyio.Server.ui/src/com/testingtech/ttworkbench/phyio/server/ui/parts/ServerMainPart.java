@@ -2,6 +2,7 @@ package com.testingtech.ttworkbench.phyio.server.ui.parts;
  
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
+import com.testingtech.ttworkbench.phyio.server.ui.Utils.ServerOutputStream;
 import com.testingtech.ttworkbench.phyio.server.ui.Utils.ServiceProvider;
 import com.testingtech.ttworkbench.phyio.server.ui.Utils.TestModule;
 import com.testingtech.ttworkbench.phyio.server.ui.Utils.Testcase;
@@ -58,7 +61,8 @@ public class ServerMainPart {
 	private String PROJECTS_REQ = "getProjectsFromWorkspace";
 	private String MODULES_REQ = "getModulesFromFolder";
 	private String TESTCASES_REQ = "getTestcasesFromModule";
-	private String ANNOT_VALUES_REQ = "getAnnotationValuesForTestcase";
+	private String ANNOT_VALUES_TESTCASE_REQ = "getAnnotationValuesForTestcase";
+	private String ANNOT_VALUES_MODUL_REQ = "getAnnotationValuesForModul";
 	private String WORKSPACE_REQ = "getWorkspacePath";
 
 
@@ -71,18 +75,13 @@ public class ServerMainPart {
 	
 	private String END_GROUP_FLAG= "</G>";
 	private String END_TEST_FLAG= "</TC>";
-	
 
-
-
-
-
-
-	
 	private Process ttmanProcess;
+	private boolean serverIsRunning;
 
 	
 	IExecutionServer client;
+	private Text text;
 	
 	@Inject
 	public ServerMainPart() {
@@ -113,109 +112,122 @@ public class ServerMainPart {
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		
-		lblConnectionStatus = new Label(parent, SWT.NONE);
-		lblConnectionStatus.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		
 		Button btnStart = new Button(parent, SWT.NONE);
 		btnStart.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String serverPath =null;
-				String workspacePath =null;
 				
-			    try {		    	
-				
-			    	
-//			    	serverPath = textServerPath.getText();
-//			    	workspacePath = textWorkspacePath.getText();
-			    	
-			    	serverPath = "C:\\Program Files\\TTworkbenchProfessional\\TTmanServer.bat";
-			    	//workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\realization\\workspace";
-			    	workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\git\\PlayITS-2016\\TTplugin-PhyIO\\com.testingtech.ttworkbench.phyio\\projects";
-//			    	workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\git_2015";
-//			    	workspacePath = "C:\\Users\\lassan\\Desktop\\workspace";
-			    	
-			    	System.out.println("start server ...");
-			    			    
 				
 //			    	IExecutionServer server = new ExecutionServerFactory().createLocalServer(null);
 			    	
-			    	Process ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
-					
-					
-
-			    	if(ttmanProcess==null){
-			    		System.out.println("serverProcess = null");
-			    	}else{
-			    		System.out.println("Process started");
-
-			    	}
-	    
-			    	while(true){
-			    			ServiceProvider provider = new ServiceProvider();
-			    			ServerSocket servsock = new ServerSocket(PORT);
-			    		    while (true) {
-				    		      Socket sock = servsock.accept();
-				    		      InputStream is = sock.getInputStream();
-				    		      BufferedReader br = new BufferedReader(new InputStreamReader(is));
-				    			  OutputStream os = sock.getOutputStream();
-				    			  
-				    			  BufferedWriter bWriter = new BufferedWriter(new OutputStreamWriter(os));
-				    		      String request ;
-				    		      while((request = br.readLine())!=null){
-				    		    	  	if(request.equals(MODULES_REQ)){
-				    		    	  		String relPath = br.readLine();				// client sends relative path
-				    		    	  		if(relPath!=null){
-				    		    	  			provider.sendModuleNames(bWriter,workspacePath+"\\"+relPath);
-				    		    	  		}
-				    		    	  	}else if(request.endsWith(TESTCASES_REQ)){
-				    		    	  		String modName = br.readLine();				// client sends modulename
-				    		    	  		if(modName!=null){
-				    		    	  			provider.sendTestcases(bWriter,modName);
-				    		    	  		}
-				    		    	  	}else if(request.endsWith(ANNOT_VALUES_REQ)){
+			    	//Process ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
+					Thread thread = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							
+							try {
+								
+//						    	serverPath = textServerPath.getText();
+//						    	workspacePath = textWorkspacePath.getText();
+						    	
+						    	String serverPath = "C:\\Program Files\\TTworkbenchProfessional\\TTmanServer.bat";
+						    	//workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\realization\\workspace";
+						    	String workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\git\\PlayITS-2016\\TTplugin-PhyIO\\com.testingtech.ttworkbench.phyio\\projects";
+//						    	workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\git_2015";
+//						    	workspacePath = "C:\\Users\\lassan\\Desktop\\workspace";
+						    	
+						    	System.out.println("start server ...");
+							
+						    	ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
+//						    	ttmanProcess = Runtime.getRuntime().exec(serverPath + " --data " + workspacePath);
+						    	
+						    	if(ttmanProcess==null){
+						    		System.out.println("serverProcess = null");
+						    	} else{
+						    		System.out.println("Process started");
+						    		serverIsRunning = true;
+						    	}
+			    
+						    	while(serverIsRunning){
+					    			ServiceProvider provider = new ServiceProvider();
+					    			ServerSocket servsock = new ServerSocket(PORT);
+					    		      
+					    			Socket sock = servsock.accept();
+					    		    InputStream is = sock.getInputStream();
+					    		    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+					    			OutputStream os = sock.getOutputStream();
+					    			  
+					    			BufferedWriter bWriter = new BufferedWriter(new OutputStreamWriter(os));
+					    		    String request ;
+					    		    while((request = br.readLine())!=null){
+					    		    	if(request.equals(MODULES_REQ)){
+					    		    	  	String relPath = br.readLine();				// client sends relative path
+					    		    	  	if(relPath!=null){
+					    		    	  		provider.sendModuleNames(bWriter,workspacePath+"\\"+relPath);
+					    		    	  	}
+					    		    	} else if(request.endsWith(TESTCASES_REQ)){
+					    		    		String modName = br.readLine();				// client sends modulename
+					    		    	  	if(modName!=null){
+					    		    	  		provider.sendTestcases(bWriter,modName);
+					    		    	  	}
+					    		    	} else if(request.endsWith(ANNOT_VALUES_TESTCASE_REQ)){
 				    		    	  		String modName = br.readLine();				// client sends modulename testcasename and annotation
-				    		    	  		if(modName!=null){
+				    		    	  		if(modName!=null) {
 				    		    	  			provider.sendAnnotationValuesForTestcase(bWriter,modName);
 				    		    	  		}
-				    		    	  	}else if(request.endsWith(WORKSPACE_REQ)) {
-				    		    	  		provider.sendWorkspacePath(bWriter, workspacePath);
-				    		    	  	} else if(request.endsWith(PROJECTS_REQ)) {
-				    		    	  		provider.sendProjectNames(bWriter, workspacePath);
-				    		    	  	}
-				    		    	  	
-				    		    	  
-//				    		    	  	TestModule tm= new TestModule(workspacePath+"\\"+projectPath);
-//				    		    	  	sendTestInfo(tm,sock);
-				    		      }
-				    		      sock.close();
-			    		    }
-			    	}
-			    		  
-			    				    
-			    } catch(Exception ex) {
-			    	ex.printStackTrace();
-			    } 
+					    		    	} else if(request.endsWith(ANNOT_VALUES_MODUL_REQ)) {
+					    		    		String modulAndAnnotation = br.readLine();	
+					    		    		if(modulAndAnnotation!=null) {
+					    		    			provider.sendAnnotationValuesForModul(bWriter, modulAndAnnotation);
+					    		    		}
+					    		    	} else if(request.endsWith(WORKSPACE_REQ)) {
+					    		    	  	provider.sendWorkspacePath(bWriter, workspacePath);
+					    		    	} else if(request.endsWith(PROJECTS_REQ)) {
+					    		    	  	provider.sendProjectNames(bWriter, workspacePath);
+					    		    	 }
+					    		    	  	
+					    		    	  
+				//				    		    	  	TestModule tm= new TestModule(workspacePath+"\\"+projectPath);
+				//				    		    	  	sendTestInfo(tm,sock);
+					    		      }
+					    		      sock.close();
+						    	}
+						    	
+						    	ttmanProcess.destroy();
+					    		  
+					    				    
+							} catch(Exception ex) {
+								ex.printStackTrace();
+							} 
+						}
+					});
+					
+					thread.start();
+			    	
 			    
 			}
 		});
 		
-		btnStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		btnStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnStart.setText("Start");
+		new Label(parent, SWT.NONE);
 		
 		Button btnStop = new Button(parent, SWT.NONE);
 		btnStop.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(ttmanProcess!=null){
-					ttmanProcess.destroy();;
+					serverIsRunning = false;
 				}
 			}
 		});
 		btnStop.setText("Stop");
+		
+		lblConnectionStatus = new Label(parent, SWT.NONE);
+		lblConnectionStatus.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
+		
+		text = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL);
+		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		//TODO Your code here
 	}
 	

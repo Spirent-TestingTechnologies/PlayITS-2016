@@ -156,6 +156,11 @@ public class TestModule {
 		return file.getName();
 	}
 
+	public Map<String, List<String>> getModuleAnnotations() {
+		return moduleAnnotations;
+	}
+
+	
 
 
 

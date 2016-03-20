@@ -181,6 +181,28 @@ public class ServiceProvider {
 		}			
 	}
 	
+	public void sendAnnotationValuesForModul(BufferedWriter bWriter,String data) {
+		String[] reqValues = data.split(SEPERATOR);
+		try{
+			if(reqValues.length==2){
+				TestModule testModule = moduleMap.get(reqValues[0]);
+				if(testModule!=null){
+					
+					String annotName = reqValues[1];
+					List<String> values = testModule.getModuleAnnotations().get(annotName);
+					
+					for(String value:values){
+						bWriter.write(value+SEPERATOR);
+					}
+				}
+			}		
+			bWriter.write("\n");
+			bWriter.flush();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}			
+	}
+	
 	public void sendWorkspacePath(BufferedWriter bWriter, String workspacePath) {
 		try {
 			bWriter.write(workspacePath);
