@@ -7,9 +7,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.testingtech.car2x.hmi.testcases.XmlLoader;
 import com.testingtech.car2x.hmi.ttmanclient.Driver;
-import com.testingtech.car2x.hmi.ttmanclient.XMLCreator;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
 
 public class TTmanServerConnection extends AsyncTask<Void, Void, Boolean> {
 
@@ -48,8 +53,20 @@ public class TTmanServerConnection extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         boolean connected = driver.connect();
         if(connected){
-            XMLCreator.createXML();
-            XmlLoader.getInstance();
+            try {
+                int port = Integer.valueOf(PropertyReader.readProperty("ttman.server.Information.port"));
+
+                Globals.informationSocket = new Socket(Globals.serverIp,port);
+                Globals.informationWriter = new BufferedWriter(new OutputStreamWriter(Globals.informationSocket.getOutputStream()));
+                Globals.informationReader =  new BufferedReader(new InputStreamReader(Globals.informationSocket.getInputStream()));
+
+                boolean projectsLoaded =ProjectSelectorActivity.loadProjects();
+                if(!projectsLoaded){
+                    return false;
+                }
+            } catch (IOException e) {
+                return false;
+            }
             return true;
         }
         return false;
@@ -64,7 +81,7 @@ public class TTmanServerConnection extends AsyncTask<Void, Void, Boolean> {
             showConnectionError();
         } else {
             Toast.makeText(mainActivity, "Successfully connected to TTman server", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(mainActivity, TestSelectorActivity.class);
+            Intent intent = new Intent(mainActivity, ProjectSelectorActivity.class);
             mainActivity.startActivity(intent);
         }
     }

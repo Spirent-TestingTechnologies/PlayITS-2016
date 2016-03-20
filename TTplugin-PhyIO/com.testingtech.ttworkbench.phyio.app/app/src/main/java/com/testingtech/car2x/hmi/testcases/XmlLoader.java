@@ -145,4 +145,19 @@ public class XmlLoader {
             return null;
         }
     }
+
+    /**
+     * Returns the id of a test module based
+     * @param groupPosition    Position of the group.
+     * @return The group Id or null on invalid parameters.
+     */
+    public static String getGroupId(int groupPosition ) {
+        try {
+            TestCaseGroup targetGroup = groups.get(groupPosition);
+            return targetGroup.getName();
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace(Logger.writer);
+            return null;
+        }
+    }
 }

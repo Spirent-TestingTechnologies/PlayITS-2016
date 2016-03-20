@@ -6,6 +6,9 @@
     <string name="text_hint_server_ip">TTman Server IP</string>
     <string name="button_test_activity">Start</string>
 
+    <!-- Project Selector Activity -->
+    <string name="title_activity_project_selector">Choose TTCN-3-Project</string>
+
     <!-- Test Selector Activity -->
     <string name="title_activity_test_selector">Choose Test</string>
 
@@ -22,5 +25,6 @@
     <color name="white">#FFFFFF</color>
 
     <string name="content_description">com.testingtech.car2x</string>
+    <string name="title_activity_load_project">LoadProjectActivity</string>
 
 </resources>

@@ -52,7 +52,7 @@ public class TestCaseRunner implements Runnable {
     public void run() {
         String dateTime = tlzDateFormat.format(new Date());
         try {
-            String testCaseModule = PropertyReader.readProperty("ttw.testcase.module");
+            String testCaseModule = Globals.currTestModule;
             execJob = this.client.executeTestCase(testCaseModule, this.currentTestCase, null);
             Logger.writeLog("TESTCASERUNNER: Waiting for test case execution");
             boolean executionDone = false;

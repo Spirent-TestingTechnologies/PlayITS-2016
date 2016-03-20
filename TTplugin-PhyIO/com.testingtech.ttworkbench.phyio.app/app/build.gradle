@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
+
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
 
@@ -30,11 +34,12 @@ android {
 
 dependencies {
     provided fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.0.1'
     compile files('libs/TTmanServerAPI.jar')
     compile files('libs/TTlogging.jar')
     compile files('libs/TTtools.jar')
     compile files('libs/slf4j-api-1.7.7.jar')
     compile files('libs/protobuf-socket-rpc-2.0.jar')
     compile files('libs/protobuf-java-2.4.1.jar')
+    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:design:23.2.0'
 }

@@ -37,9 +37,10 @@ public class TestRunnerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_runner);
         // get data from the parent activity
         Intent intent = getIntent();
-        testId = intent.getStringExtra(TestSelectorActivity.TEST_ID);
-        String testTitle = intent.getStringExtra(TestSelectorActivity.TEST_TITLE);
-        String[] testStages = intent.getStringArrayExtra(TestSelectorActivity.TEST_STAGES);
+        testId = intent.getStringExtra(TestLoader.TEST_ID);
+        String testTitle = intent.getStringExtra(TestLoader.TEST_TITLE);
+        String[] testStages = intent.getStringArrayExtra(TestLoader.TEST_STAGES);
+
         int stageCount = testStages.length;
 
         createGuiUpdater(stageCount);

@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ExpandableListView;
 
-import com.testingtech.car2x.hmi.testcases.TestCase;
 import com.testingtech.car2x.hmi.testcases.TestCaseGroup;
 import com.testingtech.car2x.hmi.testcases.XmlLoader;
 import com.testingtech.car2x.hmi.ttmanclient.Driver;
@@ -17,16 +16,21 @@ import java.util.Map;
 
 public class TestSelectorActivity extends AppCompatActivity {
 
-    public final static String TEST_ID = "id";
-    public final static String TEST_TITLE = "title";
-    public final static String TEST_STAGES = "stages";
+
+
     private Map<String, List<String>> collection;
+
+    private String projectName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_selector);
 
+        Intent intent = getIntent();
+        projectName = intent.getStringExtra(ProjectSelectorActivity.PROJECT_NAME);
+
+        XmlLoader.getInstance();
         createCollection();
         ExpandableListView expListView = (ExpandableListView) findViewById(R.id.listView);
         final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(
@@ -37,7 +41,8 @@ public class TestSelectorActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                startTestRunnerActivity(XmlLoader.getTestCaseId(groupPosition, childPosition));
+                Globals.currTestModule = XmlLoader.getGroupId(groupPosition);
+                loadClf(XmlLoader.getTestCaseId(groupPosition, childPosition));
                 return true;
             }
         });
@@ -59,12 +64,9 @@ public class TestSelectorActivity extends AppCompatActivity {
         }
     }
 
-    public void startTestRunnerActivity(String testCaseId) {
-        TestCase testCase = XmlLoader.getTestCaseById(testCaseId);
-        Intent intent = new Intent(this, TestRunnerActivity.class);
-        intent.putExtra(TEST_ID, testCaseId);
-        intent.putExtra(TEST_TITLE, testCase.getTitle());
-        intent.putExtra(TEST_STAGES, testCase.getStagesAsArray());
-        startActivity(intent);
+    private void loadClf(String testcaseId){
+        new TestLoader(this,testcaseId).execute();
+
     }
+
 }

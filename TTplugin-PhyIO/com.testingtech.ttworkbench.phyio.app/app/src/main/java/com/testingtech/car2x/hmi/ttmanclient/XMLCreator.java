@@ -1,17 +1,23 @@
 package com.testingtech.car2x.hmi.ttmanclient;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.widget.Toast;
+
 import com.testingtech.car2x.hmi.Globals;
 import com.testingtech.car2x.hmi.PropertyReader;
+import com.testingtech.car2x.hmi.TestSelectorActivity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -29,32 +35,82 @@ import org.w3c.dom.Element;
 /**
  * Created by dammd on 12.03.2016.
  */
-public class XMLCreator {
+public class XMLCreator extends AsyncTask<Void, Void, Boolean> {
 
-    private static String SEPERATOR="<SEP>";
+    private String SEPERATOR="<SEP>";
 
+    private BufferedWriter requestWriter=null;
+    private BufferedReader responseReader=null;
+    private String projectName ;
+    private Activity loadProjActivity;
+    private ProgressDialog progress;
 
-    public static void createXML() {
-        OutputStream os = null;
-        Socket socket = null;
+    @Override
+    protected void onPreExecute() {
+        progress = createProgressDialog();
+        progress.show();
+        super.onPreExecute();
+    }
 
-        String projectName = PropertyReader.readProperty("ttw.testcase.project");
+    private ProgressDialog createProgressDialog() {
+        ProgressDialog progress = new ProgressDialog(loadProjActivity);
+        progress.setMessage("Load project: " + projectName);
+        progress.setCanceledOnTouchOutside(false);
+        progress.setCancelable(true);
+        progress.setIndeterminate(true);
+        progress.setOnCancelListener(
+                new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        cancel(true);
+                    }
+                });
+        return progress;
+    }
+
+    @Override
+    protected void onPostExecute(Boolean isConnected) {
+        if (progress != null) {
+            progress.dismiss();
+        }
+        if (!isConnected) {
+            showConnectionError();
+        } else {
+            Toast.makeText(loadProjActivity, "Project successfully loaded", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(loadProjActivity, TestSelectorActivity.class);
+            loadProjActivity.startActivity(intent);
+        }
+    }
+
+    public XMLCreator(String projectName, Activity loadProjActivity){
+        this.loadProjActivity= loadProjActivity;
+        this.projectName=projectName;
+        requestWriter=Globals.informationWriter;
+        responseReader=Globals.informationReader;
+
+    }
+
+    private void showConnectionError() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(loadProjActivity);
+        alertDialog.setTitle("Connection Error");
+        alertDialog.setMessage("Cannot load Project: " + projectName);
+        alertDialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialog.show();
+    }
+
+    @Override
+    protected Boolean doInBackground(Void... params) {
         String folderName = PropertyReader.readProperty("ttw.testcase.folder");
 
-        String moduleName = PropertyReader.readProperty("ttw.testcase.module");
-        int port = Integer.valueOf(PropertyReader.readProperty("ttman.server.Information.port"));
-
         try {
-            socket = new Socket(Globals.serverIp,port);
-            os = socket.getOutputStream();
-            BufferedWriter br = new BufferedWriter(new OutputStreamWriter(os));
 
-
-            BufferedReader in= new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            br.write("getModulesFromFolder\n");
-            br.write(projectName+"\\"+folderName+"\n");
-            br.flush();
+            requestWriter.write("getModulesFromFolder\n");
+            requestWriter.write(projectName+"\\"+folderName+"\n");
+            requestWriter.flush();
 
 
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -65,9 +121,9 @@ public class XMLCreator {
             Element rootElement = doc.createElement("testCases");
             doc.appendChild(rootElement);
 
-            String rawModuleNames = in.readLine();
+            String rawModuleNames = responseReader.readLine();
             if(rawModuleNames==null){
-                return;
+                return true;
             }
             String[] moduleNames = rawModuleNames.split(SEPERATOR);
 
@@ -76,19 +132,20 @@ public class XMLCreator {
                 Element group = doc.createElement("group");
                 // set attribute to group element
                 Attr attr = doc.createAttribute("name");
-                attr.setValue(testModuleName);
+                attr.setValue(testModuleName.replace(".ttcn3",""));
                 group.setAttributeNode(attr);
-                rootElement.appendChild(group);
 
                 // get testcases
 
-                br.write("getTestcasesFromModule\n");
-                br.write(testModuleName + "\n");
-                br.flush();
-                String rawTestNames = in.readLine();
+                requestWriter.write("getTestcasesFromModule\n");
+                requestWriter.write(testModuleName + "\n");
+                requestWriter.flush();
+                String rawTestNames = responseReader.readLine();
                 if(rawTestNames==null||rawTestNames.isEmpty()){
                     continue;
                 }
+                rootElement.appendChild(group);
+
                 String[] testNames = rawTestNames.split(SEPERATOR);
                 for(String testName : testNames){
                     // testcase elements
@@ -100,11 +157,11 @@ public class XMLCreator {
                     group.appendChild(testcase);
 
                     // get testcase annotations
-                    br.write("getAnnotationValuesForTestcase\n");
-                    br.write(testModuleName + SEPERATOR + testName+ SEPERATOR+"shortDesc\n");
-                    br.flush();
+                    requestWriter.write("getAnnotationValuesForTestcase\n");
+                    requestWriter.write(testModuleName + SEPERATOR + testName+ SEPERATOR+"shortDesc\n");
+                    requestWriter.flush();
 
-                    String rawTitleValues = in.readLine();
+                    String rawTitleValues = responseReader.readLine();
                     String titleValue = null;
                     if(rawTitleValues==null|| rawTitleValues.isEmpty()){
                         titleValue=testName;
@@ -123,11 +180,11 @@ public class XMLCreator {
                     testcase.appendChild(titel);
 
 
-                    br.write("getAnnotationValuesForTestcase\n");
-                    br.write(testModuleName + SEPERATOR + testName+ SEPERATOR+"state\n");
-                    br.flush();
+                    requestWriter.write("getAnnotationValuesForTestcase\n");
+                    requestWriter.write(testModuleName + SEPERATOR + testName+ SEPERATOR+"stage\n");
+                    requestWriter.flush();
 
-                    String rawStates = in.readLine();
+                    String rawStates = responseReader.readLine();
                     if(rawStates==null|| rawStates.isEmpty()) {
                         continue;
                     }
@@ -168,26 +225,33 @@ public class XMLCreator {
             StreamResult result = new StreamResult(sourceFile);
             transformer.transform(source, result);
 
-            socket.close();
-
-
-
-
         } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return false;
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return false;
+
         } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return false;
+
         } catch (TransformerException e) {
-            // TODO Auto-generated catch block
+            return false;
+
+
+        }
+        return true;
+
+    }
+
+    public String getProjectPath(){
+        try {
+            requestWriter.write("getWorkspacePath\n");
+
+            requestWriter.flush();
+            return responseReader.readLine();
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
+        return"";
     }
 }
