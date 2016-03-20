@@ -188,7 +188,7 @@ void loop() {
 // -------- LightSensor ------------
 void LightSensorFunction( int id, int command){
   //TODO Debug output
-  DEBUG_PRINT("\n#In the LightSensorFunction with function : '");
+  DEBUG_PRINT("#In the LightSensorFunction with function : '");
   DEBUG_PRINTLN(command);
   
   DEBUG_PRINT("' and with ID: ");
