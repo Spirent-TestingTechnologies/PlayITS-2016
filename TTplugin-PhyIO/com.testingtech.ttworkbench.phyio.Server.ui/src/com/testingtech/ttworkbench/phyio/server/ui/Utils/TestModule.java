@@ -65,8 +65,12 @@ public class TestModule {
 			    	}
 			    	
 			    	// parse all annotations
-			    	while(myLine!=null && myLine.startsWith("*")&& myLine.length()>1){
-			    		
+			    	while(myLine!=null && myLine.startsWith("*")){
+			    		if(myLine.length()<=1){
+			    			myLine=bufRead.readLine();
+			    			myLine=myLine.trim();
+			    			continue;
+			    		}
 			    		// remove"*"			    		
 			    		myLine=myLine.substring(1);
 			    		
