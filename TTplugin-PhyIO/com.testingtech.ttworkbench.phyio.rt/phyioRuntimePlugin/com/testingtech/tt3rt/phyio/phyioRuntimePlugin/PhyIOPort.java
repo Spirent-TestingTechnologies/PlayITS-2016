@@ -29,49 +29,26 @@ import com.testingtech.ttcn.tri.tools.MappingTable;
 @SuppressWarnings("serial")
 public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 	
-	private boolean connectedCOMPort = false;
 	private Map<String,ByteArrayOutputStream> messageBuffers = new Hashtable<String, ByteArrayOutputStream>();
 
 	private MappingTable<PhyPort> phyPorts = new MappingTable<PhyPort>();
 
-	private TriPortId connectedTsiPortId;
-	private TriPortId connectedCompPortId;
 
 	@Override
 	protected void clean() {
-		disconnect();
+		synchronized (phyPorts) {
+			for (PhyPort port : phyPorts.getIncomingInfoKeySet()) {
+				if (port instanceof PhyConfigPort) {
+					((PhyConfigPort)port).unmap();
+				}
+			}
+		}
 
 		if (messageBuffers != null) {
 			synchronized (messageBuffers) {
 				messageBuffers.clear();
 			}
 		}
-	}
-
-	private TriStatus disconnect() {
-		synchronized (phyPorts) {
-			if (!connectedCOMPort) {
-				return TriStatusImpl.OK;
-			}
-			// disconnect from COM port
-			connectedCOMPort = false;
-		}
-		return super.triUnmap(connectedCompPortId, connectedTsiPortId);
-	}
-
-	private TriStatus connect(TriPortId compPortId, TriPortId tsiPortId, TriParameterList paramList) {
-		if (!connectedCOMPort) {
-			synchronized (phyPorts) {
-				connectedCompPortId= compPortId;
-				connectedTsiPortId = tsiPortId;
-				TriStatus mapResult = super.triMapParam(compPortId, tsiPortId, paramList);
-				if (mapResult.getStatus() == TriStatus.TRI_ERROR) {
-					return new TriStatusImpl("Error mapping COM port: " + mapResult);
-				}
-				connectedCOMPort = true;
-			}
-		}
-		return TriStatusImpl.OK;
 	}
 
 	@Override
@@ -106,18 +83,21 @@ public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 				// ignore
 			}
 			// send NL
-			res = triSend(null, null, null, TriMessageImpl.valueOf(PhyIOCodec.str2bytes("READY\n")));
+			res = triSend(compPortId.getComponent(), tsiPortId, null, TriMessageImpl.valueOf(PhyIOCodec.str2bytes("READY\n")));
 		}
 		return res;
 	}
 
 	private TriStatus virtualTriMap(TriPortId compPortId, TriPortId tsiPortId, int deviceID, int sensorID, TriParameterList paramList) {
-		TriStatus mapResult = connect(compPortId, tsiPortId, paramList);
-		if (mapResult.getStatus() == TriStatus.TRI_ERROR) {
-			return new TriStatusImpl("Error mapping COM port: "+sensorID+" "+ mapResult);
-		}
-
 		PhyPort phyPort = createPhyPort(tsiPortId, deviceID, sensorID);
+
+		TriStatus mapResult = TriStatusImpl.OK;
+		if (phyPort instanceof PhyConfigPort) {
+			mapResult = ((PhyConfigPort)phyPort).map(compPortId, tsiPortId, paramList);
+			if (mapResult.getStatus() == TriStatus.TRI_ERROR) {
+				return new TriStatusImpl("Error mapping COM port: "+sensorID+" "+ mapResult);
+			}
+		}
 
 		logDebug("-> Opened Sensor Port: "+phyPort);
 		synchronized (phyPorts) {
@@ -128,12 +108,10 @@ public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 	}
 
 	public TriStatus triUnmap(TriPortId compPortId, TriPortId tsiPortId) {
-		if (connectedCOMPort) {
-			synchronized (phyPorts) {
-				connectedCOMPort = false;
-				// Contract: ONLY call super if the filter should forward this message/call.
-				return super.triUnmap(connectedCompPortId, connectedTsiPortId);
-			}
+		PhyPort phyPort = phyPorts.getOutgoingInfo(tsiPortId, compPortId.getComponent());
+		
+		if (phyPort != null) {
+			return phyPort.unmap();
 		}
 		return TriStatusImpl.OK;
 	}
@@ -143,8 +121,25 @@ public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 			PhyPort phyPort = phyPorts.getOutgoingInfo(tsiPortId, componentId);
 			String str = addPhyId(phyPort, sendMessage);
 			logInfo("Sent: "+str);
+			PhyConfigPort phyConfigPort = null;
+			if (phyPort instanceof PhyConfigPort) {
+				phyConfigPort = (PhyConfigPort) phyPort;
+			} else {
+				synchronized (phyPorts) {
+					for (PhyPort port : phyPorts.getIncomingInfoKeySet()) {
+						if (port instanceof PhyConfigPort && ((PhyConfigPort)port).getDeviceID() == phyPort.getDeviceID()) {
+							phyConfigPort = (PhyConfigPort) port;
+						}
+					}
+				}
+			}
+			if (phyConfigPort != null) {
+				return super.triSend(phyConfigPort.getConnectedCompPortId().getComponent(), phyConfigPort.getConnectedTsiPortId(), address, sendMessage);
+			} else {
+				return new TriStatusImpl("Cannot send data on port "+tsiPortId+". No PhyConfig mapped port for DeviceID "+phyPort.getDeviceID());
+			}
 		}
-		return super.triSend(connectedCompPortId.getComponent(), connectedTsiPortId, address, sendMessage);
+		return new TriStatusImpl("Cannot send data on port "+tsiPortId+". No RS232 port mapped ");
 	}
 
 	/**
@@ -267,8 +262,17 @@ public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 
 	private PhyPort createPhyPort(TriPortId tsiPortId, int deviceID, int sensorID) {
 		PhyPortKind kind = PhyPortKind.valueOf(localTypeName(tsiPortId));
-		PhyPort phyPort = new PhyPort(deviceID, sensorID, kind);
+		PhyPort phyPort;
+		if (sensorID == 0) {
+			phyPort = new PhyConfigPort(this, deviceID, sensorID, kind);
+		} else {
+			phyPort = new PhyPort(deviceID, sensorID, kind);
+		}
 		return phyPort;
+	}
+
+	public TriStatus triMapParamRS232(TriPortId compPortId, TriPortId tsiPortId, TriParameterList paramList) {
+		return super.triMapParam(compPortId, tsiPortId, paramList);
 	}
 
 }

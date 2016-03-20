@@ -30,11 +30,27 @@
  * @desc PhyIO Configuration module
  */
 module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
-	import from RS232ConfigPortAux all;
-
-	import from TTCN3AUX all;
+	public import from TTCN3AUX all;
 	public import from RS232ConfigPortAux all;
 
+	const SensorID SensorID_Configuration := 0;
+	const SensorID SensorID_1 := 1;
+	const SensorID SensorID_2 := 2;
+	const SensorID SensorID_3 := 3;
+	const SensorID SensorID_4 := 4;
+	const SensorID SensorID_5 := 5;
+	const SensorID SensorID_6 := 6;
+	const SensorID SensorID_7 := 7;
+	const SensorID SensorID_8 := 8;
+	const SensorID SensorID_9 := 9;
+	
+	const DeviceID DeviceID_0 := 0;
+	const DeviceID DeviceID_1 := 1;
+	const DeviceID DeviceID_2 := 2;
+	const DeviceID DeviceID_3 := 3;
+	const DeviceID DeviceID_4 := 4;
+	const DeviceID DeviceID_5 := 5;
+ 
 	type integer Timestamp;
 
 	group PhyIO {
@@ -68,7 +84,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			template SwitchLED switchLED_OFF := false;
 			
 			type float BlinkLEDStart with {
-				variant "LED,BLINK"
+				variant "LED,START"
 			}
 			type record BlinkLEDStop {} with {
 				variant "LED,STOP"
@@ -76,7 +92,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 
 			//** @desc Read the LED state and switch LED on/off
 			type port PhyLED message {
-				out SwitchLED, BlinkLEDStart, BlinkLEDStop;
+				//out
+				inout SwitchLED, BlinkLEDStart, BlinkLEDStop;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -94,15 +111,17 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
       
 			//** @desc Read the current distance (in cm) measured by the Ultrasonic sensor
 			type port PhyEcho message {
-				in Distance;
-				out ReadDistance;
+				//in
+				inout Distance;
+				//out
+				inout ReadDistance;
 				map param (DeviceID deviceID, SensorID sensorID, UpdateFrequency updateFrequency);
 			}
 		}
 		
 		group DistanceSensorGroup {
 			//** @desc Current distance measured in cm
-			type record DistanceSensorState {integer distance, integer time} with {
+			type record DistanceSensorState {integer time, integer distance} with {
 				variant "DISTANCE,RESULT"
 			}
 
@@ -119,8 +138,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
       
 			//** @desc Read the current distance (in cm) measured by the Ultrasonic sensor
 			type port DistanceSensor message {
-				in DistanceSensorState;
-				out DistanceSensorSetup, ReadDistanceStart, ReadDistanceStop;
+				//in
+				inout DistanceSensorState;
+				//out
+				inout DistanceSensorSetup, ReadDistanceStart, ReadDistanceStop;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -132,7 +153,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			}
       
 			type port PhyMotor message {
-				out Velocity;
+				//out
+				inout Velocity;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -156,8 +178,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 
 			//** @desc Read the state of the push button
 			type port PhyPushButton message {
-				in PushButtonState;
-				out ReadButtonState, ReadButtonStateStart, ReadButtonStateStop;
+				//in
+				inout PushButtonState;
+				//out
+				inout ReadButtonState, ReadButtonStateStart, ReadButtonStateStop;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -180,8 +204,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 
 			//** @desc Read the state of the push button
 			type port PhyDoor message {
-				in DoorState;
-				out ReadDoorStart, ReadDoorStop;
+				//in
+				inout DoorState;
+				//out
+				inout ReadDoorStart, ReadDoorStop;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -209,8 +235,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
       
 			//** @desc Read the current color detected by the color sensor
 			type port PhyColorSensor message {
-				in RGB;
-				out ReadRGB;
+				//in
+				inout RGB;
+				//out
+				inout ReadRGB;
 				map param (DeviceID deviceID, SensorID sensorID, UpdateFrequency updateFrequency);
 			}
 		}
@@ -224,7 +252,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
       
 			//** @desc Drive the relay to switch a contact on and off
 			type port PhyRelay message {
-				out RelaySwith;
+				//out
+				inout RelaySwith;
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
 		}
@@ -246,20 +275,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			
 			const ReadLightSensorState READ_BRIGHTNESS := false;
 			const ReadLightSensorState READ_FREQUENCY := true;
-		
-			//** @desc start reading timestamps of LED on/off switching, incl. minDiff
-			type integer ReadLightSwitchStart with {
-				variant "LIGHTSENSOR,START"
-			}
 			
 			//** @desc start measuring frequency incl. minDiff
 			type integer ReadFrequencyStart with {
 				variant "LIGHTSENSOR,START"
-			}
-			
-			//** @desc stop reading timestamps of LED on/off switching
-			type record ReadLightSwitchStop {} with {
-				variant "LIGHTSENSOR,STOP"
 			}
 			
 			//** @desc stop reading timestamps of LED on/off switching
@@ -269,11 +288,11 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			
 			//** @desc Drive the relay to switch a contact on and off
 			type port PhyLightSensor message {
-				in State, Frequency;
-				out ReadLightSensorState,
-				ReadLightSwitchStart,
+				//in
+				inout State, Frequency;
+				//out
+				inout ReadLightSensorState,
 				ReadFrequencyStart,
-				ReadLightSwitchStop,
 				ReadFrequencyStop;
         	
 				map param (DeviceID deviceID, SensorID sensorID);
@@ -293,8 +312,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			}
 			
 			type port PhyRFIDSensor message {
-				in RFID;
-				out RFID, ReadRFIDStart, ReadRFIDStop;
+				//in
+				inout RFID;
+				//out
+				inout RFID, ReadRFIDStart, ReadRFIDStop;
         	
 				map param (DeviceID deviceID, SensorID sensorID);
 			}
@@ -310,7 +331,8 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			}
 			
 			type port PhyTheftDetection message {
-				out TheftStart, TheftStop;
+				//out
+				inout TheftStart, TheftStop;
         	
 				map param (DeviceID deviceID, SensorID sensorID);
 			}

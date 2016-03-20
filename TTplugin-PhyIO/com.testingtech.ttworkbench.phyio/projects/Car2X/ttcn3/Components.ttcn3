@@ -1,22 +1,22 @@
-//**@desc Component Module, defines Ports of SUT and Tester
+/**
+ * @desc Defines components, most importantly the ports
+ */
 module Components {
 	import from PhyIOAUX all;
 	
 	type record StopThread {};
-	type port InternalVerdictPort message {
-		inout verdicttype, StopThread;
-	}
+	type charstring TestcaseInfo;
 	
-
 	//**@desc Component port definition System measuring the SUT (Arduino)
 	type component TesterPorts {
-		port PhyConfig config;
+		port PhyConfig testerConfig;
 		port DistanceSensor distanceSensor;
 		port PhyLightSensor lightSensor;
 	}
 	
 	//**@desc Component  port definition System under Test (Arduino)
 	type component SUTPorts {
+		port PhyConfig sutConfig;
 		port PhyLED led;
 		port PhyDoor doorSensor;
 		port PhyRFIDSensor rfidSensor;
@@ -27,8 +27,11 @@ module Components {
 	type component me extends SUTPorts, TesterPorts {
 		timer t;
 		
-		port InternalVerdictPort rfidPort;
-		port InternalVerdictPort emergencyLightPort;
+		// TODO only for backward compatibility, remove asap
+		port PhyConfig rfidPort;
+		port PhyConfig emergencyLightPort;
+		
+		var System simulation;
 	}
 	
 

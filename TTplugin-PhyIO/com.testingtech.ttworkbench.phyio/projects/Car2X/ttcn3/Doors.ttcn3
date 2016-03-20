@@ -1,4 +1,7 @@
-//** @desc Testing Door Status
+/**
+ * @shortdesc Doors 
+ * @desc Testcase that tests opening the door
+ */
 module Doors {
 	import from PhyIOAUX all;
 	
@@ -10,30 +13,30 @@ module Doors {
 	 * @shortdesc Open Door
 	 * @desc In this testcase the door should be opened once.
 	 * @verdict passes if the door is opened within the given time window otherwise it fails.
+	 * @stage 1:Open door
 	 */
 	testcase OpenDoorTestcase() runs on me system System {
 		setup();
     	
 		t.start(TIME_DOORS);
 		doorSensor.send(ReadDoorStart:{});
+		
+		setStage(1, TIME_DOORS);
     	
 		alt{
 			[]doorSensor.receive(DoorState: true) {
-				log("Door was opened");
-				setverdict(pass);
+				setverdict(pass, "Door was opened");
 			}
 			[]doorSensor.receive(DoorState: false) {
 				// false should never be sent but if it is we don't bother.
-				log("Door is closed");
+				log("Door is closed -> repeat");
 				repeat;
 			}
 			[]t.timeout {
-				log("Sensor sent no data.");
-				setverdict(fail);
+				setverdict(fail, "Sensor sent no data");
 			}
 			[]any port.receive {
-				log("Unexpected Message");
-				setverdict(fail);
+				setverdict(inconc, "Unexpected message");
 			}
 		}
 

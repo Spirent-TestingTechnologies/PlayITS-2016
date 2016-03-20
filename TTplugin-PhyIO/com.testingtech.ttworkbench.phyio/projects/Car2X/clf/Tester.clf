@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE campaignloader PUBLIC "-//TESTING TECH//DTD MLF//2.0" "mlf.dtd">
+<campaignloader>
+  <campaign Name="Tester" Control="false">
+    <testadapter Name="com.testingtech.ttcn.tri.PluginTestAdapter" File="">
+      <description>Tester_taconfig.xml</description>
+    </testadapter>
+    <module Name="TTlibrary_HTTPTest" File="" Package="generated_ttcn"/>
+    <module Name="Parameters" File="ttcn3build/Parameters.jar" Package="generated_ttcn"/>
+    <module Name="Tester" File="ttcn3build/Tester.jar" Package="generated_ttcn"/>
+    <parameter Name="OWNER_RFID" Module="Parameters" ModuleOfTypeDecl="PhyIOAUX">
+      <description></description>
+      <type>RFID</type>
+      <value><![CDATA[<Values:record type="RFID" module="PhyIOAUX" xmlns:Values="Values.xsd"><Values:integer type="integer" name="id1"><Values:value>194</Values:value></Values:integer><Values:integer type="integer" name="id2"><Values:value>96</Values:value></Values:integer><Values:integer type="integer" name="id3"><Values:value>196</Values:value></Values:integer><Values:integer type="integer" name="id4"><Values:value>169</Values:value></Values:integer></Values:record>]]></value>
+      <default><![CDATA[<Values:record type="RFID" module="PhyIOAUX" xmlns:Values="Values.xsd"><Values:integer type="integer" name="id1"><Values:value>194</Values:value></Values:integer><Values:integer type="integer" name="id2"><Values:value>96</Values:value></Values:integer><Values:integer type="integer" name="id3"><Values:value>196</Values:value></Values:integer><Values:integer type="integer" name="id4"><Values:value>169</Values:value></Values:integer></Values:record>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="FALSE_RFID" Module="Parameters" ModuleOfTypeDecl="PhyIOAUX">
+      <description></description>
+      <type>RFID</type>
+      <value><![CDATA[<Values:record type="RFID" module="PhyIOAUX" xmlns:Values="Values.xsd"><Values:integer type="integer" name="id1"><Values:value>34</Values:value></Values:integer><Values:integer type="integer" name="id2"><Values:value>55</Values:value></Values:integer><Values:integer type="integer" name="id3"><Values:value>89</Values:value></Values:integer><Values:integer type="integer" name="id4"><Values:value>144</Values:value></Values:integer></Values:record>]]></value>
+      <default><![CDATA[<Values:record type="RFID" module="PhyIOAUX" xmlns:Values="Values.xsd"><Values:integer type="integer" name="id1"><Values:value>34</Values:value></Values:integer><Values:integer type="integer" name="id2"><Values:value>55</Values:value></Values:integer><Values:integer type="integer" name="id3"><Values:value>89</Values:value></Values:integer><Values:integer type="integer" name="id4"><Values:value>144</Values:value></Values:integer></Values:record>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="THEFT_RFID_CHECK_RATE" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>0.1</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>0.1</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="BRIGHTNESS_THRESHOLD" Module="Parameters" ModuleOfTypeDecl="PhyIOAUX">
+      <description></description>
+      <type>Brightness</type>
+      <value><![CDATA[<Values:integer type="integer" xmlns:Values="Values.xsd"><Values:value>512</Values:value></Values:integer>]]></value>
+      <default><![CDATA[<Values:integer type="integer" xmlns:Values="Values.xsd"><Values:value>512</Values:value></Values:integer>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="ALLOWED_SWITCH_TIME_DEVIATION" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>0.1</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>0.1</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="SWITCH_TIME_TARGET" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>0.5</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>0.5</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="MIN_SWITCH_BRIGHTNESS_DIFFERENCE" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>integer</type>
+      <value><![CDATA[<Values:integer type="integer" xmlns:Values="Values.xsd"><Values:value>100</Values:value></Values:integer>]]></value>
+      <default><![CDATA[<Values:integer type="integer" xmlns:Values="Values.xsd"><Values:value>100</Values:value></Values:integer>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="ALLOWED_DISTANCE_DEVIATION" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>integer</type>
+      <value><![CDATA[<Values:integer type="integer" xmlns:Values="Values.xsd"><Values:value>3</Values:value></Values:integer>]]></value>
+      <default><![CDATA[<Values:integer type="integer" xmlns:Values="Values.xsd"><Values:value>3</Values:value></Values:integer>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="EXPECTED_DISTANCE_10" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>integer</type>
+      <value><![CDATA[<Values:integer type="integer" xmlns:Values="Values.xsd"><Values:value>10</Values:value></Values:integer>]]></value>
+      <default><![CDATA[<Values:integer type="integer" xmlns:Values="Values.xsd"><Values:value>10</Values:value></Values:integer>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="EXPECTED_DISTANCE_20" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>integer</type>
+      <value><![CDATA[<Values:integer type="integer" xmlns:Values="Values.xsd"><Values:value>20</Values:value></Values:integer>]]></value>
+      <default><![CDATA[<Values:integer type="integer" xmlns:Values="Values.xsd"><Values:value>20</Values:value></Values:integer>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="SUT_RS232_CONFIG" Module="Parameters" ModuleOfTypeDecl="RS232ConfigPortAux">
+      <description> moduleparameters of the system under test</description>
+      <type>RS232Config</type>
+      <value><![CDATA[<Values:record type="RS232Config" module="RS232ConfigPortAux" xmlns:Values="Values.xsd"><Values:universal_charstring type="universal_charstring" name="serialPortName"><Values:value>COM7</Values:value></Values:universal_charstring><Values:integer type="integer" name="baudRate"><Values:value>9600</Values:value></Values:integer><Values:integer type="integer" name="dataBits"><Values:value>8</Values:value></Values:integer><Values:integer type="integer" name="stopBits"><Values:value>1</Values:value></Values:integer><Values:enumerated type="Parity" module="RS232ConfigPortAux" name="parity"><Values:value>c_ParityNone</Values:value></Values:enumerated><Values:bitstring type="bitstring" name="flowControl"><Values:value>0000</Values:value></Values:bitstring><Values:boolean type="boolean" name="checkDSR"><Values:value>false</Values:value></Values:boolean></Values:record>]]></value>
+      <default><![CDATA[<Values:record type="RS232Config" module="RS232ConfigPortAux" xmlns:Values="Values.xsd"><Values:universal_charstring type="universal_charstring" name="serialPortName"><Values:value>COM3</Values:value></Values:universal_charstring><Values:integer type="integer" name="baudRate"><Values:value>115200</Values:value></Values:integer><Values:integer type="integer" name="dataBits"><Values:value>8</Values:value></Values:integer><Values:integer type="integer" name="stopBits"><Values:value>1</Values:value></Values:integer><Values:enumerated type="Parity" module="RS232ConfigPortAux" name="parity"><Values:value>c_ParityNone</Values:value></Values:enumerated><Values:bitstring type="bitstring" name="flowControl"><Values:value>0000</Values:value></Values:bitstring><Values:boolean type="boolean" name="checkDSR"><Values:value>false</Values:value></Values:boolean></Values:record>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="TESTER_RS232_CONFIG" Module="Parameters" ModuleOfTypeDecl="RS232ConfigPortAux">
+      <description> moduleparameters of the tester</description>
+      <type>RS232Config</type>
+      <value><![CDATA[<Values:record type="RS232Config" module="RS232ConfigPortAux" xmlns:Values="Values.xsd"><Values:universal_charstring type="universal_charstring" name="serialPortName"><Values:value>COM6</Values:value></Values:universal_charstring><Values:integer type="integer" name="baudRate"><Values:value>9600</Values:value></Values:integer><Values:integer type="integer" name="dataBits"><Values:value>8</Values:value></Values:integer><Values:integer type="integer" name="stopBits"><Values:value>1</Values:value></Values:integer><Values:enumerated type="Parity" module="RS232ConfigPortAux" name="parity"><Values:value>c_ParityNone</Values:value></Values:enumerated><Values:bitstring type="bitstring" name="flowControl"><Values:value>0000</Values:value></Values:bitstring><Values:boolean type="boolean" name="checkDSR"><Values:value>false</Values:value></Values:boolean></Values:record>]]></value>
+      <default><![CDATA[<Values:record type="RS232Config" module="RS232ConfigPortAux" xmlns:Values="Values.xsd"><Values:universal_charstring type="universal_charstring" name="serialPortName"><Values:value>COM7</Values:value></Values:universal_charstring><Values:integer type="integer" name="baudRate"><Values:value>115200</Values:value></Values:integer><Values:integer type="integer" name="dataBits"><Values:value>8</Values:value></Values:integer><Values:integer type="integer" name="stopBits"><Values:value>1</Values:value></Values:integer><Values:enumerated type="Parity" module="RS232ConfigPortAux" name="parity"><Values:value>c_ParityNone</Values:value></Values:enumerated><Values:bitstring type="bitstring" name="flowControl"><Values:value>0000</Values:value></Values:bitstring><Values:boolean type="boolean" name="checkDSR"><Values:value>false</Values:value></Values:boolean></Values:record>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="TIME_HEADLIGHTS" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>5.0</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>5.0</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="TIME_EMERGENCY_LIGHTS" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>10.0</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>10.0</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="TIME_DOORS" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>5.0</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>5.0</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="TIME_RFID" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>10.0</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>10.0</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="TIME_THEFT_DETECTION" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>30.0</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>30.0</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="TIME_DISTANCE_FIRST_MEASUREMENT" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>5.0</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>5.0</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="TIME_DISTANCE_SINGLE_MEASUREMENT" Module="Parameters" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>3.0</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>3.0</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="SINGLE_DISTANCE" Module="Parameters" ModuleOfTypeDecl="Parameters">
+      <description></description>
+      <type>DistancesToCheck</type>
+      <value><![CDATA[<Values:record_of type="DistancesToCheck" module="Parameters" xmlns:Values="Values.xsd"><Values:integer type="integer" name="0"><Values:value>10</Values:value></Values:integer></Values:record_of>]]></value>
+      <default><![CDATA[<Values:record_of type="DistancesToCheck" module="Parameters" xmlns:Values="Values.xsd"><Values:integer type="integer" name="0"><Values:value>10</Values:value></Values:integer></Values:record_of>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <parameter Name="T_RESPONSE" Module="TTlibrary_HTTPTest" ModuleOfTypeDecl="">
+      <description> The response time for a HTTP answer.
+     </description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>5.0</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>5.0</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
+    <testcase Name="TesterTestcase" Alias="" Module="Tester" Retries="0" Runs="1" ActionOnFail="continue" Selection="false" Status="stopped" Verdict="fail">
+      <description></description>
+    </testcase>
+  </campaign>
+</campaignloader>

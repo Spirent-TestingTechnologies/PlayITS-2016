@@ -34,7 +34,15 @@ import org.eclipse.swt.events.SelectionEvent;
 import com.testingtech.ttworkbench.phyio.server.ui.Utils.ServiceProvider;
 import com.testingtech.ttworkbench.phyio.server.ui.Utils.TestModule;
 import com.testingtech.ttworkbench.phyio.server.ui.Utils.Testcase;
+import com.testingtech.tworkbench.ttman.server.api.ExecutionServerFactory;
+import com.testingtech.tworkbench.ttman.server.api.IExecutionHandler;
 import com.testingtech.tworkbench.ttman.server.api.IExecutionServer;
+import com.testingtech.tworkbench.ttman.server.api.ITERequest;
+import com.testingtech.tworkbench.ttman.server.api.ITEResponse;
+import com.testingtech.tworkbench.ttman.server.api.Job;
+import com.testingtech.tworkbench.ttman.server.api.Parameter;
+import com.testingtech.tworkbench.ttman.server.api.TestCase;
+import com.testingtech.tworkbench.ttman.server.api.TestCaseStatus;
 
 public class ServerMainPart {
 	
@@ -47,9 +55,11 @@ public class ServerMainPart {
 	private String TITEL_ANNOT= "shortdesc";
 	private String STATE_ANNOT= "state";
 	
+	private String PROJECTS_REQ = "getProjectsFromWorkspace";
 	private String MODULES_REQ = "getModulesFromFolder";
 	private String TESTCASES_REQ = "getTestcasesFromModule";
 	private String ANNOT_VALUES_REQ = "getAnnotationValuesForTestcase";
+	private String WORKSPACE_REQ = "getWorkspacePath";
 
 
 
@@ -119,11 +129,19 @@ public class ServerMainPart {
 			    try {		    	
 				
 			    	
-			    	serverPath = textServerPath.getText();
-			    	workspacePath = textWorkspacePath.getText();
+//			    	serverPath = textServerPath.getText();
+//			    	workspacePath = textWorkspacePath.getText();
+			    	
+			    	serverPath = "C:\\Program Files\\TTworkbenchProfessional\\TTmanServer.bat";
+			    	//workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\realization\\workspace";
+			    	workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\git\\PlayITS-2016\\TTplugin-PhyIO\\com.testingtech.ttworkbench.phyio\\projects";
+//			    	workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\git_2015";
+//			    	workspacePath = "C:\\Users\\lassan\\Desktop\\workspace";
+			    	
 			    	System.out.println("start server ...");
 			    			    
 				
+//			    	IExecutionServer server = new ExecutionServerFactory().createLocalServer(null);
 			    	
 			    	Process ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
 					
@@ -163,6 +181,10 @@ public class ServerMainPart {
 				    		    	  		if(modName!=null){
 				    		    	  			provider.sendAnnotationValuesForTestcase(bWriter,modName);
 				    		    	  		}
+				    		    	  	}else if(request.endsWith(WORKSPACE_REQ)) {
+				    		    	  		provider.sendWorkspacePath(bWriter, workspacePath);
+				    		    	  	} else if(request.endsWith(PROJECTS_REQ)) {
+				    		    	  		provider.sendProjectNames(bWriter, workspacePath);
 				    		    	  	}
 				    		    	  	
 				    		    	  
@@ -170,7 +192,6 @@ public class ServerMainPart {
 //				    		    	  	sendTestInfo(tm,sock);
 				    		      }
 				    		      sock.close();
-		
 			    		    }
 			    	}
 			    		  

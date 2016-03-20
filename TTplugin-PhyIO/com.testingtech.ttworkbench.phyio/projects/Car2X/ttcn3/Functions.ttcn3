@@ -1,143 +1,106 @@
+/**
+ * @desc Utility functions
+ */
 module Functions {
 	import from PhyIOAUX all;
+	import from TTlibrary all;
 	
 	import from Components all;
 	import from Parameters all;
-	import from TTlibrary all;
+	import from SimulatedArduino all;
 	
-	/**
-	 * @desc Test to check for valid rfid
-	 * @param RFID in question, time until timeout
-	 * @deprecated should be removed
-	 */
-	function checkRFID(RFID rfid, float time) runs on me system System return verdicttype {
-		var verdicttype result := none;
-		
-		rfidSensor.send(ReadRFIDStart:{});
-		t.start(time);
-		
-		alt{
-			[]rfidSensor.receive(RFID: rfid){
-				result := pass;
-			}
-			[]rfidSensor.receive(RFID: ?) {
-				result := fail;
-			}
-			[]t.timeout {
-				result := inconc;
-			}
-		}
-		
-		rfidSensor.send(ReadRFIDStop:{});
-		
-		if(result != none) {
-			return result;
-		}
-		
-		return inconc;
-	}
-	/** @desc checks if EmergencyLights are working correctly
-	 *  @param 	switchTimetarget: time to next status change
-	 *  		allowedSwitchTimeDeviation: allowed delay between status changes
-	 *  		time: time until timeout
-	 *  @deprecated communication with light sensor isn't up-to-date, protocol has changed
-	 */
-	function checkEmergencyLights(float switchTimeTarget,
-		float allowedSwitchTimeDeviation,
-		integer minDiff,
-		integer minSwitches,
-		float time)
-	runs on me system System return verdicttype{
-		var verdicttype result := none;
-		
-		var State state;
-		var float lastTimestamp := -1.0;
-		var float thisTimestamp := -1.0;
-		var boolean isTimeout;
-		var integer switchCount := 0;
-		
-		lightSensor.send(ReadLightSwitchStart: minDiff);
-		
-		t.start(time);
-
-		while(result == none){
-			alt{
-				[]lightSensor.receive(State: {?, ?}) -> value state {
-					switchCount := switchCount + 1;
-					
-					thisTimestamp := int2float(state.time) / 1000.0;
-					
-					if(lastTimestamp == -1.0){
-						lastTimestamp := thisTimestamp;
-					} else {
-						if(abs_float(thisTimestamp - lastTimestamp - switchTimeTarget) > allowedSwitchTimeDeviation){
-							result := fail;
-						} else {
-							lastTimestamp := thisTimestamp;
-						}
-					}
-				}
-				[]t.timeout {
-					isTimeout := true;
-					result := inconc;
-				}
-			}
-		}
-		
-		if(result != none){
-			lightSensor.send(ReadLightSwitchStop:{});
-			return result;
-		}
-		
-		lightSensor.receive(State: {?, ?}) -> value state;
-		thisTimestamp := int2float(state.time) / 1000.0;
-		
-		lightSensor.send(ReadLightSwitchStop:{});
 			
-		if(thisTimestamp - lastTimestamp <= switchTimeTarget + allowedSwitchTimeDeviation
-			and switchCount >= minSwitches){
-			return pass;
-		} else{
-			return fail;
-		}
-		
-	}
-	
 	/**
 	 * @desc checks if the measured distance is within a certain range of an expected value
 	 */
 	function compareDist(integer measuredDistance, integer expectedDistance) return boolean {
-		return abs_int(measuredDistance - expectedDistance) <= ALLOWED_DISTANCE_DEVIATION;
+		// TODO tried to use abs_int() but no external implementation for abs()??
+		var integer diff := measuredDistance - expectedDistance;
+		
+		if(diff < 0) {
+			diff := -diff;
+		}
+		
+		return diff <= ALLOWED_DISTANCE_DEVIATION;
+	}
+
+	/**
+	 * @desc notify UI about current stage
+	 * @param id stage number, make sure it's defined in the parameters of the testcase
+	 * @üaram timeWindow time in seconds, 0 == no time window
+	 */
+	function setStage(integer id, float timeWindow) {
+		if(NOTIFY_UI) {
+			action("stage" & int2str(id) & ",timeWindow:" & int2str(float2int(timeWindow)));
+		}
 	}
 	
 	/**
-	 * @desc maps all ports  
+	 * @desc maps all ports
 	 */
 	function setup() runs on me system System {
-		map(self:config,			system:config)			param (SUT_RS232_CONFIG, 1);
-		map(self:config,			system:config)			param (SUT_RS232_CONFIG, 2);
-
-		// ports on simulation Arduino
-		map(self:led, 				system:led) 			param (1, 1);
-		map(self:rfidSensor,		system:rfidSensor)		param (1, 1);
-		map(self:doorSensor,		system:doorSensor)		param (1, 1);
-		map(self:distanceSensor,	system:distanceSensor)	param (1, 1);
-		map(self:theftDetection,	system:theftDetection)	param (1, 1);
-		
-		// ports on tester Arduino
-		map(self:lightSensor,		system:lightSensor)		param (2, 1);
+		if(not SIMULATION) {
+			// tests using real Arduinos
+			
+			map(self:sutConfig,			system:sutConfig)		param (SUT_RS232_CONFIG, DeviceID_1);
+    		
+			if(MAP_TESTER){
+				map(self:testerConfig,		system:testerConfig)	param (TESTER_RS232_CONFIG, DeviceID_2);
+				map(self:lightSensor,		system:lightSensor)		param (DeviceID_2, SensorID_2);
+			}
+    		
+			map(self:led, 				system:led) 			param (DeviceID_1, SensorID_1);
+			map(self:rfidSensor,		system:rfidSensor)		param (DeviceID_1, SensorID_3);
+			map(self:doorSensor,		system:doorSensor)		param (DeviceID_1, SensorID_4);
+			map(self:distanceSensor,	system:distanceSensor)	param (DeviceID_1, SensorID_5);
+			map(self:theftDetection,	system:theftDetection)	param (DeviceID_1, SensorID_6);
+		} else {
+			// tests using simulated Arduino behaviour
+			
+			simulation := System.create;
+			
+			connect(self:sutConfig,			simulation:sutConfig);
+			
+			connect(self:led, 				simulation:led);
+			connect(self:rfidSensor,		simulation:rfidSensor);
+			connect(self:doorSensor,		simulation:doorSensor);
+			connect(self:distanceSensor,	simulation:distanceSensor);
+			connect(self:theftDetection,	simulation:theftDetection);
+			connect(self:lightSensor,		simulation:lightSensor);
+			
+			simulation.start(main());
+		}
 	}
 	
 	/**
-	 * @desc unmaps all ports 
+	 * @desc unmaps all ports
 	 */
 	function tearDown() runs on me system System {
-		unmap(self:led, 			system:led);
-		unmap(self:lightSensor,		system:lightSensor);
-		unmap(self:rfidSensor,		system:rfidSensor);
-		unmap(self:doorSensor,		system:doorSensor);
-		unmap(self:distanceSensor,	system:distanceSensor);
-		unmap(self:theftDetection,	system:theftDetection);
+		if(not SIMULATION) {
+			unmap(self:led);
+		
+			unmap(self:rfidSensor);
+			unmap(self:doorSensor);
+			unmap(self:distanceSensor);
+			unmap(self:theftDetection);
+			unmap(self:sutConfig);
+			
+			if(MAP_TESTER){
+				unmap(self:lightSensor);
+				unmap(self:testerConfig);
+			}
+			
+		} else {
+			sutConfig.send(StopThread: {});
+			
+			disconnect(self:led);
+			disconnect(self:lightSensor);
+			disconnect(self:rfidSensor);
+			disconnect(self:doorSensor);
+			disconnect(self:distanceSensor);
+			disconnect(self:theftDetection);
+			
+			simulation.done;
+		}
 	}
-	
 }

@@ -4,7 +4,7 @@
 <campaignloader>
   <campaign Name="CodecTests" Control="false">
     <testadapter Name="com.testingtech.ttcn.tri.PluginTestAdapter" File="">
-      <description>taconfig.xml</description>
+      <description>Tester_taconfig.xml</description>
     </testadapter>
     <module Name="CodecTests" File="ttcn3build/CodecTests.jar" Package="generated_ttcn"/>
     <testcase Name="EncodingTestcase" Alias="" Module="CodecTests" Retries="0" Runs="1" ActionOnFail="continue" Selection="true" Verdict="none">

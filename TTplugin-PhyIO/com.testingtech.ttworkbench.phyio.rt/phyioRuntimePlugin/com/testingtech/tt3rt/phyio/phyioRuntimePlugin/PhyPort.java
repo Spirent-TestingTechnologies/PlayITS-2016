@@ -1,5 +1,11 @@
 package com.testingtech.tt3rt.phyio.phyioRuntimePlugin;
 
+import org.etsi.ttcn.tri.TriParameterList;
+import org.etsi.ttcn.tri.TriPortId;
+import org.etsi.ttcn.tri.TriStatus;
+
+import com.testingtech.ttcn.tri.TriStatusImpl;
+
 public class PhyPort {
 	private PhyPortKind kind;
 	private int deviceID;
@@ -26,5 +32,12 @@ public class PhyPort {
 	@Override
 	public String toString() {
 		return "PhyPort [kind=" + kind + ", deviceID=" + deviceID + ", sensorID=" + sensorID + "]";
+	}
+
+	public TriStatus map(TriPortId compPortId, TriPortId tsiPortId, TriParameterList paramList) {
+		return TriStatusImpl.OK;
+	}
+	public TriStatus unmap() {
+		return TriStatusImpl.OK;
 	}
 }

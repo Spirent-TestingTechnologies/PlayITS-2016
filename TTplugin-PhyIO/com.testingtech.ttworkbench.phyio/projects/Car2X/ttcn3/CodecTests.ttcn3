@@ -1,4 +1,6 @@
-//** @desc Testing Door Status
+/**
+ * @desc Unit tests for the codec
+ */
 module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 	import from PhyIOAUX all;
 	
@@ -6,7 +8,7 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 	
 	type record of boolean RecordList;
 	
-	type anytype TT  with {encode "PhyIO"};
+	type anytype TT with {encode "PhyIO"};
 	
 	type record CodecPair {TT v, charstring s, charstring d}
 	
@@ -16,7 +18,7 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		// LED
 		{{SwitchLED := true},				"30, 1, 1",					"LED on"},
 		{{SwitchLED := false},				"30, 1, 0",					"LED off"},
-		{{BlinkLEDStart := 0.4},			"30, 5, 0.4",				"LED blink start"},
+		{{BlinkLEDStart := 0.4},			"30, 2, 0.4",				"LED blink start"},
 		{{BlinkLEDStop := {}},				"30, 3",					"LED blink stop"},
 		
 		// RFID
@@ -36,13 +38,21 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		// Light Sensor
 		{{ReadFrequencyStart := 8},			"70, 2, 8",					"Frequency start"},
 		{{ReadFrequencyStop := {}},			"70, 3",					"Frequency stop"},
-		// ReadLightSwitchStart/Stop is not used anymore -> no tests
 		{{ReadLightSensorState := false},	"70, 4, 0",					"Read light sensor"},
 		{{ReadLightSensorState := true},	"70, 4, 1",					"Read frequency"},
 		
 		// Theft Detection
 		{{TheftStart := {255, 0, 2, 156}},	"85, 2, 255, 0, 2, 156",	"Start theft detection"},
-		{{TheftStop := {}},					"85, 3",					"Stop theft detection"}
+		{{TheftStop := {}},					"85, 3",					"Stop theft detection"},
+		
+		// things we don't need but test anyways to ensure backward compatibility
+		// these only include things that were implemented in the beginning
+		{{ReadRGB := {}},					"10, 4",					"Read RGB"},
+		{{RelaySwith := true},				"40, 1, 1",					"Switch relay on"},
+		{{RelaySwith := false},				"40, 1, 0",					"Switch relay off"},
+		{{ReadDistance := {}},				"20, 4",					"Read Ping Echo"},
+		{{Velocity := -34},					"50, 1, -34",				"Set motor negative"},
+		{{Velocity := 68},					"50, 1, 68",				"Set motor positive"}
 	};
 	
 	testcase EncodingTestcase() runs on me system me {
@@ -50,7 +60,7 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		
 		for(var integer i := 0; i < lengthof(ENCODE_LIST); i := i  + 1) {
 			if(checkEncode(ENCODE_LIST[i])) {
-			// TODO log
+				log("Success: " & ENCODE_LIST[i].d);
 			} else {
 				setverdict(fail, "Fail at:", ENCODE_LIST[i].d);
 			}
@@ -59,22 +69,45 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		// sadly impossible to put these into a list
 		if(not checkDecode<RFID>(RFID: {255, 0, 2, 156},						"80, 101, 255, 0, 2, 156")) {
 			setverdict(fail, "Fail at: RFID answer");
+		} else {
+			log("Success: RFID answer");
 		}
 		
 		if(not checkDecode<DoorState>(DoorState: true,							"60, 101, 1")) {
 			setverdict(fail, "Fail at: Door answer");
+		} else {
+			log("Success: Door answer");
 		}
 		
-		if(not checkDecode<DistanceSensorState>(DistanceSensorState: {3, 1002},	"21, 101, 3, 1002")) {
+		if(not checkDecode<DistanceSensorState>(DistanceSensorState: {1002, 3},	"21, 101, 1002, 3")) {
 			setverdict(fail, "Fail at: Distance answer");
+		} else {
+			log("Success: Distance answer");
 		}
 				
 		if(not checkDecode<State>(State: {37, 1002},							"70, 101, 37, 1002")) {
 			setverdict(fail, "Fail at: Brightness answer");
+		} else {
+			log("Success: Brightness answer");
 		}
 				
 		if(not checkDecode<Frequency>(Frequency: 3.25,							"70, 101, 3.25")) {
 			setverdict(fail, "Fail at: Frequency answer");
+		} else {
+			log("Success: Frequency answer");
+		}
+		
+		// things we don't need but test anyways to ensure backward compatibility
+		if(not checkDecode<RGB>(RGB: {0, 128, 255},								"10, 101, 0, 128, 255")) {
+			setverdict(fail, "Fail at: RGB answer");
+		} else {
+			log("Success: RGB answer");
+		}
+		
+		if(not checkDecode<Distance>(Distance: 20.2,							"20, 101, 20.2")) {
+			setverdict(fail, "Fail at: Ping Echo answer");
+		} else {
+			log("Success: Ping Echo answer");
 		}
 
 		if(getverdict == none) {

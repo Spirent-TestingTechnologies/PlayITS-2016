@@ -1,5 +1,10 @@
-module Distance{
+/**
+ * @shortdesc Distance 
+ * @desc Testcases that test the distance sensor
+ */
+module Distance {
 	import from PhyIOAUX all;
+	import from TTlibrary_UnitTest all;
 	
 	import from Components all;
 	import from Functions all;
@@ -9,18 +14,28 @@ module Distance{
 	 * @shortdesc Single Distance
 	 * @desc Move object a certain distance in front of the sensor and measure it
 	 * @verdict pass if the distance sensor yields the expected distance else fail
+	 * @stage 1: Distance: 10cm
 	 */
 	testcase SingleDistanceTestcase() runs on me system System {
-		setverdict(internalDistancesTestcase(SINGLE_DISTANCE));
+		var VerdictDescription verdict := internalDistancesTestcase(SINGLE_DISTANCE);
+		setverdict(verdict.verdict, verdict.reason);
 	}
 	
 	/**
 	 * @shortdesc Various Distances
 	 * @desc Move object a certain distance in front of the sensor and measure it. Repeat this for a number of values.
 	 * @verdict pass if the distance sensor yields the expected distances else fail
+	 * @stage 1: Distance: 30cm
+	 * @stage 2: Distance: 10cm
+	 * @stage 3: Distance: 20cm
+	 * @stage 4: Distance: 50cm
 	 */
 	testcase VariousDistancesTestcase() runs on me system System {
-		setverdict(internalDistancesTestcase(VARIOUS_DISTANCES));
+		// these values are hardcoded because UI can't handle parameters that are changend on runtime
+		// the number of elements in the list would affect the number of stages
+		var DistancesToCheck variousDistances := {30, 10, 20, 50};
+		var VerdictDescription verdict := internalDistancesTestcase(variousDistances);
+		setverdict(verdict.verdict, verdict.reason);
 	}
 	
 	/**
@@ -30,47 +45,55 @@ module Distance{
 	 * @param list list of expected distances
 	 * @return verdict
 	 * @verdict pass if all distances match before timeout, fail otherwise.
-	 *
 	 */
-	function internalDistancesTestcase(DistancesToCheck list) runs on me system System return verdicttype {
-		// TODO should yield inconc if no answers come from the sensor
-		 
-		var verdicttype result := none;
+	function internalDistancesTestcase(DistancesToCheck list) runs on me system System return VerdictDescription {
+		var VerdictDescription result := {none} ;
 		var DistanceSensorState state;
 		var integer i := 0;
-		
-		timer singleMeasurementTimer;
+		var boolean hasReceivedData := false;
 		
 		setup();
 		
+		if(SIMULATION) {
+			sutConfig.send(TestcaseInfo: "Distance Sweep On");
+		}
+		
 		distanceSensor.send(ReadDistanceStart:{});
 		
-		while(i < lengthof(list) and result == none) {
-
-			t.start(TIME_DISTANCE);
-			singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
+		t.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
+		
+		setStage(1, TIME_DISTANCE_SINGLE_MEASUREMENT);
+		
+		while(i < lengthof(list) and result.verdict == none) {
 			
 			alt {
 				[]distanceSensor.receive(DistanceSensorState:{?,?}) -> value state {
-					if(compareDist(state.distance, list[i])){
-						t.start(TIME_DISTANCE);
+					if(compareDist(state.distance, list[i])) {
+						log("Success at " & int2str(list[i]) & "cm");
+						
+						if(i < lengthof(list) - 1) {
+							setStage(i + 1, TIME_DISTANCE_SINGLE_MEASUREMENT);
+							t.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
+						}
+						
 						i := i + 1;
 					}
 					// else continue with same index since the we're not in the desired range
 					
-					singleMeasurementTimer.start(TIME_DISTANCE_SINGLE_MEASUREMENT);
-				}
-				[]singleMeasurementTimer.timeout {
-					result := inconc;
+					hasReceivedData := true;
 				}
 				[]t.timeout {
-					result := fail;
+					if(not hasReceivedData) {
+						result := verdictInconc("No data from sensor");
+					} else {
+						result := verdictFail("Failed to match distance within given time span");
+					}
 				}
 			}
 		}
 		
-		if(result == none) {
-			result := pass;
+		if(result.verdict == none) {
+			result := verdictPass("");
 		}
 		
 		distanceSensor.send(ReadDistanceStop:{});

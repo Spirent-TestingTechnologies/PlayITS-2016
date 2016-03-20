@@ -143,7 +143,7 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		if(moduleIdentifier.equals("CONFIG")){
 			return PhyModule.GeneralConfig01.getId();
 		}
-		else if (moduleIdentifier.equals("COLOR")){
+		else if (moduleIdentifier.equals("RGB")){
 			return PhyModule.ColorView01.getId();
 		}
 		else if (moduleIdentifier.equals("ECHO")){
@@ -195,9 +195,6 @@ public class PhyIOCodec extends AbstractCodecPlugin implements CodecProvider {
 		}
 		else if(functionIdentifier.equals("READ")){
 			return READ;
-		}
-		else if(functionIdentifier.equals("BLINK")){
-			return BLINK;
 		}
 		else if(functionIdentifier.equals("RESULT")){
 			return RESULT;

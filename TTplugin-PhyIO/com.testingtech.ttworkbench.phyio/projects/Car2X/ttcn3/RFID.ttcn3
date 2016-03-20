@@ -1,26 +1,35 @@
+/**
+ * @shortdesc RFID
+ * @desc Testcases that test the RFID sensor
+ */
 module RFIDModule {
 	import from PhyIOAUX all;
+	import from TTlibrary_UnitTest all;
 	
 	import from Components all;
 	import from Functions all;
-	import from Parameters all; 
+	import from Parameters all;
 	
 	/**
 	 * @shortdesc Correct RFID
 	 * @desc Receives detected RFID which ought to be the correct one.
 	 * @verdict pass if RFID is currect else fail
+	 * @stage 1:Wait for RFID
 	 */
 	testcase CorrectRFIDTestcase() runs on me system System {
-		setverdict(internalRFIDTestcase(OWNER_RFID, true));
+		var VerdictDescription verdict := internalRFIDTestcase(OWNER_RFID, true);
+		setverdict(verdict.verdict, verdict.reason);
 	}
 	
 	/**
 	 * @shortdesc False RFID
 	 * @desc Receives detected RFID which ought to be a false one.
 	 * @verdict pass if RFID is detected and does NOT match. fail if there is NO RFID or the correct one.
+	 * @stage 1:Wait for RFID
 	 */
 	testcase FalseRFIDTestcase() runs on me system System {
-		setverdict(internalRFIDTestcase(FALSE_RFID, false));
+		var VerdictDescription verdict := internalRFIDTestcase(OWNER_RFID, false);
+		setverdict(verdict.verdict, verdict.reason);
 	}
 	
 	/**
@@ -29,30 +38,59 @@ module RFIDModule {
 	 * @param expectCorrectRFID true if match for correct RFID, false if a false one is expected
 	 */
 	function internalRFIDTestcase(RFID correctRFID, boolean expectCorrectRFID)
-			runs on me system System return verdicttype {
+	runs on me system System return VerdictDescription {
 		var boolean hasRFID := false;
 		var boolean isRFIDCorrect := false;
+		var RFID tmp;
 		
 		setup();
+		
+		if(SIMULATION) {
+			// we abuse sutConfig because it's not otherwise used
+			if(expectCorrectRFID) {
+				sutConfig.send(TestcaseInfo: "Correct RFID");
+			} else {
+				sutConfig.send(TestcaseInfo: "False RFID");
+			}
+		}
 		
 		rfidSensor.send(ReadRFIDStart:{});
 		t.start(TIME_RFID);
 		
+		setStage(1, TIME_RFID);
+		
 		alt{
-			[]rfidSensor.receive(RFID: correctRFID){
+			[]rfidSensor.receive(RFID: correctRFID) -> value tmp{
+				log("Received correct RFID: {" &
+					int2str(tmp.id1) & ", " &
+					int2str(tmp.id2) & ", " &
+					int2str(tmp.id3) & ", " &
+					int2str(tmp.id4) & "}");
+    				
 				hasRFID := true;
 				isRFIDCorrect := true;
 			}
-			[]rfidSensor.receive(RFID: ?) {
+			[]rfidSensor.receive(RFID: ?) -> value tmp {
+				log("Received false RFID: {" &
+					int2str(tmp.id1) & ", " &
+					int2str(tmp.id2) & ", " &
+					int2str(tmp.id3) & ", " &
+					int2str(tmp.id4) & "}");
+									
 				hasRFID := true;
 				isRFIDCorrect := false;
+			}
+			[] sutConfig.receive {
+				// config port sends some data in some of the Arduino files
+				// TODO make sure that it doesn't
+				repeat;
 			}
 			[]t.timeout {
 				hasRFID := false;
 			}
-			[] any port.receive {
-				hasRFID := false;
-			}
+			//[] any port.receive {
+			//	hasRFID := false;
+			//}
 		}
 		
 		rfidSensor.send(ReadRFIDStop:{});
@@ -60,11 +98,11 @@ module RFIDModule {
 		tearDown();
 		
 		if(not hasRFID) {
-			return inconc;
+			return verdictInconc("Received no RFID");
 		} else if(isRFIDCorrect == expectCorrectRFID) {
-			return pass;
+			return verdictPass("");
 		} else {
-			return fail;
+			return verdictFail("");
 		}
 	}
 	

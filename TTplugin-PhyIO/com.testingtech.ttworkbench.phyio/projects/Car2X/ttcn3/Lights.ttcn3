@@ -26,7 +26,10 @@
  *  OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
  * ----------------------------------------------------------------------------
  */
-//** @desc Testing Lightsensor data
+/**
+ * @shortdesc Lights
+ * @desc Testcases concerning headlights and emergency lights
+ */
 module Lights {
 	import from PhyIOAUX all;
 	import from TTlibrary_UnitTest all;
@@ -38,6 +41,8 @@ module Lights {
 	/**
 	 * @shortdesc Headlights On
 	 * @desc Turns the LED on then checks using the light sensor if it really is turned on.
+	 * @stage 1:Switch on LED
+	 * @stage 2:Wait for light sensor
 	 */
 	testcase HeadLightsOnTestcase() runs on me system System {
 		var VerdictDescription verdict := internalHeadLightsTestcase(true);
@@ -47,6 +52,8 @@ module Lights {
 	/**
 	 * @shortdesc Headlights Off
 	 * @desc Turns the LED off then checks using the light sensor if it really is turned off.
+	 * @stage 1:Switch off LED
+	 * @stage 2:Wait for light sensor
 	 */
 	testcase HeadLightsOffTestcase() runs on me system System {
 		var VerdictDescription verdict := internalHeadLightsTestcase(false);
@@ -67,11 +74,13 @@ module Lights {
 		
 		setup();
 		
+		setStage(1, 0.0);
+		
 		if(expectLEDOn) {
 			led.send(switchLED_ON);
 		} else {
 			// should be off already but we want to be sure
-			led.send(switchLED_ON);
+			led.send(switchLED_OFF);
 		}
 		
 		// wait a bit to make sure that the LED really has the desired state by now
@@ -79,6 +88,8 @@ module Lights {
 		t.timeout;
 		
 		lightSensor.send(READ_BRIGHTNESS);
+		
+		setStage(2, TIME_HEADLIGHTS);
 		
 		t.start(TIME_HEADLIGHTS);
 		
@@ -94,7 +105,12 @@ module Lights {
 			[] t.timeout {
 				measuredLED := false;
 			}
-			[] config.receive {
+			[] testerConfig.receive {
+				// config port sends some data in some of the Arduino files
+				// TODO make sure that it doesn't
+				repeat;
+			}
+			[] sutConfig.receive {
 				// config port sends some data in some of the Arduino files
 				// TODO make sure that it doesn't
 				repeat;
@@ -120,25 +136,6 @@ module Lights {
 		}
 	}
 	
-	/**
-	 * @shortdesc Emergency Lights (old)
-	 * @desc reads on/off switches of LED to dertermin if emergency lights are on
-	 * @verdict pass when emergency light blink with expected frequency, fail otherwise
-	 */
-	testcase OldEmergencyLightsTestcase() runs on me system System {
-		setup();
-		
-		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
-		
-		setverdict(checkEmergencyLights(
-				SWITCH_TIME_TARGET,
-				ALLOWED_SWITCH_TIME_DEVIATION,
-				MIN_SWITCH_BRIGHTNESS_DIFFERENCE,
-				5, 10.0));
-			
-		led.send(BlinkLEDStop: {});
-		tearDown();
-	}
 	
 	/**
 	 * @shortdesc Emergency Lights
@@ -146,13 +143,17 @@ module Lights {
 	 * 		 reads the sensors output, which is the average time elapsed between
 	 * 		 switches. These have to be near the expected value.
 	 * @verdict pass when emergency light blink with expected frequency, fail otherwise
+	 * @stage 1:Start to blink
+	 * @stage 2:Wait for frequency detection
 	 */
 	testcase EmergencyLightsTestcase() runs on me system System {
 		var Frequency frequency;
 		
 		setup();
 		
-		led.send(BlinkLEDStart: 1.0 / SWITCH_TIME_TARGET);
+		setStage(1, 0.0);
+		
+		led.send(BlinkLEDStart: BLINK_FREQUENCY_TARGET);
 		
 		// wait a bit to make sure that arduino had enough time to react
 		t.start(0.25);
@@ -161,6 +162,10 @@ module Lights {
 		
 		t.start(TIME_EMERGENCY_LIGHTS);
 		lightSensor.send(ReadFrequencyStop: {});
+		
+		setStage(2, TIME_EMERGENCY_LIGHTS);
+		
+		t.start(2.0);
 		
 		alt {
 			

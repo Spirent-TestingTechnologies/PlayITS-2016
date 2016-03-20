@@ -1,24 +1,69 @@
+/**
+ * @desc Parameters, mostly module parameters 
+ */
 module Parameters {
 	import from PhyIOAUX all;
 	import from RS232ConfigPortAux all with { encode "BASE" }
 	import from TTlibrary_UnitTest all;
 	
+	// general properties
+	//**@desc Simulate arduinos with Unittests
+	modulepar boolean SIMULATION := false;
+	//**@desc Send a message to the UI
+	modulepar boolean NOTIFY_UI := false;
+	//**@desc Initialize Sensor Arduino 
+	modulepar boolean MAP_TESTER := false;
+	
+	// LED / light sensor
+	//**@desc Timervalue for headlights testcases
+	modulepar float TIME_HEADLIGHTS := 5.0;
+	//**@desc Timervalue for emergency lights testcase
+	modulepar float TIME_EMERGENCY_LIGHTS := 10.0;
+	//**@desc Threshold to differentiate between on/off states of the LED
+	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
+	//**@desc Targeted number of blinks per second for LED
+	modulepar float BLINK_FREQUENCY_TARGET := 2.0;
+	//**@desc Allowed Deviation of the blink frequency of the LED
+	  modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.3;
+	//**@desc minimal Brightness Difference for state change
+	modulepar integer MIN_SWITCH_BRIGHTNESS_DIFFERENCE := 100;
+ 
+ 	// door (push button)
+	//**@desc Door Timer Parameter	
+	modulepar float TIME_DOORS := 5.0;
+	
+	// theft tetection
+	//**@desc Theft Detection Timer Parameter
+	modulepar float TIME_THEFT_DETECTION := 30.0;
+	
+	// RFID
+	//**@desc RFID Timer Parameter
+	modulepar float TIME_RFID := 10.0;
+	//**@desc Rate of RFID checks while Theft testcase is running. Unit in seconds
+	modulepar float THEFT_RFID_CHECK_RATE := 0.1;
 	// ID Karte: 194, 96, 196, 169 (DEZ)
 	// ID Chip: 4, 226, 92, 235 (DEZ)
+	//**@desc RFID for which the test should pass
 	modulepar RFID OWNER_RFID := {194, 96, 196, 169};
+	//**@desc False RFID
 	modulepar RFID FALSE_RFID := {34, 55, 89, 144};
 
-	modulepar float THEFT_RFID_CHECK_RATE := 0.1;
-
-	modulepar Brightness BRIGHTNESS_THRESHOLD := 512;
-	modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.1;
-	modulepar float SWITCH_TIME_TARGET := 0.5;
-	modulepar integer MIN_SWITCH_BRIGHTNESS_DIFFERENCE := 100;
-
+	// distance sensor
+	//**@desc Timeframe until the sensor should receive a valid measurement in given range
+	modulepar float TIME_DISTANCE_SINGLE_MEASUREMENT := 10.0;
+	//**@desc Allowed Deviation for measurements in cm
 	modulepar integer ALLOWED_DISTANCE_DEVIATION := 3;
+	//**@desc expecting a distance of 10 cm
 	modulepar integer EXPECTED_DISTANCE_10 := 10;
+	//**@desc expecting a distance of 20 cm
 	modulepar integer EXPECTED_DISTANCE_20 := 20;
-		
+	
+	type record of integer DistancesToCheck;
+	//**@desc Single distance which we want to measure, unit in cm.
+	modulepar DistancesToCheck SINGLE_DISTANCE := {10};
+	// modulepar DistancesToCheck VARIOUS_DISTANCES := {30, 20, 10, 50};
+	
+	// connection properties
 	//**@desc moduleparameters of the system under test
 	modulepar RS232Config SUT_RS232_CONFIG := {
 		serialPortName := "COM3",
@@ -29,7 +74,6 @@ module Parameters {
 		flowControl := c_FlowControlNone,
 		checkDSR := false
 	};
-	
 	//**@desc moduleparameters of the tester
 	modulepar RS232Config TESTER_RS232_CONFIG := {
 		serialPortName := "COM7",
@@ -40,25 +84,11 @@ module Parameters {
 		flowControl := c_FlowControlNone,
 		checkDSR := false
 	};
-
-	//timerparams for different testcases
-	modulepar float TIME_HEADLIGHTS := 5.0;
-	modulepar float TIME_EMERGENCY_LIGHTS := 10.0;
-	modulepar float TIME_DOORS := 5.0;
-	modulepar float TIME_RFID := 10.0;
-	modulepar float TIME_THEFT_DETECTION := 30.0;
-	modulepar float TIME_DISTANCE := 5.0;
-	modulepar float TIME_DISTANCE_SINGLE_MEASUREMENT := 3.0;
-
-	type record of integer DistancesToCheck;
 	
-	modulepar DistancesToCheck SINGLE_DISTANCE := {10};
-	modulepar DistancesToCheck VARIOUS_DISTANCES := {30, 20, 10, 50};
-	
-	
+	//**@desc Type for storing the expected Frequency
 	template Frequency CORRECT_FREQUENCY :=
-		(SWITCH_TIME_TARGET - ALLOWED_SWITCH_TIME_DEVIATION ..
-		SWITCH_TIME_TARGET + ALLOWED_SWITCH_TIME_DEVIATION);
+		(BLINK_FREQUENCY_TARGET - ALLOWED_SWITCH_TIME_DEVIATION ..
+	BLINK_FREQUENCY_TARGET + ALLOWED_SWITCH_TIME_DEVIATION);
 		
 	// TTlibraryUnitTest defines verdictPass and verdictFail but not verdictInconc 'cause that's how the pros operate...
 	template VerdictDescription verdictInconc(in template charstring p_reason := omit) := {verdict := inconc, reason := p_reason}

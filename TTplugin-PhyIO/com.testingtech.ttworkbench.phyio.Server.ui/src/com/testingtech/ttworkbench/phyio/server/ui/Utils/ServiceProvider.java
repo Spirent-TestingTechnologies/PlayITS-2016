@@ -1,22 +1,26 @@
 package com.testingtech.ttworkbench.phyio.server.ui.Utils;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class ServiceProvider {
+	
+	private String TTCN3_NATURE = "com.testingtech.ttworkbench.core.ttcn3nature";
 	
 	private Map<String,TestModule> moduleMap ;
 	
@@ -26,13 +30,70 @@ public class ServiceProvider {
 		moduleMap= new HashMap<String,TestModule>();
 	}
 	
-
+	public void sendProjectNames(BufferedWriter bWriter, String workspacePath) {
+		
+		File workspace = new File(workspacePath);
+		if(workspace.exists() && workspace.isDirectory()) {
+			for(File project : workspace.listFiles()) {
+				if(project.isDirectory()) {
+					for(File file : project.listFiles()) {
+						if(file.getName().equals(".project")) {
+							
+							try {
+								DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+								DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+								
+								Document doc = dBuilder.parse(file);
+								
+								NodeList nodeList = doc.getElementsByTagName("natures");
+								
+								for(int i = 0; i < nodeList.getLength(); i++) {
+									Node node = nodeList.item(i);
+									if(node.getNodeType() == Node.ELEMENT_NODE) {
+										Element element = (Element) node;
+										
+										String strNature = element.getElementsByTagName("nature").item(0).getTextContent();
+										if(strNature.equals(TTCN3_NATURE)) {
+											bWriter.write(project.getName() + SEPERATOR);
+										}
+										
+									}
+								}
+								
+							} catch (ParserConfigurationException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (SAXException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
+						}
+					}
+			
+				}
+			}
+		}
+		
+		try {
+			bWriter.newLine();
+			bWriter.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
 	public void sendModuleNames(BufferedWriter bWriter,String path){
 		List<TestModule> testModules = new ArrayList<TestModule>();
   		File folder = new File(path);
   		
-		OutputStream os;
-		BufferedWriter br;
 		try {
 ;	
 
@@ -118,6 +179,17 @@ public class ServiceProvider {
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}			
+	}
+	
+	public void sendWorkspacePath(BufferedWriter bWriter, String workspacePath) {
+		try {
+			bWriter.write(workspacePath);
+			bWriter.write("\n");
+			bWriter.flush();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		
 	}
 	
 	

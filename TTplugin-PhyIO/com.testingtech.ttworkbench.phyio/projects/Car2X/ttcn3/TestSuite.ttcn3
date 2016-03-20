@@ -1,3 +1,6 @@
+/**
+ * @desc Encapsules the calls of all testcases that are not unit tests 
+ */
 module TestSuite {
 	import from Distance all;
 	import from Doors all;
