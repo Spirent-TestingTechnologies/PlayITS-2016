@@ -162,11 +162,12 @@ module Lights {
 		lightSensor.send(ReadFrequencyStart: MIN_SWITCH_BRIGHTNESS_DIFFERENCE);
 		
 		t.start(TIME_EMERGENCY_LIGHTS);
+		t.timeout;
 		lightSensor.send(ReadFrequencyStop: {});
 		
 		setStage(2, TIME_EMERGENCY_LIGHTS);
 		
-		t.start(2.0);
+		t.start(5.0);
 		
 		alt {
 			
@@ -189,6 +190,9 @@ module Lights {
 			}
 			[]t.timeout {
 				setverdict(inconc, "Timeout");
+			}
+			[] any port.receive{
+				repeat;
 			}
 		}
 		
