@@ -161,14 +161,14 @@ module TheftDetection {
 					setStage(3, WAIT_FOR_EL_TIME);
 					
 					hasDoor := true;
-
+					
 					t.start(WAIT_FOR_EL_TIME);
 				}
 				[]doorSensor.receive(DoorState: ?) {
 				// there is nothing to see here, please continue
 				}
 				[not isAlarmOn]requestELTimer.timeout {
-					lightSensor.send(READ_FREQUENCY);
+					//lightSensor.send(READ_FREQUENCY);
 					requestELTimer.start(EL_CHECK_TIME);
 				}
 				[]lightSensor.receive(Frequency: 0.0) {
@@ -180,7 +180,7 @@ module TheftDetection {
 					run := false;
 				}
 				[]lightSensor.receive(Frequency: ?) {
-					// false emergency lights frequency
+					false emergency lights frequency
 					result := verdictFail("Emergency lights blink in incorrect frequency");
 				}
 				[]rfidSensor.receive(RFIDState: {?, OWNER_RFID}) {
@@ -229,46 +229,61 @@ module TheftDetection {
 			}
 		}
 		
-		theftDetection.send(TheftStop: {});
 		lightSensor.send(ReadFrequencyStop: {});
+		theftDetection.send(TheftStop: {});
 		
-		tearDown();
-		
-		if(not expectEmergency and isAlarmOn) {
-			return verdictFail("Alarm shouldn't have gone off");
-		} else if(expectEmergency and not isAlarmOn) {
-			return verdictFail("Alarm should have gone off");
-		} else if(not expectDoor and hasDoor) {
-			return verdictFail("Door shouldn't have opened");
-		} else if(expectDoor and not hasDoor) {
-			return verdictFail("Door should have opened");
+		if(not isAlarmOn) {
+			// TODO make this more beautiful
+			t.start(WAIT_FOR_EL_TIME);
+			alt {
+				[]t.timeout {
+				}
+				[]lightSensor.receive(Frequency: 0.0) {
+				// there is nothing to see here, please continue
+				}
+				[]lightSensor.receive(Frequency: CORRECT_FREQUENCY) {
+					isAlarmOn := true;
+				}
+			}
 		}
+		
+			tearDown();
+		
+			if(not expectEmergency and isAlarmOn) {
+				return verdictFail("Alarm shouldn't have gone off");
+			} else if(expectEmergency and not isAlarmOn) {
+				return verdictFail("Alarm should have gone off");
+			} else if(not expectDoor and hasDoor) {
+				return verdictFail("Door shouldn't have opened");
+			} else if(expectDoor and not hasDoor) {
+				return verdictFail("Door should have opened");
+			}
 
-		if(expectRFID == inconc) {
-			if(hasRFID) {
-				return verdictFail("Expected no RFID");
+			if(expectRFID == inconc) {
+				if(hasRFID) {
+					return verdictFail("Expected no RFID");
+				} else {
+					return verdictPass();
+				}
 			} else {
-				return verdictPass();
-			}
-		} else {
-			if(isRFIDCorrect and expectRFID == fail) {
-				return verdictFail("Expected false RFID");
-			} else if(not isRFIDCorrect and expectRFID == pass) {
-				return verdictFail("Expected correct RFID");
-			} else {
-				return verdictPass();
+				if(isRFIDCorrect and expectRFID == fail) {
+					return verdictFail("Expected false RFID");
+				} else if(not isRFIDCorrect and expectRFID == pass) {
+					return verdictFail("Expected correct RFID");
+				} else {
+					return verdictPass();
+				}
 			}
 		}
+	
+	
+	
+		function executeTheftDetectionTestcases() {
+			execute(TheftDetectionTestcase_RfidOk_DoorOpens());
+			execute(TheftDetectionTestcase_RfidOk_DoorClosed());
+			execute(TheftDetectionTestcase_RfidFalse_DoorOpens());
+			execute(TheftDetectionTestcase_RfidFalse_DoorClosed());
+			execute(TheftDetectionTestcase_RfidMissing_DoorOpens());
+			execute(TheftDetectionTestcase_RfidMissing_DoorClosed());
+		}
 	}
-	
-	
-	
-	function executeTheftDetectionTestcases() {
-		execute(TheftDetectionTestcase_RfidOk_DoorOpens());
-		execute(TheftDetectionTestcase_RfidOk_DoorClosed());
-		execute(TheftDetectionTestcase_RfidFalse_DoorOpens());
-		execute(TheftDetectionTestcase_RfidFalse_DoorClosed());
-		execute(TheftDetectionTestcase_RfidMissing_DoorOpens());
-		execute(TheftDetectionTestcase_RfidMissing_DoorClosed());
-	}
-}
