@@ -4,7 +4,7 @@
 //#include <NewPing.h>
 //#include <Time.h>
 //#include <IRremote.h>
-
+#include <math.h>
 
 #define MAX_PARAM 5
 
@@ -334,6 +334,15 @@ void LightFunctionPrint(int id,int value,unsigned long time){
  boolean readInput(float frequency,boolean error){
   //ließt Input und bearbeitet ihn, liefert true wenn die Aufrufende Funktion gestoppt werden muss
   int id, functionType, command,variable;
+  //division by zero return -1
+  // todo test isnan or isinf
+  if(isnan(frequency)){
+    frequency = -1.0;
+  }
+  if(isinf(frequency)){
+    frequency = -1.0;
+  }
+  //////////////////
   if (millis() >= readTimer) {
     readTimer += readSpeed;      // Set the next ping time.
     if (XSERIAL.available() > 0) {
