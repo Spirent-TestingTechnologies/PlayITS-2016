@@ -69,7 +69,7 @@ module Parameters {
 	//**@desc moduleparameters of the system under test
 	modulepar RS232Config SUT_RS232_CONFIG := {
 		serialPortName := "COM3",
-		baudRate := c_baudRate_115200,
+		baudRate := c_baudRate_9600,
 		dataBits := 8,
 		stopBits := 1,
 		parity := c_ParityNone,
@@ -79,7 +79,7 @@ module Parameters {
 	//**@desc moduleparameters of the tester
 	modulepar RS232Config TESTER_RS232_CONFIG := {
 		serialPortName := "COM7",
-		baudRate := c_baudRate_115200,
+		baudRate := c_baudRate_9600,
 		dataBits := 8,
 		stopBits := 1,
 		parity := c_ParityNone,
