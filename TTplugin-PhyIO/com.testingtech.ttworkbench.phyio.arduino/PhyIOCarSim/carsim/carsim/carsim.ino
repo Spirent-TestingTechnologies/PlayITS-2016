@@ -91,7 +91,7 @@ void setup() {
   mfrc522.PCD_Init();
   
 #ifndef RFID_PRESENT
-  DEBUG_PRINTLN("Simulating RFID");
+  DEBUG_PRINTLN("#Simulating RFID");
   randomSeed(RFID_SS_PIN);
 #endif
 
@@ -241,7 +241,7 @@ void RFIDFunctionTagClear(){
 }
 
 void RFIDFunction(int id, int command){
-  DEBUG_PRINT("In RFIDFunction with function ");
+  DEBUG_PRINT("#In RFIDFunction with function ");
   DEBUG_PRINTLN(command);
   switch(command){
     case SETUP:
@@ -275,7 +275,6 @@ void RFIDFunctionSetup(){
 // Function returns 1 if the rfid read is matching the expected one, 0 if it does not match
 // and only if in simulating mode it can return -1 when no simulated card was found nearby
 int RFIDFunctionProcess(int id){
-    DEBUG_PRINTLN("#In RFIDFunctionProcess...");
     int rfid_tag_tmp[4];
 
 #ifdef RFID_PRESENT    
@@ -291,7 +290,6 @@ int RFIDFunctionProcess(int id){
     if(randNumber >= 2){
       return -1; // nothing to read
     }
-
     // Generate random rfid uid
     for (byte i = 0; i < 4; i++){
       if(randNumber == 0){
@@ -671,7 +669,11 @@ void ProcessHandling(){
       Theft01.bt_changed = ButtonFunctionProcess(&Button1);
       Theft01.bt_time = millis(); // currently unused
   }
+#ifdef RFID_PRESENT
   if(RFID_ENABLED && mfrc522.PICC_IsNewCardPresent()){
+#else
+  if(RFID_ENABLED){  
+#endif
      //Card detected, process data...
      int res = RFIDFunctionProcess(RF01);
      if(THEFT_ENABLED){
