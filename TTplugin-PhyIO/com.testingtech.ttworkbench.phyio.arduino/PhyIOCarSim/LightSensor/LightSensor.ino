@@ -309,7 +309,6 @@ void LightFunctionPrint(int id,int value,unsigned long time){
         }
         else{
           if(checkError(timeDiff,millis()-endTime)==false && inPut == false){
-            Serial.println("Error");
             error = true;
           }
           endTime = millis();
