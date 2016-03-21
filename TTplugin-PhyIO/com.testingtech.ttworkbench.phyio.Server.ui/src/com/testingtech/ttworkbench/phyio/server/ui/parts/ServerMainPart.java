@@ -1,51 +1,31 @@
 package com.testingtech.ttworkbench.phyio.server.ui.parts;
  
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.inject.Inject;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
-import com.testingtech.ttworkbench.phyio.server.ui.Utils.ServerOutputStream;
 import com.testingtech.ttworkbench.phyio.server.ui.Utils.ServiceProvider;
-import com.testingtech.ttworkbench.phyio.server.ui.Utils.TestModule;
-import com.testingtech.ttworkbench.phyio.server.ui.Utils.Testcase;
-import com.testingtech.tworkbench.ttman.server.api.ExecutionServerFactory;
-import com.testingtech.tworkbench.ttman.server.api.IExecutionHandler;
 import com.testingtech.tworkbench.ttman.server.api.IExecutionServer;
-import com.testingtech.tworkbench.ttman.server.api.ITERequest;
-import com.testingtech.tworkbench.ttman.server.api.ITEResponse;
-import com.testingtech.tworkbench.ttman.server.api.Job;
-import com.testingtech.tworkbench.ttman.server.api.Parameter;
-import com.testingtech.tworkbench.ttman.server.api.TestCase;
-import com.testingtech.tworkbench.ttman.server.api.TestCaseStatus;
 
 public class ServerMainPart {
 	
@@ -54,27 +34,12 @@ public class ServerMainPart {
 	private Label lblConnectionStatus;
 	private int PORT=22782;
 	
-	private String GROUPANNOT= "group";
-	private String TITEL_ANNOT= "shortdesc";
-	private String STATE_ANNOT= "state";
-	
 	private String PROJECTS_REQ = "getProjectsFromWorkspace";
 	private String MODULES_REQ = "getModulesFromFolder";
 	private String TESTCASES_REQ = "getTestcasesFromModule";
 	private String ANNOT_VALUES_TESTCASE_REQ = "getAnnotationValuesForTestcase";
 	private String ANNOT_VALUES_MODUL_REQ = "getAnnotationValuesForModul";
 	private String WORKSPACE_REQ = "getWorkspacePath";
-
-
-
-	private String DEFAULT_GROUPNAME= "tests";
-	private String GROUP_FLAG= "<G>";
-	private String TEST_FLAG= "<TC>";
-	private String TITLE_FLAG= "<TI>";
-	private String STATE_FLAG= "<ST>";
-	
-	private String END_GROUP_FLAG= "</G>";
-	private String END_TEST_FLAG= "</TC>";
 
 	private Process ttmanProcess;
 	private boolean serverIsRunning;
@@ -139,7 +104,30 @@ public class ServerMainPart {
 						    	System.out.println("start server ...");
 							
 						    	ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
-//						    	ttmanProcess = Runtime.getRuntime().exec(serverPath + " --data " + workspacePath);
+						    	
+//						    	InputStream input = ttmanProcess.getInputStream();
+//						    	InputStreamReader reader = new InputStreamReader(input);
+//						    	BufferedReader bReader = new BufferedReader(reader);
+						    	
+//						    	Thread readerThread = new Thread(new Runnable() {
+//									
+//									@Override
+//									public void run() {
+//										String bReaderLine;
+//										try {
+//											while ((bReaderLine = bReader.readLine()) != null) {
+//												text.append(bReaderLine);
+//											}
+//										} catch (IOException e) {
+//											// TODO Auto-generated catch block
+//											e.printStackTrace();
+//										}
+////									}
+//								});
+						    	
+//						    	readerThread.start();
+						    	
+						    	//					    	ttmanProcess = Runtime.getRuntime().exec(serverPath + " --data " + workspacePath);
 						    	
 						    	if(ttmanProcess==null){
 						    		System.out.println("serverProcess = null");
@@ -191,6 +179,7 @@ public class ServerMainPart {
 				//				    		    	  	sendTestInfo(tm,sock);
 					    		      }
 					    		      sock.close();
+					    		      servsock.close();
 						    	}
 						    	
 						    	ttmanProcess.destroy();

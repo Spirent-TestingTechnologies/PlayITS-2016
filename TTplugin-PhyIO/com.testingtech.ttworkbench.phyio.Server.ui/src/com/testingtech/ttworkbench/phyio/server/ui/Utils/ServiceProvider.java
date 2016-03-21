@@ -191,8 +191,10 @@ public class ServiceProvider {
 					String annotName = reqValues[1];
 					List<String> values = testModule.getModuleAnnotations().get(annotName);
 					
-					for(String value:values){
-						bWriter.write(value+SEPERATOR);
+					if(values != null) {
+						for(String value:values){
+							bWriter.write(value+SEPERATOR);
+						}
 					}
 				}
 			}		
