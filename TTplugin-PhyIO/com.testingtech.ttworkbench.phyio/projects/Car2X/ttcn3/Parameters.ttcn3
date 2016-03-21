@@ -45,6 +45,8 @@ module Parameters {
 	modulepar float THEFT_RFID_CHECK_RATE := 0.1;
 	// ID Karte: 194, 96, 196, 169 (DEZ)
 	// ID Chip: 4, 226, 92, 235 (DEZ)
+	modulepar float EL_CHECK_TIME := 3.0;
+	modulepar float WAIT_FOR_EL_TIME := 8.0;
 	//**@desc RFID for which the test should pass
 	modulepar RFID OWNER_RFID := {194, 96, 196, 169};
 	//**@desc False RFID

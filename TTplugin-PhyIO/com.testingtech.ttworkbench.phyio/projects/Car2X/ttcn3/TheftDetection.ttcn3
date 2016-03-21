@@ -103,8 +103,7 @@ module TheftDetection {
 		var VerdictDescription result := {none};
 		timer requestELTimer;
 		
-		const float EL_CHECK_TIME := 0.5;
-		const float WAIT_FOR_EL_TIME := 3.0;
+		
 		
 		var boolean hasDoor := false;
 		var boolean hasRFID := false;
