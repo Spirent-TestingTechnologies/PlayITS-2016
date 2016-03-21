@@ -187,12 +187,6 @@ void loop() {
 
 // -------- LightSensor ------------
 void LightSensorFunction( int id, int command){
-  //TODO Debug output
-  DEBUG_PRINT("#In the LightSensorFunction with function : '");
-  DEBUG_PRINTLN(command);
-  
-  DEBUG_PRINT("' and with ID: ");
-  DEBUG_PRINTLN(id);
   int variable = XSERIAL.parseInt();
   
   switch(command){
@@ -239,9 +233,6 @@ void LightFunctionPrint(int id,int value,unsigned long time){
   }
   void LightFunctionStart(int id,int lightValue,int lightDiff){
     //wartet bis sich die Helligkeit um lightDiff geändert hat und beginnt zu messen
-    DEBUG_PRINTLN("# In the sub-function LightFunctionStart of LightSensorFunction");
-    DEBUG_PRINT("# with id");
-    DEBUG_PRINTLN(id);
     int lightValueNow,top,down;
     //////////Schranken setzen/////////////
     if(lightValue - lightDiff < 0){
@@ -273,9 +264,6 @@ void LightFunctionPrint(int id,int value,unsigned long time){
   }
  void LightFunctionFrequenz(int id,int top,int down,boolean upOrDown,unsigned long startTime,unsigned long endTime){
   //zaehlt die Anzahl der Wechsel und überprüft ob die Wechsel den gleichen zeitlichen Abstand haben
-   DEBUG_PRINTLN("# In the sub-function LightFunctionFrequenz of LightSensorFunction");
-   DEBUG_PRINT("# with id");
-   DEBUG_PRINTLN(id);
    boolean error=false;
    boolean inPut = false;
    unsigned long timeDiff= 0;
