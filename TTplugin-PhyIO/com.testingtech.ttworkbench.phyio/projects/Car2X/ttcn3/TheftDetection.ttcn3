@@ -90,7 +90,7 @@ module TheftDetection {
 		setverdict(verdict.verdict, verdict.reason);
 	}
 	/**
-	 * 
+	 *
 	 * @desc Checks states of RFID and Door and if necessary the Emergency Lights
 	 * @param expectRFID
 	 * @param expectDoor
@@ -213,6 +213,14 @@ module TheftDetection {
 					
 					hasRFID := true;
 					isRFIDCorrect := false;
+				}
+				[] testerConfig.receive {
+					// config port sends some data in some of the Arduino files
+					repeat;
+				}
+				[] sutConfig.receive {
+					// config port sends some data in some of the Arduino files
+					repeat;
 				}
 				[]t.timeout {
 					log("Timeout.");

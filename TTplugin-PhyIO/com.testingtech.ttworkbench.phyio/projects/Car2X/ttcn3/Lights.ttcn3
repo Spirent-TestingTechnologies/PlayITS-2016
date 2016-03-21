@@ -179,6 +179,14 @@ module Lights {
 			[]lightSensor.receive(Frequency: ?) -> value frequency {
 				setverdict(fail, "Wrong frequency", frequency);
 			}
+			[] testerConfig.receive {
+				// config port sends some data in some of the Arduino files
+				repeat;
+			}
+			[] sutConfig.receive {
+				// config port sends some data in some of the Arduino files
+				repeat;
+			}
 			[]t.timeout {
 				setverdict(inconc, "Timeout");
 			}

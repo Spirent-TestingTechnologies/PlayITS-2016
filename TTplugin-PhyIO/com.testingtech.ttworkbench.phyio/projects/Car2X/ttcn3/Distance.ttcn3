@@ -83,6 +83,14 @@ module Distance {
 					
 					hasReceivedData := true;
 				}
+				[] testerConfig.receive {
+					// config port sends some data in some of the Arduino files
+					repeat;
+				}
+				[] sutConfig.receive {
+					// config port sends some data in some of the Arduino files
+					repeat;
+				}
 				[]t.timeout {
 					if(not hasReceivedData) {
 						result := verdictInconc("No data from sensor");
