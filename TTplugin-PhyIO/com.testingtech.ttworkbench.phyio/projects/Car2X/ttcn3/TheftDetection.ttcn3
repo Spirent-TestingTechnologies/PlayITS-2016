@@ -1,7 +1,7 @@
 /**
  * @shortdesc Theft Detection
  * @desc Testcase that tests the theft detection
- * @relexecpath Testsuite.clf
+ * @relexecpath clf/Testsuite.clf
  */
 module TheftDetection {
 	import from PhyIOAUX all;
