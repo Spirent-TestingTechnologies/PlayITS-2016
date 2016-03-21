@@ -11,6 +11,13 @@ module TheftDetection {
 	import from Functions all;
 	import from Parameters all;
 	
+	/*
+	 * General Concept:
+	 * The procedure is inspired by the way you get into a car-sharing vehicle. First you have to show your RFID,
+	 * then you can open the door. In this case scenario there is only one correct RFID. If the door is opened
+	 * with no or a false RFID provided, then the alarm goes off.
+	 */
+	
 	/**
 	 * @shortdesc Theft Detection (correct RFID, door opens)
 	 * @desc Theft detection with the correct RFID and door opening. Expect no alarm.
@@ -91,7 +98,7 @@ module TheftDetection {
 	}
 	/**
 	 *
-	 * @desc Checks states of RFID and Door and if necessary the Emergency Lights
+	 * @desc Checks states of RFID and Door and if necessary the Emergency Lights.
 	 * @param expectRFID
 	 * @param expectDoor
 	 * @param expectEmergency
@@ -115,6 +122,7 @@ module TheftDetection {
 		setup();
 		
 		if(SIMULATION) {
+			// simulator needs infos to determine behaviour
 			sutConfig.send(TestcaseInfo: "Theft Detection");
 			
 			if(expectRFID == pass) {
@@ -241,7 +249,7 @@ module TheftDetection {
 			if(hasRFID) {
 				return verdictFail("Expected no RFID");
 			} else {
-				return verdictPass("");
+				return verdictPass();
 			}
 		} else {
 			if(isRFIDCorrect and expectRFID == fail) {
@@ -249,7 +257,7 @@ module TheftDetection {
 			} else if(not isRFIDCorrect and expectRFID == pass) {
 				return verdictFail("Expected correct RFID");
 			} else {
-				return verdictPass("");
+				return verdictPass();
 			}
 		}
 	}
