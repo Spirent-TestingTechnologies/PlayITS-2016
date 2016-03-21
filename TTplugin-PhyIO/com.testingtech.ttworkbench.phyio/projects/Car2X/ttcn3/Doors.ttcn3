@@ -17,6 +17,8 @@ module Doors {
 	 * @stage 1:Open door
 	 */
 	testcase OpenDoorTestcase() runs on me system System {
+		var default alts := activate(alt_default());
+		
 		setup();
     	
 		t.start(TIME_DOORS);
@@ -33,19 +35,8 @@ module Doors {
 				log("Door is closed -> repeat");
 				repeat;
 			}
-			[] testerConfig.receive {
-				// config port sends some data in some of the Arduino files
-				repeat;
-			}
-			[] sutConfig.receive {
-				// config port sends some data in some of the Arduino files
-				repeat;
-			}
 			[]t.timeout {
 				setverdict(fail, "Sensor sent no data");
-			}
-			[]any port.receive {
-				setverdict(inconc, "Unexpected message");
 			}
 		}
 

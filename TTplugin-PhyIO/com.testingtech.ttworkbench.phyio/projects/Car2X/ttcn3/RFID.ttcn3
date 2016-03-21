@@ -40,6 +40,7 @@ module RFIDModule {
 	 */
 	function internalRFIDTestcase(RFID correctRFID, boolean expectCorrectRFID)
 	runs on me system System return VerdictDescription {
+		var default alts := activate(alt_default());
 		var boolean hasRFID := false;
 		var boolean isRFIDCorrect := false;
 		var RFID tmp;
@@ -82,10 +83,6 @@ module RFIDModule {
 				isRFIDCorrect := false;
 			}
 			[] testerConfig.receive {
-				// config port sends some data in some of the Arduino files
-				repeat;
-			}
-			[] sutConfig.receive {
 				// config port sends some data in some of the Arduino files
 				repeat;
 			}

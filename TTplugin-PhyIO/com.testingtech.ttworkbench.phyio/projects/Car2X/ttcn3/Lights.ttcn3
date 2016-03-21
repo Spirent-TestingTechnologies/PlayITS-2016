@@ -69,6 +69,7 @@ module Lights {
 	 * 			The verdict is inconc if we get not result or a message of an unexpected type.
 	 */
 	function internalHeadLightsTestcase(boolean expectLEDOn) runs on me system System return VerdictDescription {
+		var default alts := activate(alt_default());
 		var template State LED_OFF := {(0..BRIGHTNESS_THRESHOLD), ?};
 		var boolean isLEDOn := false;
 		var boolean measuredLED := false;
@@ -106,20 +107,6 @@ module Lights {
 			[] t.timeout {
 				measuredLED := false;
 			}
-			[] testerConfig.receive {
-				// config port sends some data in some of the Arduino files
-				// TODO make sure that it doesn't
-				repeat;
-			}
-			[] sutConfig.receive {
-				// config port sends some data in some of the Arduino files
-				// TODO make sure that it doesn't
-				repeat;
-			}
-			[] any port.receive {
-				// some unexpected message arrived
-				measuredLED := false;
-			}
 		}
 		
 		if(expectLEDOn) {
@@ -148,6 +135,7 @@ module Lights {
 	 * @stage 2:Wait for frequency detection
 	 */
 	testcase EmergencyLightsTestcase() runs on me system System {
+		var default alts := activate(alt_default());
 		var Frequency frequency;
 		
 		setup();
@@ -179,14 +167,6 @@ module Lights {
 			}
 			[]lightSensor.receive(Frequency: ?) -> value frequency {
 				setverdict(fail, "Wrong frequency", frequency);
-			}
-			[] testerConfig.receive {
-				// config port sends some data in some of the Arduino files
-				repeat;
-			}
-			[] sutConfig.receive {
-				// config port sends some data in some of the Arduino files
-				repeat;
 			}
 			[]t.timeout {
 				setverdict(inconc, "Timeout");
