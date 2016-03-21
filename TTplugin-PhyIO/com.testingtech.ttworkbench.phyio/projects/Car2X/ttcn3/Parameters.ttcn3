@@ -6,12 +6,14 @@ module Parameters {
 	import from RS232ConfigPortAux all with { encode "BASE" }
 	import from TTlibrary_UnitTest all;
 	
+	import from Components all;
+	
 	// general properties
 	//**@desc Simulate arduinos with Unittests
 	modulepar boolean SIMULATION := false;
 	//**@desc Send a message to the UI
 	modulepar boolean NOTIFY_UI := false;
-	//**@desc Initialize Sensor Arduino 
+	//**@desc Initialize Sensor Arduino
 	modulepar boolean MAP_TESTER := false;
 	
 	// LED / light sensor
@@ -24,12 +26,12 @@ module Parameters {
 	//**@desc Targeted number of blinks per second for LED
 	modulepar float BLINK_FREQUENCY_TARGET := 2.0;
 	//**@desc Allowed Deviation of the blink frequency of the LED
-	  modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.3;
+	modulepar float ALLOWED_SWITCH_TIME_DEVIATION := 0.3;
 	//**@desc minimal Brightness Difference for state change
 	modulepar integer MIN_SWITCH_BRIGHTNESS_DIFFERENCE := 100;
  
- 	// door (push button)
-	//**@desc Door Timer Parameter	
+	// door (push button)
+	//**@desc Door Timer Parameter
 	modulepar float TIME_DOORS := 5.0;
 	
 	// theft tetection
@@ -87,9 +89,27 @@ module Parameters {
 	
 	//**@desc Type for storing the expected Frequency
 	template Frequency CORRECT_FREQUENCY :=
-		(BLINK_FREQUENCY_TARGET - ALLOWED_SWITCH_TIME_DEVIATION ..
-	BLINK_FREQUENCY_TARGET + ALLOWED_SWITCH_TIME_DEVIATION);
+	(BLINK_FREQUENCY_TARGET - ALLOWED_SWITCH_TIME_DEVIATION ..
+		BLINK_FREQUENCY_TARGET + ALLOWED_SWITCH_TIME_DEVIATION);
 		
 	// TTlibraryUnitTest defines verdictPass and verdictFail but not verdictInconc 'cause that's how the pros operate...
 	template VerdictDescription verdictInconc(in template charstring p_reason := omit) := {verdict := inconc, reason := p_reason}
+	
+	//** default altstep
+	altstep alt_default() runs on me {
+		[] testerConfig.receive {
+			// config port sends some data in some of the Arduino files
+			// TODO make sure that it doesn'ts
+			repeat;
+		}
+		[] sutConfig.receive {
+			// config port sends some data in some of the Arduino files
+			// TODO make sure that it doesn't
+			repeat;
+		}
+		[] any port.receive {
+			// some unexpected message arrived
+			repeat;
+		}
+	}
 }

@@ -48,6 +48,7 @@ module Distance {
 	 * @verdict pass if all distances match before timeout, fail otherwise.
 	 */
 	function internalDistancesTestcase(DistancesToCheck list) runs on me system System return VerdictDescription {
+		var default alts := activate(alt_default());
 		var VerdictDescription result := {none} ;
 		var DistanceSensorState state;
 		var integer i := 0;
@@ -82,14 +83,6 @@ module Distance {
 					// else continue with same index since the we're not in the desired range
 					
 					hasReceivedData := true;
-				}
-				[] testerConfig.receive {
-					// config port sends some data in some of the Arduino files
-					repeat;
-				}
-				[] sutConfig.receive {
-					// config port sends some data in some of the Arduino files
-					repeat;
 				}
 				[]t.timeout {
 					if(not hasReceivedData) {

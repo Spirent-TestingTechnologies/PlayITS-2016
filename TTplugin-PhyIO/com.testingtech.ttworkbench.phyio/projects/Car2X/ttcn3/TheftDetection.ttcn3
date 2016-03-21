@@ -99,6 +99,7 @@ module TheftDetection {
 	 */
 	function internalTheftDetection(verdicttype expectRFID, boolean expectDoor, boolean expectEmergency)
 	runs on me system System return VerdictDescription {
+		var default alts := activate(alt_default());
 		var VerdictDescription result := {none};
 		timer requestELTimer;
 		
@@ -213,14 +214,6 @@ module TheftDetection {
 					
 					hasRFID := true;
 					isRFIDCorrect := false;
-				}
-				[] testerConfig.receive {
-					// config port sends some data in some of the Arduino files
-					repeat;
-				}
-				[] sutConfig.receive {
-					// config port sends some data in some of the Arduino files
-					repeat;
 				}
 				[]t.timeout {
 					log("Timeout.");
