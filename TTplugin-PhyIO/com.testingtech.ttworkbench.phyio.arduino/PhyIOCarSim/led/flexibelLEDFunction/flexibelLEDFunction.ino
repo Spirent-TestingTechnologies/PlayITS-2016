@@ -183,7 +183,7 @@ void LEDFunction( int id, int command) {
       LEDFunctionSet(id, XSERIAL.parseInt());
       break;
     case BLINK:
-      LEDFunctionBlink(id, (1000/(XSERIAL.parseInt()*2)));
+      LEDFunctionBlink(id, (1000/(XSERIAL.parseFloat()*2)));
       break;
     case STOP:
       LEDFunctionSet(id, 0);
