@@ -1,6 +1,7 @@
 /**
  * @shortdesc Distance 
  * @desc Testcases that test the distance sensor
+ * @relexecpath Testsuite.clf
  */
 module Distance {
 	import from PhyIOAUX all;

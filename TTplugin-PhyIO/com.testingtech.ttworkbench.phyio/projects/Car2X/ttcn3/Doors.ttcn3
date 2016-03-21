@@ -1,6 +1,7 @@
 /**
  * @shortdesc Doors 
  * @desc Testcase that tests opening the door
+ * @relexecpath Testsuite.clf
  */
 module Doors {
 	import from PhyIOAUX all;
