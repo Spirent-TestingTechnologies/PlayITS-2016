@@ -95,7 +95,7 @@ module SimulatedArduino language "TTCN-3:2010 Real Time and Performance Testing"
 				// nothing to do
 				}
 				[]rfidSensor.receive(ReadRFIDStart: {}) {
-					rfidSensor.send(rfid);
+					rfidSensor.send(RFIDState: {float2int((now - startTime) * 1000.0), rfid});
 				}
 				[]rfidSensor.receive(ReadRFIDStop: {}) {
 				//nothing to do
@@ -139,6 +139,7 @@ module SimulatedArduino language "TTCN-3:2010 Real Time and Performance Testing"
 	function theftDetect() runs on System {
 		var boolean run := true;
 		var charstring testcaseInfo := "";
+		var float startTime := now;
 		
 		var boolean sendRFID := true;
 		var boolean correctRFID := false;
@@ -172,13 +173,13 @@ module SimulatedArduino language "TTCN-3:2010 Real Time and Performance Testing"
 					// send rfid if expected
 					if(sendRFID) {
 						if(correctRFID) {
-							rfidSensor.send(expectedRFID);
+							rfidSensor.send(RFIDState: {float2int((now - startTime) * 1000.0), expectedRFID});
 						} else {
 							if(expectedRFID == FALSE_RFID) {
 								// by accident the RFID which we usually use as the false one was expected here
-								rfidSensor.send(OWNER_RFID);
+								rfidSensor.send(RFIDState: {float2int((now - startTime) * 1000.0), OWNER_RFID});
 							} else {
-								rfidSensor.send(FALSE_RFID);
+								rfidSensor.send(RFIDState: {float2int((now - startTime) * 1000.0), FALSE_RFID});
 							}
 						}
 					}

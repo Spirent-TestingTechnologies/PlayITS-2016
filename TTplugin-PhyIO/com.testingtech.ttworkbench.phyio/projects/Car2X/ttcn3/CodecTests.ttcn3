@@ -67,7 +67,7 @@ module CodecTests language "TTCN-3:2010 Advanced Parameterization" {
 		}
 		
 		// sadly impossible to put these into a list
-		if(not checkDecode<RFID>(RFID: {255, 0, 2, 156},						"80, 101, 255, 0, 2, 156")) {
+		if(not checkDecode<RFIDState>(RFIDState: {1230, {255, 0, 2, 156}},		"80, 101, 1230, 255, 0, 2, 156")) {
 			setverdict(fail, "Fail at: RFID answer");
 		} else {
 			log("Success: RFID answer");

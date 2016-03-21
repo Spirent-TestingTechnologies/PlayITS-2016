@@ -304,6 +304,10 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 				variant "RFID,SETUP"
 			}
 			
+			type record RFIDState {integer time, RFID rfid} with {
+				variant "RFID,RESULT"
+			}
+			
 			type record ReadRFIDStart {} with {
 				variant "RFID,START"
 			}
@@ -313,7 +317,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			
 			type port PhyRFIDSensor message {
 				//in
-				inout RFID;
+				inout RFIDState;
 				//out
 				inout RFID, ReadRFIDStart, ReadRFIDStop;
         	

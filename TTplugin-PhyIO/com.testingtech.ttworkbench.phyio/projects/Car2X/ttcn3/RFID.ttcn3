@@ -43,7 +43,7 @@ module RFIDModule {
 		var default alts := activate(alt_default());
 		var boolean hasRFID := false;
 		var boolean isRFIDCorrect := false;
-		var RFID tmp;
+		var RFIDState tmp;
 		
 		setup();
 		
@@ -62,22 +62,22 @@ module RFIDModule {
 		setStage(1, TIME_RFID);
 		
 		alt{
-			[]rfidSensor.receive(RFID: correctRFID) -> value tmp{
+			[]rfidSensor.receive(RFIDState: {?, correctRFID}) -> value tmp {
 				log("Received correct RFID: {" &
-					int2str(tmp.id1) & ", " &
-					int2str(tmp.id2) & ", " &
-					int2str(tmp.id3) & ", " &
-					int2str(tmp.id4) & "}");
+					int2str(tmp.rfid.id1) & ", " &
+					int2str(tmp.rfid.id2) & ", " &
+					int2str(tmp.rfid.id3) & ", " &
+					int2str(tmp.rfid.id4) & "}");
     				
 				hasRFID := true;
 				isRFIDCorrect := true;
 			}
-			[]rfidSensor.receive(RFID: ?) -> value tmp {
+			[]rfidSensor.receive(RFIDState: ?) -> value tmp {
 				log("Received false RFID: {" &
-					int2str(tmp.id1) & ", " &
-					int2str(tmp.id2) & ", " &
-					int2str(tmp.id3) & ", " &
-					int2str(tmp.id4) & "}");
+					int2str(tmp.rfid.id1) & ", " &
+					int2str(tmp.rfid.id2) & ", " &
+					int2str(tmp.rfid.id3) & ", " &
+					int2str(tmp.rfid.id4) & "}");
 									
 				hasRFID := true;
 				isRFIDCorrect := false;

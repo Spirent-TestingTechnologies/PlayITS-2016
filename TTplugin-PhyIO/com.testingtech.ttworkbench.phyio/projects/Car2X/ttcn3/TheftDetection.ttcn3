@@ -176,7 +176,7 @@ module TheftDetection {
 					// false emergency lights frequency
 					result := verdictFail("Emergency lights blink in incorrect frequency");
 				}
-				[]rfidSensor.receive(RFID: OWNER_RFID) {
+				[]rfidSensor.receive(RFIDState: {?, OWNER_RFID}) {
 					if(not hasRFID or not isRFIDCorrect) {
 						log("Received correct RFID.");
 					}
@@ -195,7 +195,7 @@ module TheftDetection {
 					hasRFID := true;
 					isRFIDCorrect := true;
 				}
-				[]rfidSensor.receive(RFID: ?) {
+				[]rfidSensor.receive(RFIDState: ?) {
 					// false RFID
 					if(not hasRFID or isRFIDCorrect) {
 						log("Received false RFID.");
