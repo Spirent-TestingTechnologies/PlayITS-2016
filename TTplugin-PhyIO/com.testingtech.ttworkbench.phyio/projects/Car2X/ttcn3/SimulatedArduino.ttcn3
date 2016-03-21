@@ -217,6 +217,9 @@ module SimulatedArduino language "TTCN-3:2010 Real Time and Performance Testing"
 				[]sutConfig.receive(StopThread: {}) {
 					run := false;
 				}
+				[]lightSensor.receive(ReadFrequencyStart: ?) {
+				// nothing to do
+				}
 			}
 		}
 	}
