@@ -168,7 +168,7 @@ module TheftDetection {
 				// there is nothing to see here, please continue
 				}
 				[not isAlarmOn]requestELTimer.timeout {
-					//lightSensor.send(READ_FREQUENCY);
+					lightSensor.send(READ_FREQUENCY);
 					requestELTimer.start(EL_CHECK_TIME);
 				}
 				[]lightSensor.receive(Frequency: 0.0) {
@@ -178,10 +178,6 @@ module TheftDetection {
 					log("Emergency light on, frequency correct.");
 					isAlarmOn := true;
 					run := false;
-				}
-				[]lightSensor.receive(Frequency: ?) {
-					false emergency lights frequency
-					result := verdictFail("Emergency lights blink in incorrect frequency");
 				}
 				[]rfidSensor.receive(RFIDState: {?, OWNER_RFID}) {
 					if(not hasRFID or not isRFIDCorrect) {
