@@ -3,8 +3,6 @@
 #include <MFRC522.h>
 #include <NewPing.h>
 
-//include <Time.h> // Use in future low power mode
-
 #define XSERIAL Serial // mySerial // Serial // to switch between Bluetooth and USB XSERIAL connection for communication
 
 #define CV01   10
@@ -38,9 +36,9 @@
 #endif
 
 //Enable/Disable
-#define BT_PRESENT 1
-#define RFID_PRESENT 1
-#define PE_PRESENT  1
+//#define BT_PRESENT 1
+//#define RFID_PRESENT 1
+//#define PE_PRESENT 1
 
 
 unsigned long readTimer; // holds the next read time;
@@ -56,7 +54,7 @@ unsigned int RFID_ENABLED = 0; // Tells if rfid is enabled for scanning
 #define RFID_SS_PIN 10 
 #define RFID_RST_PIN 9
 MFRC522 mfrc522(RFID_SS_PIN, RFID_RST_PIN); // creates and holds mfrc522 data
-
+  
 //Theft Detection
 int THEFT_ENABLED = 0; // Enables theft detection
 
@@ -317,6 +315,9 @@ int RFIDFunctionProcess(int id){
 #else
       XSERIAL.print(rfid_tag_tmp[i], rfid_format);
 #endif
+      if(i < 3){
+        XSERIAL.print(", ");
+      }
     }
     
     XSERIAL.println("");
@@ -628,7 +629,11 @@ void PingEchoFunctionRead2() {
       pePoint.distance = uS;
       break;
     default:
+#ifdef PE_PRESENT
       pePoint.distance = sonar.convert_cm(uS);
+#else
+      pePoint.distance = uS;
+#endif
       break;
   }
 
