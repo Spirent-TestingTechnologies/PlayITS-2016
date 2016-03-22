@@ -24,6 +24,9 @@ Theft theft(Theft1ID, button, led, rfid);
 PingEcho echo;
 
 
+// LightSensor Initialisierung
+LightSensor ls(readTimer, readSpeed);
+
 
 void setup() {
 	XSERIAL.begin(9600, SERIAL_8N1); // Open serial monitor at 9600 baud
@@ -94,6 +97,10 @@ void loop() {
 					case TD01:
 						// Theft Detection 
 						theft.TheftDetectionFunction(id, command);
+						break;
+					case LS01:
+						// Light Sensor
+						ls.LightSensorFunction(id, command);
 						break;
 				}
 			}

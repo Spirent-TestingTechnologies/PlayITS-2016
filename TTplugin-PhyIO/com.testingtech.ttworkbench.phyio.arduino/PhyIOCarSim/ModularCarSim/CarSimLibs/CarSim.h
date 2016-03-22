@@ -8,6 +8,8 @@
 #include <CarSimRFID.h>
 #include <CarSimTheft.h>
 #include <CarSimPingEcho.h>
+#include <CarSimLightSensor.h>
+
 
 //hier sollte am besten das process handling rein
 

@@ -1,6 +1,7 @@
 #ifndef CarSimDefine
 #define CarSimDefine
 
+#define MAX_PARAM 5
 
 #define XSERIAL Serial // mySerial // Serial // to switch between Bluetooth and USB XSERIAL connection for communication
 
@@ -39,6 +40,7 @@
 //#define BT_PRESENT 1
 //#define RFID_PRESENT 1
 //#define PE_PRESENT 1
+//#define LS_PRESENT 1
 
 // configurable defines for Button
 #define Button1Pin 2
@@ -63,6 +65,35 @@
 
 // configurable defines for Theft-Detection
 #define Theft1ID 6
+
+
+// configurable defines for LightSensor
+#define LS1PIN A1
+
+
+/*
+// 32 bit NEC IR remote control
+// für das Schreiben eines Moduls für die Remote, wird folgender
+// Import benötigt
+//#include <IRremote.h>
+
+//#define IR_PRESENT 1
+#ifdef IR_PRESENT
+// IR LED DATA on D9 (PWM)
+IRsend irsend;
+#endif
+
+#define IR_ON 0xF7C03F
+#define IR_OFF 0xF740BF
+#define IR_RED 0xF720DF
+#define IR_GREEN 0xF7A05F
+#define IR_BLUE 0xF7609F
+#define IR_WHITE 0xF7E01F
+#define IR_FADE 0xF7C837
+#define IR_SMOOTH 0xF7E817
+#define IR_STROBE 0xF7D02F
+#define IR_FLASH 0xF7D02F
+*/
 
 
 
