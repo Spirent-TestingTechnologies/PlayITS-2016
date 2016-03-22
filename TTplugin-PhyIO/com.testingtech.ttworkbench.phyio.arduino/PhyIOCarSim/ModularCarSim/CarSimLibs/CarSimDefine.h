@@ -41,6 +41,10 @@
 //#define RFID_PRESENT 1
 //#define PE_PRESENT 1
 //#define LS_PRESENT 1
+//#define CVF_PRESENT 1
+//#define MOTOR_PRESENT 1
+//#define RELAYS_PRESENT 1
+
 
 // configurable defines for Button
 #define Button1Pin 2
@@ -59,9 +63,11 @@
 #define PE_TIME_BETWEEN_SAMPLES 100 //Ping Frequency
 #define PE_POINT_MEDIAN_ITERATIONS  1 //how many iterations used for median
 
+
 // configurable defines for RFID
 #define RFID_SS_PIN 10 
 #define RFID_RST_PIN 9
+
 
 // configurable defines for Theft-Detection
 #define Theft1ID 6
@@ -69,6 +75,21 @@
 
 // configurable defines for LightSensor
 #define LS1PIN A1
+
+
+// configurable defines for Colour View
+#define cvf_ledpin 4
+
+
+// configurable defines for Motor Function
+#define enablePin 5
+#define in1Pin 6
+#define in2Pin 7
+
+
+// configurable defines for Relay Functions
+#define RELAY1PIN  A1
+#define RELAY2PIN  A2
 
 
 /*

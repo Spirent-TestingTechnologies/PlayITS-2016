@@ -23,12 +23,20 @@ Theft theft(Theft1ID, button, led, rfid);
 // Distance Initialisierung
 PingEcho echo;
 
-
 // LightSensor Initialisierung
 LightSensor ls(readTimer, readSpeed);
 
+// ColorView Initialisierung
+ColorView cv;
 
-void setup() {
+// Relay Initialisierung
+Relay relay;
+
+// Motor Initialisierung
+Motor motor;
+
+
+void setup(){
 	XSERIAL.begin(9600, SERIAL_8N1); // Open serial monitor at 9600 baud
 
 	while (!XSERIAL) {
@@ -39,7 +47,8 @@ void setup() {
 	DEBUG_PRINTLN("#Entered loop");
 }
 
-void loop() {
+
+void loop(){
 	int id, functionType, command;
 	if (millis() >= readTimer) {
 		readTimer += readSpeed;      // Set the next ping time.
@@ -67,7 +76,8 @@ void loop() {
 			else{
 				switch (functionType) {
 					case CV01:
-						DEBUG_PRINTLN("#Not supported.");
+						// ColorView -- "Legacy module"
+						cv.ColorViewFunction(id, command);
 						break;
 					case PE01:
 						DEBUG_PRINTLN("#Not supported. Use distance module");
@@ -81,10 +91,11 @@ void loop() {
 						led.LEDFunction(id, command);
 						break;
 					case REL01:
-						DEBUG_PRINTLN("#Not supported.");
+						// Relay
+						relay.RelayFunction(id, command);
 						break;
 					case MM01:
-						DEBUG_PRINTLN("#Not supported.");
+						motor.MotorFunction(id, command);
 						break;
 					case RF01:
 						// RFID Communication

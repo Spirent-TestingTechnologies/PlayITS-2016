@@ -9,7 +9,9 @@
 #include <CarSimTheft.h>
 #include <CarSimPingEcho.h>
 #include <CarSimLightSensor.h>
-
+#include <CarSimColorView.h>
+#include <CarSimRelay.h>
+#include <CarSimMotor.h>
 
 //hier sollte am besten das process handling rein
 
