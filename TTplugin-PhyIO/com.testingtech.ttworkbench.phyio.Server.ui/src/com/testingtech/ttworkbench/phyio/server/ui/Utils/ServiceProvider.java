@@ -145,9 +145,11 @@ public class ServiceProvider {
 				bWriter.flush();
 			}
 			TestModule testModule = moduleMap.get(modName);
-			for(Testcase testcase: testModule.getTestcases()){
-				bWriter.write(testcase.getTestcaseID()+SEPERATOR);
-			}
+			if(testModule!=null){
+				for(Testcase testcase:testModule.getTestcases()){
+					bWriter.write(testcase.getTestcaseID()+SEPERATOR);
+				}
+			}		
 			bWriter.write("\n");
 			bWriter.flush();
 		} catch (IOException e) {
