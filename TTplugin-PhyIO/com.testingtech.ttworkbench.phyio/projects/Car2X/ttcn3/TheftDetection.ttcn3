@@ -126,6 +126,7 @@ module TheftDetection {
 		var boolean isRFIDCorrect := false;
 		var boolean isAlarmOn := false;
 		var boolean run := true;
+		var RFIDState receivedRFID;
 		
 		setup();
 		
@@ -188,12 +189,16 @@ module TheftDetection {
 					isAlarmOn := true;
 					run := false;
 				}
-				[]rfidSensor.receive(RFIDState: {?, OWNER_RFID}) {
-					if(not hasRFID or not isRFIDCorrect) {
-						log("Received correct RFID.");
+				[]rfidSensor.receive(RFIDState: ?) -> value receivedRFID {
+					if(receivedRFID.rfid == OWNER_RFID) {
+						isRFIDCorrect := true;
+					} else {
+						isRFIDCorrect := false;
 					}
 					
 					if(not hasRFID) {
+						hasRFID := true;
+						
 						// restart timer here because we want to give extra time to push button
 						if(expectDoor) {
 							setStage(2, TIME_THEFT_DETECTION);
@@ -203,29 +208,6 @@ module TheftDetection {
 							t.start(WAIT_FOR_EL_TIME);
 						}
 					}
-					
-					hasRFID := true;
-					isRFIDCorrect := true;
-				}
-				[]rfidSensor.receive(RFIDState: ?) {
-					// false RFID
-					if(not hasRFID or isRFIDCorrect) {
-						log("Received false RFID.");
-					}
-					
-					if(not hasRFID) {
-						// restart timer here because we want to give extra time to push button
-						if(expectDoor) {
-							setStage(2, TIME_THEFT_DETECTION);
-							t.start(TIME_THEFT_DETECTION);
-						} else {
-							setStage(3, WAIT_FOR_EL_TIME);
-							t.start(WAIT_FOR_EL_TIME);
-						}
-					}
-					
-					hasRFID := true;
-					isRFIDCorrect := false;
 				}
 				[]t.timeout {
 					log("Timeout.");
