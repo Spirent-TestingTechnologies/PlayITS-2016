@@ -702,7 +702,7 @@ void ProcessHandling(){
       DEBUG_PRINTLN(Theft01.rfid_matched);
       if(Theft01.rfid_matched <= 0){
         DEBUG_PRINTLN("#Process Handling   Alarm!");
-        LEDFunctionBlink(1,0.5);
+        LEDFunctionBlink(1,1);
       }else{
         DEBUG_PRINTLN("#Car unlocked.");
         LEDFunctionSet(1,0);
