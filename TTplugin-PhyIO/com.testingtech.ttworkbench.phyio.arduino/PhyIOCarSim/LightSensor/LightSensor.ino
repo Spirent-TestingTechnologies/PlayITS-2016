@@ -337,10 +337,10 @@ void LightFunctionPrint(int id,int value,unsigned long time){
   //division by zero return -1
   // todo test isnan or isinf
   if(isnan(frequency)){
-    frequency = -1.0;
+    frequency = 0.0;
   }
   if(isinf(frequency)){
-    frequency = -1.0;
+    frequency = 0.0;
   }
   //////////////////
   if (millis() >= readTimer) {
