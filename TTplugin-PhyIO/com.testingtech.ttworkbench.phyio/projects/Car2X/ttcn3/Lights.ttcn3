@@ -29,7 +29,7 @@
 /**
  * @shortdesc Lights
  * @desc Testcases concerning headlights and emergency lights
- * @relexecpath clf/Testsuite.clf
+ * @relexecpath clf/TestSuite.clf
  */
 module Lights {
 	import from PhyIOAUX all;

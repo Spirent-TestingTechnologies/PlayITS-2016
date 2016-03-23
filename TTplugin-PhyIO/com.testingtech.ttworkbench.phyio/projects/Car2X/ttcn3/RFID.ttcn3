@@ -1,7 +1,7 @@
 /**
  * @shortdesc RFID
  * @desc Testcases that test the RFID sensor
- * @relexecpath clf/Testsuite.clf
+ * @relexecpath clf/TestSuite.clf
  */
 module RFIDModule {
 	import from PhyIOAUX all;
