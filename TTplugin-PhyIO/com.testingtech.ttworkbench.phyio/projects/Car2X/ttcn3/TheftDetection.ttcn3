@@ -38,6 +38,7 @@ module TheftDetection {
 	 * @verdict pass if RFID is correct, door doesn't open and no alarm. inconc if light sensor doesn't inform about
 	 * 			the alarm. Otherwise fail
 	 * @stage 1:Read correct RFID
+	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
 	 */
 	testcase TheftDetectionTestcase_RfidOk_DoorClosed() runs on me system System {
@@ -64,7 +65,8 @@ module TheftDetection {
 	 * @desc Theft detection with the false RFID and door doesn't open. Expect no alarm.
 	 * @verdict pass if RFID is false, door doesn't open and no alarm. inconc if light sensor doesn't inform about
 	 * 			the alarm. Otherwise fail
-	 * @stage 2:Read false RFID
+	 * @stage 1:Read correct RFID
+	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
 	 */
 	testcase TheftDetectionTestcase_RfidFalse_DoorClosed() runs on me system System {
@@ -77,6 +79,7 @@ module TheftDetection {
 	 * @desc Theft detection with no RFID and door opening. Expect alarm.
 	 * @verdict pass if RFID is missing, door opens and alarm goes off. inconc if light sensor doesn't inform about
 	 * 			the alarm. Otherwise fail
+	 * @stage 1:Read correct RFID
 	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
 	 */
@@ -90,6 +93,8 @@ module TheftDetection {
 	 * @desc Theft detection with the no RFID and door doesn't open. Expect no alarm.
 	 * @verdict pass if RFID is missing, door doesn't open and no alarm. inconc if light sensor doesn't inform about
 	 * 			the alarm. Otherwise fail
+	 * @stage 1:Read correct RFID
+	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
 	 */
 	testcase TheftDetectionTestcase_RfidMissing_DoorClosed() runs on me system System {
