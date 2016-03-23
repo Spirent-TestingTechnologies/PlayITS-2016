@@ -254,7 +254,9 @@ module TheftDetection {
 				return verdictPass();
 			}
 		} else {
-			if(isRFIDCorrect and expectRFID == fail) {
+			if(not hasRFID) {
+				return verdictFail("Expected RFID");
+			} else if(isRFIDCorrect and expectRFID == fail) {
 				return verdictFail("Expected false RFID");
 			} else if(not isRFIDCorrect and expectRFID == pass) {
 				return verdictFail("Expected correct RFID");
