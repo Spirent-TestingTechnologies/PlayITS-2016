@@ -26,6 +26,7 @@ module TheftDetection {
 	 * @stage 1:Read correct RFID
 	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidOk_DoorOpens() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(pass, true, false);
@@ -40,6 +41,7 @@ module TheftDetection {
 	 * @stage 1:Read correct RFID
 	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidOk_DoorClosed() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(pass, false, false);
@@ -54,6 +56,7 @@ module TheftDetection {
 	 * @stage 1:Read false RFID
 	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidFalse_DoorOpens() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(fail, true, true);
@@ -68,6 +71,7 @@ module TheftDetection {
 	 * @stage 1:Read correct RFID
 	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidFalse_DoorClosed() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(fail, false, false);
@@ -82,6 +86,7 @@ module TheftDetection {
 	 * @stage 1:Read correct RFID
 	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidMissing_DoorOpens() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(inconc, true, true);
@@ -96,6 +101,7 @@ module TheftDetection {
 	 * @stage 1:Read correct RFID
 	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidMissing_DoorClosed() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(inconc, false, false);
@@ -227,6 +233,8 @@ module TheftDetection {
 				}
 			}
 		}
+		
+		setStage(4, WAIT_FOR_EL_TIME);
 		
 		lightSensor.send(ReadFrequencyStop: {});
 		theftDetection.send(TheftStop: {});
