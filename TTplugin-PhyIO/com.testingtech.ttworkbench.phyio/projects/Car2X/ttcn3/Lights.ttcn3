@@ -42,7 +42,7 @@ module Lights {
 	/**
 	 * @shortdesc Headlights On
 	 * @desc Turns the LED on then checks using the light sensor if it really is turned on.
-	 * @stage 1:Switch on LED
+	 * @stage 1:Switch LED on
 	 * @stage 2:Wait for light sensor
 	 */
 	testcase HeadLightsOnTestcase() runs on me system System {
@@ -53,7 +53,7 @@ module Lights {
 	/**
 	 * @shortdesc Headlights Off
 	 * @desc Turns the LED off then checks using the light sensor if it really is turned off.
-	 * @stage 1:Switch off LED
+	 * @stage 1:Switch LED off
 	 * @stage 2:Wait for light sensor
 	 */
 	testcase HeadLightsOffTestcase() runs on me system System {
