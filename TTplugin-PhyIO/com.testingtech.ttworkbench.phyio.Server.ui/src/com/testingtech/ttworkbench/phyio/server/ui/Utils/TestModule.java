@@ -2,7 +2,6 @@ package com.testingtech.ttworkbench.phyio.server.ui.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,12 +10,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TestModule {
 	
 	private String TESTCASE= "testcase";
 	private String MODULE= "module";
-	private String path;
+	
+	private final String ANNOT_REGEX ="^\\s*/*\\*/*\\s*@(\\w+)\\s*(.*)";
 
 	private List<Testcase> testcases;
 	private Map<String,List<String>> moduleAnnotations ;
@@ -24,7 +26,6 @@ public class TestModule {
 	private File file;
 	
 	public TestModule(String path){
-		this.path=path;
 		this.file = new File(path);
 		if(file==null){
 			System.out.println("File not found");
@@ -35,6 +36,7 @@ public class TestModule {
 	}
 	
 	public void parseFile(){
+		Pattern annotPattern = Pattern.compile(ANNOT_REGEX);
 		testcases = new ArrayList<Testcase>();
 		FileReader input;
 		
@@ -45,15 +47,15 @@ public class TestModule {
 
 			while ( (myLine = bufRead.readLine()) != null)
 			{    
-				
+		    	
 				myLine=myLine.trim();
+
 			    if(myLine.startsWith("/**")){
-			    	
 			    	String tcID= null;
 			    	LinkedHashMap<String, String> parameter = new LinkedHashMap<String, String>();
-			    	Map<String, List<String>> annotations = new HashMap<String, List<String>>();
+			    	Map<String, List<String>> annotations = new HashMap<String, List<String>>();			    	
 
-			    	
+		    	
 			    	//start parsing
 			    	if(myLine.length()>3){
 			    		myLine = myLine.substring(2);
@@ -66,47 +68,27 @@ public class TestModule {
 			    	
 			    	// parse all annotations
 			    	while(myLine!=null && myLine.startsWith("*")){
-			    		if(myLine.length()<=1){
-			    			myLine=bufRead.readLine();
-			    			myLine=myLine.trim();
-			    			continue;
-			    		}
-			    		// remove"*"			    		
-			    		myLine=myLine.substring(1);
-			    		
-			    		//remove whitespaces
-			    		myLine=myLine.trim();
-					    
-					    if(myLine.startsWith("@")){
-				    		// remove"@"
-					    	myLine=myLine.substring(1);
-					    	
-					    	Scanner s2 = new Scanner(myLine);
-					    	
-					    	if(s2.hasNext()){
-					    		// get annotation name
-					    		String annotName= s2.next();
-					    		
-					    		// get annotation value
-					    		String annotValue = myLine.replace(annotName+" ", "");
-					    		
-					    		// add value to list
-					    		List<String> oldValues = annotations.get(annotName);
-					    		if(oldValues==null){
-					    			List<String> annotValueList = new ArrayList<String>();
-					    			annotValueList.add(annotValue);
-					    			annotations.put(annotName, annotValueList);
-					    		}else{
-					    			annotations.get(annotName).add(annotValue);
-					    		}
-					    	}
-					    	s2.close();
-					    }
-					    myLine=bufRead.readLine();
+			    		Matcher matcher = annotPattern.matcher(myLine);
+				    	if(matcher.find()){					
+				    		String annotName= matcher.group(1);
+				    		String annotValue= matcher.group(2);
+			    			System.out.println(annotName+":"+annotValue);
+	
+				    		List<String> oldValues = annotations.get(annotName);
+				    		if(oldValues==null){
+				    			List<String> annotValueList = new ArrayList<String>();
+				    			annotValueList.add(annotValue);
+				    			annotations.put(annotName, annotValueList);
+				    		}else{
+				    			annotations.get(annotName).add(annotValue);
+				    		}
+				    	}
+				    	myLine=bufRead.readLine();
 		    			myLine=myLine.trim();
+				    }
 
-			    	}
-			    	
+		    	
+		    	
 			    	// parse testcase declaration 
 			    	if(myLine!=null && myLine.startsWith(TESTCASE)){
 				    	Scanner s2 = new Scanner(myLine);
@@ -130,8 +112,9 @@ public class TestModule {
 				    			}
 				    		}
 				    	}
-				    	
-				    	
+				    	s2.close();
+			    	
+			    	
 				    }
 			    	// parse testcase declaration 
 			    	if(myLine!=null && myLine.startsWith(MODULE)){
@@ -142,9 +125,10 @@ public class TestModule {
 			    		testcases.add(new Testcase(tcID, parameter,annotations));
 			    	}
 			    }
-			    
-			    
 			}
+			bufRead.close(); 
+		
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -153,7 +137,7 @@ public class TestModule {
 	
 	
 	public List<Testcase> getTestcases(){
-		return new ArrayList(testcases);
+		return new ArrayList<Testcase>(testcases);
 	}
 	
 	public String getName(){

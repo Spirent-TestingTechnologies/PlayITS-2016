@@ -40,6 +40,10 @@
 //#define RFID_PRESENT 1
 //#define PE_PRESENT 1
 
+//This define is needed for faulty HC-SR04 ping echo sensor modules.
+//Faulty modules get stuck at 0 values, this define calls a function to reset them for continous use
+#define HC-SR04
+
 
 unsigned long readTimer; // holds the next read time;
 unsigned int readSpeed = 500; // How frequently are we going to read the serial line
@@ -603,11 +607,15 @@ void PingEchoFunctionStop2(){
   pe_enabled = false;
 }
 
-void pintEchoSensorFix(){
+//Fix for faulty Sensor module HC-SR04
+void pingEchoSensorFix(){
   pinMode(ECHO_PIN,OUTPUT);
+  delay(1);
   digitalWrite(ECHO_PIN,LOW);
+  delay(1);
   pinMode(ECHO_PIN,INPUT);
 }
+
 void PingEchoFunctionRead2() {
 
   DEBUG_PRINTLN("#In the PingEchoFunctionRead");
@@ -634,6 +642,12 @@ void PingEchoFunctionRead2() {
 #endif
       break;
   }
+
+#ifdef HC-SR04 //sensor module
+  if (pePoint.distance == 0){
+    pingEchoSensorFix();
+  }
+#endif
 
   PingEchoFunctionR1();
 }
@@ -688,7 +702,7 @@ void ProcessHandling(){
       DEBUG_PRINTLN(Theft01.rfid_matched);
       if(Theft01.rfid_matched <= 0){
         DEBUG_PRINTLN("#Process Handling   Alarm!");
-        LEDFunctionBlink(1,0.5);
+        LEDFunctionBlink(1,1);
       }else{
         DEBUG_PRINTLN("#Car unlocked.");
         LEDFunctionSet(1,0);

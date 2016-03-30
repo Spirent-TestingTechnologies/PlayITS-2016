@@ -1,8 +1,16 @@
 package com.testingtech.ttworkbench.phyio.server.ui.Utils;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,20 +26,35 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class ServiceProvider {
+public class ServiceProvider implements Runnable{
 	
 	private String TTCN3_NATURE = "com.testingtech.ttworkbench.core.ttcn3nature";
-	
+	private boolean serverIsRunning ;
 	private Map<String,TestModule> moduleMap ;
+	private String workspacePath;
+	private int port;
 	
 	String SEPERATOR= "<SEP>";
 	
-	public ServiceProvider(){
+	
+	private String PROJECTS_REQ = "getProjectsFromWorkspace";
+	private String MODULES_REQ = "getModulesFromFolder";
+	private String TESTCASES_REQ = "getTestcasesFromModule";
+	private String ANNOT_VALUES_TESTCASE_REQ = "getAnnotationValuesForTestcase";
+	private String ANNOT_VALUES_MODUL_REQ = "getAnnotationValuesForModul";
+	private String WORKSPACE_REQ = "getWorkspacePath";
+	
+	public ServiceProvider(String workspacePath, int port){
+		
+		
 		moduleMap= new HashMap<String,TestModule>();
+		this.workspacePath=workspacePath;
+		this.port=port;
 	}
 	
-	public void sendProjectNames(BufferedWriter bWriter, String workspacePath) {
-		
+	private void sendProjectNames(BufferedWriter bWriter, String workspacePath) {
+
+		//check if the project in the workspace is a TTCN3 Project. Its a TTCN3 project if the project nature is set
 		File workspace = new File(workspacePath);
 		if(workspace.exists() && workspace.isDirectory()) {
 			for(File project : workspace.listFiles()) {
@@ -52,22 +75,23 @@ public class ServiceProvider {
 									if(node.getNodeType() == Node.ELEMENT_NODE) {
 										Element element = (Element) node;
 										
-										String strNature = element.getElementsByTagName("nature").item(0).getTextContent();
-										if(strNature.equals(TTCN3_NATURE)) {
-											bWriter.write(project.getName() + SEPERATOR);
+										Node elemNode = element.getElementsByTagName("nature").item(0);
+										if(elemNode!=null){
+											String strNature=elemNode.getTextContent();
+											if(strNature.equals(TTCN3_NATURE)) {
+												bWriter.write(project.getName() + SEPERATOR);
+											}
 										}
+										
 										
 									}
 								}
 								
 							} catch (ParserConfigurationException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} catch (SAXException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 							
@@ -82,7 +106,6 @@ public class ServiceProvider {
 			bWriter.newLine();
 			bWriter.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -90,12 +113,12 @@ public class ServiceProvider {
 		
 	}
 	
-	public void sendModuleNames(BufferedWriter bWriter,String path){
+	private void sendModuleNames(BufferedWriter bWriter,String path){
+
 		List<TestModule> testModules = new ArrayList<TestModule>();
   		File folder = new File(path);
   		
 		try {
-;	
 
 	  		if(folder!=null && folder.isDirectory()){  		
 	  			testModules = getModules(folder);
@@ -137,7 +160,7 @@ public class ServiceProvider {
 	}
 
 
-	public void sendTestcases(BufferedWriter bWriter, String modName) {
+	private void sendTestcases(BufferedWriter bWriter, String modName) {
 
 		try{
 			if(modName==null||modName.isEmpty()){
@@ -145,9 +168,11 @@ public class ServiceProvider {
 				bWriter.flush();
 			}
 			TestModule testModule = moduleMap.get(modName);
-			for(Testcase testcase: testModule.getTestcases()){
-				bWriter.write(testcase.getTestcaseID()+SEPERATOR);
-			}
+			if(testModule!=null){
+				for(Testcase testcase:testModule.getTestcases()){
+					bWriter.write(testcase.getTestcaseID()+SEPERATOR);
+				}
+			}		
 			bWriter.write("\n");
 			bWriter.flush();
 		} catch (IOException e) {
@@ -155,7 +180,8 @@ public class ServiceProvider {
 		}			
 	}
 	
-	public void sendAnnotationValuesForTestcase(BufferedWriter bWriter,String data) {
+	private void sendAnnotationValuesForTestcase(BufferedWriter bWriter,String data) {
+
 		String[] reqValues = data.split(SEPERATOR);
 		try{
 			if(reqValues.length==3){
@@ -181,7 +207,8 @@ public class ServiceProvider {
 		}			
 	}
 	
-	public void sendAnnotationValuesForModul(BufferedWriter bWriter,String data) {
+	private void sendAnnotationValuesForModul(BufferedWriter bWriter,String data) {
+
 		String[] reqValues = data.split(SEPERATOR);
 		try{
 			if(reqValues.length==2){
@@ -205,7 +232,8 @@ public class ServiceProvider {
 		}			
 	}
 	
-	public void sendWorkspacePath(BufferedWriter bWriter, String workspacePath) {
+	private void sendWorkspacePath(BufferedWriter bWriter, String workspacePath) {
+
 		try {
 			bWriter.write(workspacePath);
 			bWriter.write("\n");
@@ -215,6 +243,77 @@ public class ServiceProvider {
 		}
 		
 	}
+
+	@Override
+	public void run() {
+		serverIsRunning=true;
+	 
+	    	
+    	while(serverIsRunning){   
+    		try{
+    			ServerSocket servsock = new ServerSocket(port);
+
+    			Socket sock = servsock.accept();
+    		    InputStream is = sock.getInputStream();
+    		    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+    			OutputStream os = sock.getOutputStream();
+    			  
+    			BufferedWriter bWriter = new BufferedWriter(new OutputStreamWriter(os));
+    		    String request ;
+    		    while((request = br.readLine())!=null){
+    		    	if(request.equals(MODULES_REQ)){
+    		    	  	String relPath = br.readLine();				// client sends relative path
+    		    	  	if(relPath!=null){
+    		    	  		sendModuleNames(bWriter,workspacePath+"\\"+relPath);
+    		    	  	}
+    		    	} else if(request.endsWith(TESTCASES_REQ)){
+    		    		String modName = br.readLine();				// client sends modulename
+    		    	  	if(modName!=null){
+    		    	  		sendTestcases(bWriter,modName);
+    		    	  	}
+    		    	} else if(request.endsWith(ANNOT_VALUES_TESTCASE_REQ)){
+		    	  		String modName = br.readLine();				// client sends modulename testcasename and annotation
+		    	  		if(modName!=null) {
+		    	  			sendAnnotationValuesForTestcase(bWriter,modName);
+		    	  		}
+    		    	} else if(request.endsWith(ANNOT_VALUES_MODUL_REQ)) {
+    		    		String modulAndAnnotation = br.readLine();	
+    		    		if(modulAndAnnotation!=null) {
+    		    			sendAnnotationValuesForModul(bWriter, modulAndAnnotation);
+    		    		}
+    		    	} else if(request.endsWith(WORKSPACE_REQ)) {
+    		    	  	sendWorkspacePath(bWriter, workspacePath);
+    		    	} else if(request.endsWith(PROJECTS_REQ)) {
+    		    	  	sendProjectNames(bWriter, workspacePath);
+    		    	 }
+    		    	  	
+ 
+    		      }
+    		      sock.close();
+    		      servsock.close();
+    		      
+	    		
+	    	}catch(SocketException se){	    		
+	    	}catch(Exception ex) {
+				ex.printStackTrace();
+				return;
+			}
+    	}
+	    	    		  
+    				    
+		
+	}
+
+	public void stop(){
+		serverIsRunning= false;
+	}
+
+	public boolean isRunning() {
+		return serverIsRunning;
+	}
+	
+	
+
 	
 	
 }

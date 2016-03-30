@@ -1,7 +1,7 @@
 /**
  * @shortdesc Theft Detection
  * @desc Testcase that tests the theft detection
- * @relexecpath clf/Testsuite.clf
+ * @relexecpath clf/TestSuite.clf
  */
 module TheftDetection {
 	import from PhyIOAUX all;
@@ -26,6 +26,7 @@ module TheftDetection {
 	 * @stage 1:Read correct RFID
 	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidOk_DoorOpens() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(pass, true, false);
@@ -38,7 +39,9 @@ module TheftDetection {
 	 * @verdict pass if RFID is correct, door doesn't open and no alarm. inconc if light sensor doesn't inform about
 	 * 			the alarm. Otherwise fail
 	 * @stage 1:Read correct RFID
+	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidOk_DoorClosed() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(pass, false, false);
@@ -53,6 +56,7 @@ module TheftDetection {
 	 * @stage 1:Read false RFID
 	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidFalse_DoorOpens() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(fail, true, true);
@@ -64,8 +68,10 @@ module TheftDetection {
 	 * @desc Theft detection with the false RFID and door doesn't open. Expect no alarm.
 	 * @verdict pass if RFID is false, door doesn't open and no alarm. inconc if light sensor doesn't inform about
 	 * 			the alarm. Otherwise fail
-	 * @stage 2:Read false RFID
+	 * @stage 1:Read correct RFID
+	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidFalse_DoorClosed() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(fail, false, false);
@@ -77,8 +83,10 @@ module TheftDetection {
 	 * @desc Theft detection with no RFID and door opening. Expect alarm.
 	 * @verdict pass if RFID is missing, door opens and alarm goes off. inconc if light sensor doesn't inform about
 	 * 			the alarm. Otherwise fail
+	 * @stage 1:Read correct RFID
 	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidMissing_DoorOpens() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(inconc, true, true);
@@ -90,7 +98,10 @@ module TheftDetection {
 	 * @desc Theft detection with the no RFID and door doesn't open. Expect no alarm.
 	 * @verdict pass if RFID is missing, door doesn't open and no alarm. inconc if light sensor doesn't inform about
 	 * 			the alarm. Otherwise fail
+	 * @stage 1:Read correct RFID
+	 * @stage 2:Wait for door
 	 * @stage 3:Check for alarm
+	 * @stage 4:Check for alarm / Shutdown
 	 */
 	testcase TheftDetectionTestcase_RfidMissing_DoorClosed() runs on me system System {
 		var VerdictDescription verdict := internalTheftDetection(inconc, false, false);
@@ -115,6 +126,7 @@ module TheftDetection {
 		var boolean isRFIDCorrect := false;
 		var boolean isAlarmOn := false;
 		var boolean run := true;
+		var RFIDState receivedRFID;
 		
 		setup();
 		
@@ -143,17 +155,38 @@ module TheftDetection {
 		t.start(TIME_THEFT_DETECTION);
 		requestELTimer.start(EL_CHECK_TIME);
 		
+		// notify UI
 		if(expectRFID != inconc) {
 			setStage(1, TIME_THEFT_DETECTION);
 		} else if(expectDoor) {
 			setStage(2, TIME_THEFT_DETECTION);
-			
 		} else if(not expectDoor) {
 			setStage(3, WAIT_FOR_EL_TIME);
 		}
 		
+		// main loop
 		while(result.verdict == none and run) {
 			alt {
+				[]rfidSensor.receive(RFIDState: ?) -> value receivedRFID {
+					if(receivedRFID.rfid == OWNER_RFID) {
+						isRFIDCorrect := true;
+					} else {
+						isRFIDCorrect := false;
+					}
+					
+					if(not hasRFID) {
+						hasRFID := true;
+						
+						// restart timer here because we want to give extra time to push button
+						if(expectDoor) {
+							setStage(2, TIME_THEFT_DETECTION);
+							t.start(TIME_THEFT_DETECTION);
+						} else {
+							setStage(3, WAIT_FOR_EL_TIME);
+							t.start(WAIT_FOR_EL_TIME);
+						}
+					}
+				}
 				[not hasDoor]doorSensor.receive(DoorState: true) {
 					log("Door opened.");
 					setStage(3, WAIT_FOR_EL_TIME);
@@ -172,49 +205,10 @@ module TheftDetection {
 				[]lightSensor.receive(Frequency: 0.0) {
 				// there is nothing to see here, please continue
 				}
-				[]lightSensor.receive(Frequency: CORRECT_FREQUENCY) {
-					log("Emergency light on, frequency correct.");
+				[]lightSensor.receive(Frequency: ?) {
+					log("Emergency light on.");
 					isAlarmOn := true;
 					run := false;
-				}
-				[]rfidSensor.receive(RFIDState: {?, OWNER_RFID}) {
-					if(not hasRFID or not isRFIDCorrect) {
-						log("Received correct RFID.");
-					}
-					
-					if(not hasRFID) {
-						// restart timer here because we want to give extra time to push button
-						if(expectDoor) {
-							setStage(2, TIME_THEFT_DETECTION);
-							t.start(TIME_THEFT_DETECTION);
-						} else {
-							setStage(3, WAIT_FOR_EL_TIME);
-							t.start(WAIT_FOR_EL_TIME);
-						}
-					}
-					
-					hasRFID := true;
-					isRFIDCorrect := true;
-				}
-				[]rfidSensor.receive(RFIDState: ?) {
-					// false RFID
-					if(not hasRFID or isRFIDCorrect) {
-						log("Received false RFID.");
-					}
-					
-					if(not hasRFID) {
-						// restart timer here because we want to give extra time to push button
-						if(expectDoor) {
-							setStage(2, TIME_THEFT_DETECTION);
-							t.start(TIME_THEFT_DETECTION);
-						} else {
-							setStage(3, WAIT_FOR_EL_TIME);
-							t.start(WAIT_FOR_EL_TIME);
-						}
-					}
-					
-					hasRFID := true;
-					isRFIDCorrect := false;
 				}
 				[]t.timeout {
 					log("Timeout.");
@@ -222,6 +216,8 @@ module TheftDetection {
 				}
 			}
 		}
+		
+		setStage(4, WAIT_FOR_EL_TIME);
 		
 		lightSensor.send(ReadFrequencyStop: {});
 		theftDetection.send(TheftStop: {});
@@ -236,7 +232,7 @@ module TheftDetection {
 				isAlarmOn := true;
 			}
 			[]t.timeout {
-				// continue
+			// continue
 			}
 		}
 		
@@ -259,7 +255,9 @@ module TheftDetection {
 				return verdictPass();
 			}
 		} else {
-			if(isRFIDCorrect and expectRFID == fail) {
+			if(not hasRFID) {
+				return verdictFail("Expected RFID");
+			} else if(isRFIDCorrect and expectRFID == fail) {
 				return verdictFail("Expected false RFID");
 			} else if(not isRFIDCorrect and expectRFID == pass) {
 				return verdictFail("Expected correct RFID");

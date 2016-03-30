@@ -31,7 +31,7 @@ module Functions {
 	 */
 	function setStage(integer id, float timeWindow) {
 		if(NOTIFY_UI) {
-			action("stage" & int2str(id) & ",timeWindow:" & int2str(float2int(timeWindow)));
+			action("stage:" & int2str(id) & ",timeWindow:" & int2str(float2int(timeWindow)));
 		}
 	}
 	
