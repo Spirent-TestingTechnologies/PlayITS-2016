@@ -2,10 +2,10 @@ package com.testingtech.car2x.hmi.ttmanclient;
 
 import android.os.AsyncTask;
 
-import com.testingtech.car2x.hmi.AsyncTimer;
-import com.testingtech.car2x.hmi.Globals;
-import com.testingtech.car2x.hmi.Logger;
-import com.testingtech.car2x.hmi.TestRunnerActivity;
+import com.testingtech.car2x.hmi.Utils.AsyncTimer;
+import com.testingtech.car2x.hmi.Utils.Globals;
+import com.testingtech.car2x.hmi.Utils.Logger;
+import com.testingtech.car2x.hmi.UserInterface.TestRunnerActivity;
 import com.testingtech.car2x.hmi.testcases.TestCaseProgress;
 import com.testingtech.car2x.hmi.testcases.TestCaseVerdict;
 import com.testingtech.car2x.hmi.testcases.Utils;
@@ -84,7 +84,6 @@ public class Publisher {
 
     public void publishVerdict(String testCaseName, String verdictLabel) throws IOException {
         TestCaseVerdict testCaseVerdict = Utils.toTestCaseVerdict(verdictLabel);
-
         String result;
         if (isCurrent(testCaseName) && testCaseName != null && testCaseVerdict != null) {
             Logger.writeLog(String.format(

@@ -1,6 +1,6 @@
 package com.testingtech.car2x.hmi.testcases;
 
-import com.testingtech.car2x.hmi.Logger;
+import com.testingtech.car2x.hmi.Utils.Logger;
 
 public class Utils {
 

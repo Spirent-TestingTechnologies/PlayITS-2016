@@ -1,4 +1,4 @@
-package com.testingtech.car2x.hmi;
+package com.testingtech.car2x.hmi.UserInterface;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ExpandableListView;
 
+import com.testingtech.car2x.hmi.Utils.Globals;
+import com.testingtech.car2x.hmi.R;
+import com.testingtech.car2x.hmi.AsyncTasks.TestLoader;
 import com.testingtech.car2x.hmi.testcases.TestCaseGroup;
 import com.testingtech.car2x.hmi.testcases.XmlLoader;
 import com.testingtech.car2x.hmi.ttmanclient.Driver;
@@ -20,7 +23,6 @@ public class TestSelectorActivity extends AppCompatActivity {
 
     private Map<String, List<String>> collection;
 
-    private String projectName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +30,6 @@ public class TestSelectorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_selector);
 
         Intent intent = getIntent();
-        projectName = intent.getStringExtra(ProjectSelectorActivity.PROJECT_NAME);
-
         XmlLoader.getInstance();
         createCollection();
         ExpandableListView expListView = (ExpandableListView) findViewById(R.id.listView);

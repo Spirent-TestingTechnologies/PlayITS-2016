@@ -1,10 +1,12 @@
-package com.testingtech.car2x.hmi;
+package com.testingtech.car2x.hmi.UserInterface;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+
+import com.testingtech.car2x.hmi.Utils.Globals;
 
 import java.util.HashSet;
 import java.util.Set;

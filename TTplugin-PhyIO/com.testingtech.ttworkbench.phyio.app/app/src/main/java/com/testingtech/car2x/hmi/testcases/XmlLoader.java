@@ -1,7 +1,7 @@
 package com.testingtech.car2x.hmi.testcases;
 
-import com.testingtech.car2x.hmi.Globals;
-import com.testingtech.car2x.hmi.Logger;
+import com.testingtech.car2x.hmi.Utils.Globals;
+import com.testingtech.car2x.hmi.Utils.Logger;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -23,18 +23,34 @@ public class XmlLoader {
     private Document document = null;
     private static List<TestCaseGroup> groups;
     private static XmlLoader instance;
+    private static File path =null;
 
     public static XmlLoader getInstance() {
         if (XmlLoader.instance == null)
             XmlLoader.instance = new XmlLoader();
+        else{
+            File xml = new File(path, "source.xml");
+            try {
+                // parse an XML document into a DOM tree
+                DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                XmlLoader.instance.document = parser.parse(new FileInputStream(xml));
+            } catch (IOException | SAXException | ParserConfigurationException e) {
+                Logger.writeLog("XML document cannot be loaded: " + e.getMessage());
+            }
+            groups = new ArrayList();
+            XmlLoader.instance.storeFromSource();
+        }
         return XmlLoader.instance;
     }
 
+
     private XmlLoader() {
-        File path = Globals.mainActivity.getExternalFilesDir(null);
-//        File path = Globals.mainActivity.getFilesDir();
+        path = Globals.mainActivity.getExternalFilesDir(null);
         File xml = new File(path, "source.xml");
         try {
+            if(!xml.exists()){
+                xml.createNewFile();
+            }
             // parse an XML document into a DOM tree
             DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             document = parser.parse(new FileInputStream(xml));
@@ -43,6 +59,8 @@ public class XmlLoader {
         }
         groups = new ArrayList();
         storeFromSource();
+//      File path = Globals.mainActivity.getFilesDir();
+
     }
 
     public void storeFromSource() {

@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".UserInterface.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,28 +20,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TestSelectorActivity"
+            android:name=".UserInterface.TestSelectorActivity"
             android:label="@string/title_activity_test_selector"
-            android:parentActivityName=".ProjectSelectorActivity">
+            android:parentActivityName=".UserInterface.ProjectSelectorActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.testingtech.car2x.hmi.ProjectSelectorActivity" />
+                android:value=".UserInterface.ProjectSelectorActivity" />
         </activity>
         <activity
-            android:name=".TestRunnerActivity"
+            android:name=".UserInterface.TestRunnerActivity"
             android:label="@string/title_activity_test_runner"
-            android:parentActivityName=".TestSelectorActivity">
+            android:parentActivityName=".UserInterface.TestSelectorActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.testingtech.car2x.hmi.TestSelectorActivity" />
+                android:value=".UserInterface.TestSelectorActivity" />
         </activity>
         <activity
-            android:name=".ProjectSelectorActivity"
+            android:name=".UserInterface.ProjectSelectorActivity"
             android:label="@string/title_activity_project_selector"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".UserInterface.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.testingtech.car2x.hmi.MainActivity" />
+                android:value=".UserInterface.MainActivity" />
 
         </activity>
     </application>

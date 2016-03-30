@@ -1,13 +1,17 @@
-package com.testingtech.car2x.hmi;
+package com.testingtech.car2x.hmi.UserInterface;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
+
+import com.testingtech.car2x.hmi.Utils.Logger;
+import com.testingtech.car2x.hmi.R;
 
 public class GuiUpdater extends Activity {
 
@@ -103,10 +107,16 @@ public class GuiUpdater extends Activity {
                 if (stage < 0 || stage > stageCount)
                     return;
                 stages.smoothScrollTo(0, stage);
-                if (stage > 0) {
-                    table.getChildAt(stage - 1).setBackgroundColor(Color.TRANSPARENT);
+                for(int i =0;i< stageCount;i++){
+                    table.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+
                 }
-                table.getChildAt(stage).setBackgroundResource(R.drawable.rectangle_border_red);
+
+                View stageView = table.getChildAt(stage);
+                if(stageView == null){
+                    return;
+                }
+                stageView.setBackgroundResource(R.drawable.rectangle_border_red);
             }
         });
     }

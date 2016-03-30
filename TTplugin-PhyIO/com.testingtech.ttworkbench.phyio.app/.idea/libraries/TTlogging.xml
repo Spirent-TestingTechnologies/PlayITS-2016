@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="TTlogging">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/app/libs/TTlogging.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

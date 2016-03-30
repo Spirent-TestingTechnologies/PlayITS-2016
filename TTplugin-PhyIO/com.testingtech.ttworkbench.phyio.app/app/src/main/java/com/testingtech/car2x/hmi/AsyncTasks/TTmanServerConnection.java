@@ -1,4 +1,4 @@
-package com.testingtech.car2x.hmi;
+package com.testingtech.car2x.hmi.AsyncTasks;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.testingtech.car2x.hmi.Utils.Globals;
+import com.testingtech.car2x.hmi.Utils.PropertyReader;
+import com.testingtech.car2x.hmi.UserInterface.MainActivity;
+import com.testingtech.car2x.hmi.UserInterface.ProjectSelectorActivity;
 import com.testingtech.car2x.hmi.ttmanclient.Driver;
 
 import java.io.BufferedReader;
@@ -54,13 +58,16 @@ public class TTmanServerConnection extends AsyncTask<Void, Void, Boolean> {
         boolean connected = driver.connect();
         if(connected){
             try {
+                // initialize two directional, message based connection to information server
+
                 int port = Integer.valueOf(PropertyReader.readProperty("ttman.server.Information.port"));
 
                 Globals.informationSocket = new Socket(Globals.serverIp,port);
                 Globals.informationWriter = new BufferedWriter(new OutputStreamWriter(Globals.informationSocket.getOutputStream()));
                 Globals.informationReader =  new BufferedReader(new InputStreamReader(Globals.informationSocket.getInputStream()));
 
-                boolean projectsLoaded =ProjectSelectorActivity.loadProjects();
+                // load all projects that exist in the workspace of the server
+                boolean projectsLoaded = ProjectSelectorActivity.loadProjects();
                 if(!projectsLoaded){
                     return false;
                 }

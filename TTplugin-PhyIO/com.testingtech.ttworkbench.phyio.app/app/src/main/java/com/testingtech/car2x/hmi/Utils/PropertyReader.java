@@ -1,4 +1,7 @@
-package com.testingtech.car2x.hmi;
+package com.testingtech.car2x.hmi.Utils;
+
+import com.testingtech.car2x.hmi.Utils.Globals;
+import com.testingtech.car2x.hmi.Utils.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package com.testingtech.car2x.hmi;
+package com.testingtech.car2x.hmi.Utils;
 
 import android.graphics.Color;
 import android.os.AsyncTask;

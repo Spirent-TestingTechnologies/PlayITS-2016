@@ -1,4 +1,4 @@
-package com.testingtech.car2x.hmi;
+package com.testingtech.car2x.hmi.AsyncTasks;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,10 +8,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.testingtech.car2x.hmi.Utils.Globals;
+import com.testingtech.car2x.hmi.UserInterface.TestRunnerActivity;
 import com.testingtech.car2x.hmi.testcases.TestCase;
 import com.testingtech.car2x.hmi.testcases.XmlLoader;
 import com.testingtech.car2x.hmi.ttmanclient.Driver;
 
+import java.io.File;
 import java.io.IOException;
 
 
@@ -21,6 +24,11 @@ public class TestLoader extends AsyncTask<Void, Void, Boolean> {
     public final static String TEST_TITLE = "title";
     public final static String TEST_STAGES = "stages";
     public final static String TEST_GROUP = "group";
+    private final static String MODULE_ANNOT_REQ = "getAnnotationValuesForModul";
+    private final static String REL_EXEC_PATH_ANNOT = "relexecpath";
+
+    private static String relExecPath;
+
 
     public static String testcaseId;
 
@@ -65,6 +73,7 @@ public class TestLoader extends AsyncTask<Void, Void, Boolean> {
         if (!isConnected) {
             showConnectionError();
         } else {
+            Toast.makeText(testSelectorActivity, "Testfile successfully loaded", Toast.LENGTH_SHORT).show();
             startTestRunnerActivity(testcaseId);
         }
     }
@@ -72,7 +81,27 @@ public class TestLoader extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Void... params) {
         try {
-            Driver.getInstance().initTestSuite();
+            if(Globals.informationReader ==null ||Globals.informationWriter ==null){
+                return false;
+            }
+            // send request for relative path of clf file(stored in module annotation)
+            Globals.informationWriter.write(MODULE_ANNOT_REQ);
+            Globals.informationWriter.newLine();
+            Globals.informationWriter.write(Globals.currTestModule+".ttcn3" +Globals.SEPERATOR+REL_EXEC_PATH_ANNOT);
+            Globals.informationWriter.newLine();
+            Globals.informationWriter.flush();
+
+            String rawAnnotationValues = Globals.informationReader.readLine();
+            if(rawAnnotationValues== null){
+                return false;
+            }
+            // parse response and take first value
+            String[] annotationValues = rawAnnotationValues.split(Globals.SEPERATOR);
+            relExecPath = annotationValues[0];
+
+            relExecPath = relExecPath.replaceAll("/", File.separator);
+
+            Driver.getInstance().initTestSuite(relExecPath);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -83,7 +112,7 @@ public class TestLoader extends AsyncTask<Void, Void, Boolean> {
     private void showConnectionError() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(testSelectorActivity);
         alertDialog.setTitle("Connection Error");
-        alertDialog.setMessage("Cannot load Testfile " + Globals.currTestModule+".clf");
+        alertDialog.setMessage("Cannot load Testfile " + relExecPath);
         alertDialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

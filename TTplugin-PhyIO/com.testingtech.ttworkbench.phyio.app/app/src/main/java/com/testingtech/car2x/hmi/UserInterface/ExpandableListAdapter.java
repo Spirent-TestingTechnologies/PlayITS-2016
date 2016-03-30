@@ -1,4 +1,4 @@
-package com.testingtech.car2x.hmi;
+package com.testingtech.car2x.hmi.UserInterface;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+
+import com.testingtech.car2x.hmi.R;
 
 import java.util.List;
 import java.util.Map;

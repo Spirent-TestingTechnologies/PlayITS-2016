@@ -8,22 +8,22 @@
  */
 package com.testingtech.car2x.hmi.ttmanclient;
 
-import com.testingtech.car2x.hmi.Globals;
-import com.testingtech.car2x.hmi.Logger;
-import com.testingtech.car2x.hmi.PropertyReader;
+import com.testingtech.car2x.hmi.Utils.Globals;
+import com.testingtech.car2x.hmi.Utils.Logger;
+import com.testingtech.car2x.hmi.Utils.PropertyReader;
 import com.testingtech.tworkbench.ttman.server.api.Credentials;
 import com.testingtech.tworkbench.ttman.server.api.ExecutionServerFactory;
-import com.testingtech.tworkbench.ttman.server.api.IExecutionBase;
 import com.testingtech.tworkbench.ttman.server.api.Parameter;
 import com.testingtech.tworkbench.ttman.server.impl.client.RemoteExecutionClient;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -53,6 +53,10 @@ public class Driver {
     private Driver() {
     }
 
+    /**
+     * Create and initialize  connection to TTmanServe.
+     * @return true if connection is initialized otherwise false
+     */
     public boolean connect() {
         boolean isConnected = false;
         try {
@@ -114,12 +118,24 @@ public class Driver {
         return client;
     }
 
-    public void initTestSuite() throws IOException {
-        final String testFile = Globals.currTestModule+".clf";
-        Logger.writeLog("DRIVER: Loading test suite " + testFile);
-        client.loadTestSuiteFromFile(Globals.currentTestProject, testFile);
+    /**
+     * Loads ttcn3 execution file and creates @tesCaseRunner
+     * @param relExecPath
+     * @throws IOException
+     */
+    public void initTestSuite(String relExecPath) throws IOException {
+
+        // if no rel. path of executable clf file is written in annotations,then use same name like the testmodule
+        if(relExecPath.isEmpty()){
+            relExecPath= Globals.currTestModule+".clf";
+        }
+        Logger.writeLog("DRIVER: Loading test suite " + relExecPath);
+        client.loadTestSuiteFromFile(Globals.currentTestProject, relExecPath);
 
         byte[] encodedParam = ("<Values:charstring type=\"charstring\" xmlns:Values=\"Values.xsd\"><Values:value>" + Globals.serverIp + "</Values:value></Values:charstring>").getBytes("UTF-8");
+        Set<Parameter> paramCollection = new HashSet<Parameter>();
+        paramCollection.add(new Parameter(CAR2_X_MODULE_PARAMETERS_TCP_REMOTE_HOST, "", encodedParam));
+        paramCollection.add(new Parameter("NOTIFY_UI","","true".getBytes()));
         client.setModuleParameters(Collections.singleton(new Parameter(CAR2_X_MODULE_PARAMETERS_TCP_REMOTE_HOST, "", encodedParam)));
         testCaseRunner = new TestCaseRunner(client);
     }
@@ -158,9 +174,11 @@ public class Driver {
             public void run() {
                 Logger.writeLog("DRIVER: Disconnecting from server");
                 try {
-                    Globals.informationSocket.close();
-                    if (client != null) {
-                        client.disconnect();
+                    if(Globals.informationSocket!=null){
+                        Globals.informationSocket.close();
+                        if (client != null) {
+                            client.disconnect();
+                        }
                     }
                 } catch (IOException ioex) {
                     Logger.writeLog("DRIVER: An error occurred while disconnecting from server: " + ioex.getMessage());

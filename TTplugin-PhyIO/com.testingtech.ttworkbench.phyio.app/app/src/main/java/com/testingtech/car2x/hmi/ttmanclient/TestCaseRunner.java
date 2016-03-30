@@ -1,8 +1,7 @@
 package com.testingtech.car2x.hmi.ttmanclient;
 
-import com.testingtech.car2x.hmi.Globals;
-import com.testingtech.car2x.hmi.Logger;
-import com.testingtech.car2x.hmi.PropertyReader;
+import com.testingtech.car2x.hmi.Utils.Globals;
+import com.testingtech.car2x.hmi.Utils.Logger;
 import com.testingtech.car2x.hmi.testcases.TestCaseVerdict;
 import com.testingtech.car2x.hmi.testcases.Utils;
 import com.testingtech.tworkbench.ttman.server.api.ExecuteTestCaseJob;

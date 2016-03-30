@@ -1,4 +1,4 @@
-package com.testingtech.car2x.hmi;
+package com.testingtech.car2x.hmi.UserInterface;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -6,7 +6,11 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
-import com.testingtech.car2x.hmi.testcases.XmlLoader;
+import com.testingtech.car2x.hmi.Utils.Globals;
+import com.testingtech.car2x.hmi.Utils.Logger;
+import com.testingtech.car2x.hmi.Utils.PropertyReader;
+import com.testingtech.car2x.hmi.R;
+import com.testingtech.car2x.hmi.AsyncTasks.TTmanServerConnection;
 import com.testingtech.car2x.hmi.ttmanclient.Driver;
 
 import java.io.File;
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         addDefaultResourceFile(new File(path, "config.properties"), R.raw.config);
         addDefaultResourceFile(new File(path, "schema.xsd"), R.raw.schema);
         addDefaultResourceFile(new File(path, "source.xml"), R.raw.source);
+
     }
 
     private void addDefaultResourceFile(File resourceFile, int rawResourceId) {

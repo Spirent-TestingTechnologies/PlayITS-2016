@@ -1,4 +1,4 @@
-package com.testingtech.car2x.hmi;
+package com.testingtech.car2x.hmi.UserInterface;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
@@ -16,6 +16,10 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.testingtech.car2x.hmi.Utils.AsyncTimer;
+import com.testingtech.car2x.hmi.Utils.Globals;
+import com.testingtech.car2x.hmi.R;
+import com.testingtech.car2x.hmi.AsyncTasks.TestLoader;
 import com.testingtech.car2x.hmi.ttmanclient.Driver;
 
 import java.util.Locale;
