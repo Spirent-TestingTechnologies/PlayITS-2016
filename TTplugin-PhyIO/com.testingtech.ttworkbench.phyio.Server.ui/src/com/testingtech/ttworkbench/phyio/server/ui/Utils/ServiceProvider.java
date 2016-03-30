@@ -30,8 +30,10 @@ public class ServiceProvider {
 		moduleMap= new HashMap<String,TestModule>();
 	}
 	
+	//send the existing project names for the given workspacePath
 	public void sendProjectNames(BufferedWriter bWriter, String workspacePath) {
 		
+		//check if the project in the workspace is a TTCN3 Project. Its a TTCN3 project if the project nature is set
 		File workspace = new File(workspacePath);
 		if(workspace.exists() && workspace.isDirectory()) {
 			for(File project : workspace.listFiles()) {
@@ -90,12 +92,12 @@ public class ServiceProvider {
 		
 	}
 	
+	//send the moduleNames for the given path to a project
 	public void sendModuleNames(BufferedWriter bWriter,String path){
 		List<TestModule> testModules = new ArrayList<TestModule>();
   		File folder = new File(path);
   		
 		try {
-;	
 
 	  		if(folder!=null && folder.isDirectory()){  		
 	  			testModules = getModules(folder);
@@ -137,6 +139,7 @@ public class ServiceProvider {
 	}
 
 
+	//sends the testcases for the given module name
 	public void sendTestcases(BufferedWriter bWriter, String modName) {
 
 		try{
@@ -157,6 +160,7 @@ public class ServiceProvider {
 		}			
 	}
 	
+	//send the annotation for given testcase data
 	public void sendAnnotationValuesForTestcase(BufferedWriter bWriter,String data) {
 		String[] reqValues = data.split(SEPERATOR);
 		try{
@@ -183,6 +187,7 @@ public class ServiceProvider {
 		}			
 	}
 	
+	//send the annotation for given modul data
 	public void sendAnnotationValuesForModul(BufferedWriter bWriter,String data) {
 		String[] reqValues = data.split(SEPERATOR);
 		try{
@@ -207,6 +212,7 @@ public class ServiceProvider {
 		}			
 	}
 	
+	//send the workspacePath to the client
 	public void sendWorkspacePath(BufferedWriter bWriter, String workspacePath) {
 		try {
 			bWriter.write(workspacePath);

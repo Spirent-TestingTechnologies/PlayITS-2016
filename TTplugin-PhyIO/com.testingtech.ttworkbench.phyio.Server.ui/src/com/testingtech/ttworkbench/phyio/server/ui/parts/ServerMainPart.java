@@ -42,12 +42,7 @@ public class ServerMainPart {
 	private String WORKSPACE_REQ = "getWorkspacePath";
 
 	private Process ttmanProcess;
-	private boolean serverIsRunning;
 
-	
-	IExecutionServer client;
-	private Text text;
-	
 	@Inject
 	public ServerMainPart() {
 		//TODO Your code here
@@ -82,116 +77,80 @@ public class ServerMainPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
-				
-//			    	IExecutionServer server = new ExecutionServerFactory().createLocalServer(null);
-			    	
-			    	//Process ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
-					Thread thread = new Thread(new Runnable() {
-						@Override
-						public void run() {
+		    	String serverPath = textServerPath.getText();
+		    	String workspacePath = textWorkspacePath.getText();
+						    	
+		    	System.out.println("start server ...");
 							
-							try {
-								
-//						    	serverPath = textServerPath.getText();
-//						    	workspacePath = textWorkspacePath.getText();
+		    	try {
+		    		//starts the server if your operating system is windows, change parameters when using linux
+					ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 						    	
-						    	String serverPath = "C:\\Program Files\\TTworkbenchProfessional\\TTmanServer.bat";
-						    	//workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\realization\\workspace";
-						    	String workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\git\\PlayITS-2016\\TTplugin-PhyIO\\com.testingtech.ttworkbench.phyio\\projects";
-//						    	workspacePath = "C:\\Users\\lassan\\Projekte\\Arduino\\git_2015";
-//						    	workspacePath = "C:\\Users\\lassan\\Desktop\\workspace";
 						    	
-						    	System.out.println("start server ...");
+		    	if(ttmanProcess==null){
+		    		System.out.println("serverProcess = null");
+		    	} else{
+		    		System.out.println("Process started");
+		    	}
+						    	
+		    	//thread for server socket, necessary for the service provider
+		    	Thread thread = new Thread(new Runnable() {
+					@Override
+					public void run() {
 							
-						    	ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
-						    	
-//						    	InputStream input = ttmanProcess.getInputStream();
-//						    	InputStreamReader reader = new InputStreamReader(input);
-//						    	BufferedReader bReader = new BufferedReader(reader);
-						    	
-//						    	Thread readerThread = new Thread(new Runnable() {
-//									
-//									@Override
-//									public void run() {
-//										String bReaderLine;
-//										try {
-//											while ((bReaderLine = bReader.readLine()) != null) {
-//												text.append(bReaderLine);
-//											}
-//										} catch (IOException e) {
-//											// TODO Auto-generated catch block
-//											e.printStackTrace();
-//										}
-////									}
-//								});
-						    	
-//						    	readerThread.start();
-						    	
-						    	//					    	ttmanProcess = Runtime.getRuntime().exec(serverPath + " --data " + workspacePath);
-						    	
-						    	if(ttmanProcess==null){
-						    		System.out.println("serverProcess = null");
-						    	} else{
-						    		System.out.println("Process started");
-						    		serverIsRunning = true;
-						    	}
+						try {
 			    
-						    	while(serverIsRunning){
-					    			ServiceProvider provider = new ServiceProvider();
-					    			ServerSocket servsock = new ServerSocket(PORT);
+					    	while(true){
+				    			ServiceProvider provider = new ServiceProvider();
+				    			ServerSocket servsock = new ServerSocket(PORT);
 					    		      
-					    			Socket sock = servsock.accept();
-					    		    InputStream is = sock.getInputStream();
-					    		    BufferedReader br = new BufferedReader(new InputStreamReader(is));
-					    			OutputStream os = sock.getOutputStream();
+				    			Socket sock = servsock.accept();
+				    		    InputStream is = sock.getInputStream();
+				    		    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+				    			OutputStream os = sock.getOutputStream();
 					    			  
-					    			BufferedWriter bWriter = new BufferedWriter(new OutputStreamWriter(os));
-					    		    String request ;
-					    		    while((request = br.readLine())!=null){
-					    		    	if(request.equals(MODULES_REQ)){
-					    		    	  	String relPath = br.readLine();				// client sends relative path
-					    		    	  	if(relPath!=null){
-					    		    	  		provider.sendModuleNames(bWriter,workspacePath+"\\"+relPath);
-					    		    	  	}
-					    		    	} else if(request.endsWith(TESTCASES_REQ)){
-					    		    		String modName = br.readLine();				// client sends modulename
-					    		    	  	if(modName!=null){
-					    		    	  		provider.sendTestcases(bWriter,modName);
-					    		    	  	}
-					    		    	} else if(request.endsWith(ANNOT_VALUES_TESTCASE_REQ)){
-				    		    	  		String modName = br.readLine();				// client sends modulename testcasename and annotation
-				    		    	  		if(modName!=null) {
-				    		    	  			provider.sendAnnotationValuesForTestcase(bWriter,modName);
-				    		    	  		}
-					    		    	} else if(request.endsWith(ANNOT_VALUES_MODUL_REQ)) {
-					    		    		String modulAndAnnotation = br.readLine();	
-					    		    		if(modulAndAnnotation!=null) {
-					    		    			provider.sendAnnotationValuesForModul(bWriter, modulAndAnnotation);
-					    		    		}
-					    		    	} else if(request.endsWith(WORKSPACE_REQ)) {
-					    		    	  	provider.sendWorkspacePath(bWriter, workspacePath);
-					    		    	} else if(request.endsWith(PROJECTS_REQ)) {
-					    		    	  	provider.sendProjectNames(bWriter, workspacePath);
-					    		    	 }
-					    		    	  	
-					    		    	  
-				//				    		    	  	TestModule tm= new TestModule(workspacePath+"\\"+projectPath);
-				//				    		    	  	sendTestInfo(tm,sock);
-					    		      }
-					    		      sock.close();
-					    		      servsock.close();
-						    	}
-						    	
-						    	ttmanProcess.destroy();
-					    		  
-					    				    
-							} catch(Exception ex) {
-								ex.printStackTrace();
-							} 
-						}
-					});
+				    			BufferedWriter bWriter = new BufferedWriter(new OutputStreamWriter(os));
+				    		    String request ;
+				    		    while((request = br.readLine())!=null){
+				    		    	if(request.equals(MODULES_REQ)){
+				    		    	  	String relPath = br.readLine();				// client sends relative path
+				    		    	  	if(relPath!=null){
+				    		    	  		provider.sendModuleNames(bWriter,workspacePath+"\\"+relPath);
+				    		    	  	}
+				    		    	} else if(request.endsWith(TESTCASES_REQ)){
+				    		    		String modName = br.readLine();				// client sends modulename
+				    		    	  	if(modName!=null){
+				    		    	  		provider.sendTestcases(bWriter,modName);
+				    		    	  	}
+				    		    	} else if(request.endsWith(ANNOT_VALUES_TESTCASE_REQ)){
+			    		    	  		String modName = br.readLine();				// client sends modulename testcasename and annotation
+			    		    	  		if(modName!=null) {
+			    		    	  			provider.sendAnnotationValuesForTestcase(bWriter,modName);
+			    		    	  		}
+				    		    	} else if(request.endsWith(ANNOT_VALUES_MODUL_REQ)) {
+				    		    		String modulAndAnnotation = br.readLine();	 //client sends modulename and annotation
+				    		    		if(modulAndAnnotation!=null) {
+				    		    			provider.sendAnnotationValuesForModul(bWriter, modulAndAnnotation);
+				    		    		}
+				    		    	} else if(request.endsWith(WORKSPACE_REQ)) {
+				    		    	  	provider.sendWorkspacePath(bWriter, workspacePath);
+				    		    	} else if(request.endsWith(PROJECTS_REQ)) {
+				    		    	  	provider.sendProjectNames(bWriter, workspacePath);
+				    		    	}
+					    		}
+				    		    sock.close();
+				    		    servsock.close();
+						    }
+						} catch(Exception ex) {
+							ex.printStackTrace();
+						} 
+					}
+				});
 					
-					thread.start();
+				thread.start();
 			    	
 			    
 			}
@@ -200,24 +159,10 @@ public class ServerMainPart {
 		btnStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnStart.setText("Start");
 		new Label(parent, SWT.NONE);
-		
-		Button btnStop = new Button(parent, SWT.NONE);
-		btnStop.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(ttmanProcess!=null){
-					serverIsRunning = false;
-				}
-			}
-		});
-		btnStop.setText("Stop");
+		new Label(parent, SWT.NONE);
 		
 		lblConnectionStatus = new Label(parent, SWT.NONE);
 		lblConnectionStatus.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
-		
-		text = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
-		//TODO Your code here
 	}
 	
 }
