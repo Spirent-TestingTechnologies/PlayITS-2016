@@ -1,6 +1,7 @@
 #ifndef CarSimRFID
 #define CarSimRFID
 
+#include <SoftwareSerial.h>
 #include <SPI.h>
 #include <MFRC522.h>
 #include "Arduino.h"
@@ -12,8 +13,6 @@ class RFID {
 	
 		long randNumber;
 	
-		MFRC522 mfrc522; // creates and holds mfrc522 data
-	
 		// Needs to be refactored to support multiple rfid sensors using a rfid struct
 		// ID Karte: 194, 96, 196, 169 (DEZ)
 		// ID Chip: 4, 226, 92, 235 (DEZ)
@@ -24,14 +23,17 @@ class RFID {
 	
 	public:
 		
-		unsigned int RFID_ENABLED;
+		MFRC522 mfrc522; // creates and holds mfrc522 data
+		int RFID_ENABLED;
 		
 		RFID();
+		
 		void RFIDFunctionTagClear();
 		void RFIDFunction(int id, int command);
+		void RFIDSetup();
 		void RFIDFunctionSetup();
 		int RFIDFunctionProcess(int id);
-	
+		
 };
 
 

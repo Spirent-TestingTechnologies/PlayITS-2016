@@ -23,7 +23,6 @@ class Button  {
 		};
 		
 		
-		
 		long randNumber;		
 		
 	public:

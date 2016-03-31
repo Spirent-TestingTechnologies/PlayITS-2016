@@ -34,6 +34,7 @@ class ColorView {
 	
 		ColorView();
 		void ColorViewFunction( int id, int command);
+		void ColorViewSetup();
 		void ColorViewFunctionSetup();
 		void ColorViewFunctionRead();
 		void ColorViewFunctionR1();	

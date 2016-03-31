@@ -54,7 +54,7 @@ class LED {
 
 		void LEDFunction( int id, int command);
 		void LEDFunctionSet(int id, int state);
-		void LEDFunctionBlink(int id, float freq);
+		void LEDFunctionBlink(int id, float on_time);
 		void LEDFunctionStop(int id);
 		void LEDToggling(LED::LEDFunctionConfig *led);
 		void LEDSwitch(LED::LEDFunctionConfig *led, int state);

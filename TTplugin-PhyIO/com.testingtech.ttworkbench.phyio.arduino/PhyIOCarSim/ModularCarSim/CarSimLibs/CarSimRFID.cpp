@@ -1,19 +1,19 @@
 #include "CarSimRFID.h"
 
-RFID::RFID(){
-	
-	this->RFID_ENABLED = 0;
-	mfrc522 = MFRC522(RFID_SS_PIN, RFID_RST_PIN);
-	
+RFID::RFID() : mfrc522(RFID_SS_PIN, RFID_RST_PIN){}
+
+void RFID::RFIDSetup(){
 	SPI.begin();
 	mfrc522.PCD_Init();
-  
+	
+	this->RFID_ENABLED = 0;
+	
 	#ifndef RFID_PRESENT // changeable in CarSimDefine
-		DEBUG_PRINTLN("#Simulating RFID");
+		DEBUG_PRINTLN("#Simulating RFID\n");
 		randomSeed(RFID_SS_PIN);
 	#endif
-	
 }
+
 
 void RFID::RFIDFunctionTagClear(){
 	for(int i = 0; i < 4; i++){
@@ -26,15 +26,15 @@ void RFID::RFIDFunction(int id, int command){
 	DEBUG_PRINTLN(command);
 	switch(command){
 		case SETUP:
-			RFIDFunctionTagClear();
-			RFIDFunctionSetup();
+			//RFIDFunctionTagClear();
+			//RFIDFunctionSetup();
 			break;
 		case START:
-			this->RFID_ENABLED = 1; //start scanning for rfid card
+			//this->RFID_ENABLED = 1; //start scanning for rfid card
 			break;
 		case STOP:
-			this->RFID_ENABLED = 0; //stop scanning for rfid card
-			RFIDFunctionTagClear();
+			//this->RFID_ENABLED = 0; //stop scanning for rfid card
+			//RFIDFunctionTagClear();
 			break;
 		default:
 			break;
@@ -42,6 +42,7 @@ void RFID::RFIDFunction(int id, int command){
 }
 
 void RFID::RFIDFunctionSetup(){
+	
 	// ID, RF01, SETUP, <tag1>, <tag2>, <tag3>, <tag4>
 	DEBUG_PRINTLN("#In RFIDFunctionSetup... ");
 	DEBUG_PRINT("#Tag wird gelesen: ");
@@ -50,6 +51,7 @@ void RFID::RFIDFunctionSetup(){
 		DEBUG_PRINT(rfid_tag[i]); DEBUG_PRINT(" ");
 	}
 	DEBUG_PRINTLN("Tag erfolgreich gesetzt.");  
+
 }
 
 // Function returns 1 if the rfid read is matching the expected one, 0 if it does not match

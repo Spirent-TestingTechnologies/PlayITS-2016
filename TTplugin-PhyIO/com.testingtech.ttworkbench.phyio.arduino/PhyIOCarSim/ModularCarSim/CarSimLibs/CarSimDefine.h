@@ -5,6 +5,7 @@
 
 #define XSERIAL Serial // mySerial // Serial // to switch between Bluetooth and USB XSERIAL connection for communication
 
+
 #define CV01   10
 #define PE01   20
 #define LED01  30
@@ -25,7 +26,12 @@
 #define READ 4
 #define R1 101
 
-#define DEBUG 1
+// the following line declares if there will be debug lines
+// important to note is the fact, that not all modules are capeable 
+// to run at the same time, while debugging-print-outs are switched on,
+// as it takes to much memory at once
+// always switch this option off, while working with all modules at the same time
+//#define DEBUG 1
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x) XSERIAL.print (x)
@@ -34,6 +40,20 @@
 #define DEBUG_PRINT(x)
 #define DEBUG_PRINTLN(x)
 #endif
+
+
+// the following defines which modules will be included during the compilation
+// works great for easy testing on one module
+#define Button_Module 1
+#define LED_Module 1
+#define RFID_Module 1
+#define Theft_Module 1 // button, led and rfid also have to be included for this module
+#define PingEcho_Module 1
+#define LighSensor_Module 1
+#define ColorView_Module 1
+#define Relay_Module 1
+#define Motor_Module 1
+
 
 
 //Enable/Disable for Simulation of those Modules
@@ -52,7 +72,8 @@
 
 
 // configurable defines for LED
-#define Led1Pin 3
+#define LedAmount 1
+#define Led1Pin 3 // 3 in the finished testing version |
 #define Led1ID 1
 
 // configurable defines for echo ping

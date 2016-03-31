@@ -1,7 +1,8 @@
 #include "CarSimColorView.h"
 
-ColorView::ColorView() : tcs(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X){
+ColorView::ColorView() : tcs(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X){}
 
+void ColorView::ColorViewSetup(){
 	#ifdef CVF_PRESENT
 		if (tcs.begin()) {
 			DEBUG_PRINTLN("#Found CVF sensor");
@@ -16,7 +17,6 @@ ColorView::ColorView() : tcs(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X){
 	#else
 		DEBUG_PRINTLN("#Found simulated CVF sensor");
 	#endif
-
 }
 
 void ColorView::ColorViewFunction( int id, int command) {

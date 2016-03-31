@@ -5,7 +5,7 @@
 */
 LED::LED(int LEDPins[], int LEDIDs[]){
 	
-	DEBUG_PRINT("\n# In CarSimLED-Constructor");
+	DEBUG_PRINT("\n# In CarSimLED-Constructor\n");
 
 	this->LedCount = (int)( sizeof(LEDPins) / sizeof(LEDPins[0]));
   
@@ -43,17 +43,17 @@ void LED::LEDFunction(int id, int command) {
 }
 
 
-void LED::LEDFunctionBlink(int id, float freq) {
+void LED::LEDFunctionBlink(int id, float on_time) {
 	// tells the given led, that it now has to blink
 
 	DEBUG_PRINT("\n# In the LEDFunctionBlink");
 	DEBUG_PRINT("\n# With ID: ");
 	DEBUG_PRINTLN(id);
-	DEBUG_PRINT("\n# and with frequency: ");
-	DEBUG_PRINTLN(freq);
+	DEBUG_PRINT("\n# and with an on_time of: ");
+	DEBUG_PRINTLN(on_time);
 
 	this->Dioden[(id - 1)].is_toggling = true;
-	this->Dioden[(id - 1)].toggling_time = freq;
+	this->Dioden[(id - 1)].toggling_time = on_time;
 
 }
 
@@ -86,6 +86,7 @@ void LED::LEDToggling(LED::LEDFunctionConfig *led){
 		} else {
 			LEDSwitch(led, 0);
 		}
+		//DEBUG_PRINT("blink!");
 	}
 }
 
