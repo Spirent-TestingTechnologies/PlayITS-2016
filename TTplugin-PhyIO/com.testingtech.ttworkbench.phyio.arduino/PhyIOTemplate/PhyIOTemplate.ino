@@ -1,4 +1,4 @@
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 #include <NewPing.h>
@@ -446,8 +446,6 @@ void PingEchoFunctionR1() {
 
 
 // -------- LEDFunciton ------------
-#define LED1PIN  8
-#define LED2PIN  9
 struct LEDFunctionConfig
 {
   int ID; // The ID
@@ -465,7 +463,7 @@ struct LEDFunctionConfig
   }
 };
 
-LEDFunctionConfig LEDPoint1(1, LED1PIN);
+LEDFunctionConfig LEDPoint1(1, LED1PIN1);
 LEDFunctionConfig LEDPoint2(2, LED2PIN);
 
 void LEDFunction( int id, int command) {
