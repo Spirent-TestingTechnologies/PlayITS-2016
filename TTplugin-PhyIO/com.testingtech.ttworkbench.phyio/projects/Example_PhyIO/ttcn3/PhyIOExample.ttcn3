@@ -31,14 +31,15 @@ module PhyIOExample {
 	import from RS232ConfigPortAux all;
 
 	import from PhyIOAUX all;
+	modulepar float TIMEOUT := 10.0;
 	
 	const integer RED := 0;
 	const integer YELLOW := 1;
 	const integer A := 0;
 	const integer B := 1;
 	
-	const float LED_REFRESH_RATE := 1.0; // seconds
-	const float RGB_REFRESH_RATE := 1.0; // seconds
+	const UpdateFrequency LED_REFRESH_RATE := 1.0; // seconds
+	const UpdateFrequency RGB_REFRESH_RATE := 1.0; // seconds
 	
 	modulepar RS232Config px_rs232Configuration := {
 		serialPortName := "COM3",
@@ -95,7 +96,7 @@ module PhyIOExample {
 		
 		if (getverdict() == pass) {
 			switchLamp(true);
-			t.start(5.0); t.timeout;
+			t.start(TIMEOUT); t.timeout;
 			switchLamp(false);
 		} else {
 			switchLamp(true);
@@ -156,9 +157,9 @@ module PhyIOExample {
 		
 		var default cfgUpdates := activate(configUpdates());
 		rgbSensor.send(ReadRGB:{});
-		t.start(5.0);
+		t.start(TIMEOUT);
 		alt {
-			[]rgbSensor.receive(RGB:{?, ?, ?}) -> value rgb {
+			[]rgbSensor.receive(RGB:{?, ?, ?, ?, ?, ?, ?, ?, ?, ?}) -> value rgb {
 				// TODO test color
 				log("Color detected ", rgb);
 				setverdict(pass);
@@ -190,9 +191,9 @@ module PhyIOExample {
 		t.start(3.0); t.timeout;
 		
 		rgbSensor.send(ReadRGB:{});
-		t.start(5.0);
+		t.start(TIMEOUT);
 		alt {
-			[]rgbSensor.receive(RGB:{?, ?, ?}) -> value rgb {
+			[]rgbSensor.receive(RGB:{?, ?, ?, ?, ?, ?, ?, ?, ?, ?}) -> value rgb {
 				// TODO test color
 				log("Color detected ", rgb);
 				setverdict(pass);
@@ -209,4 +210,6 @@ module PhyIOExample {
 		}
 	}
 
+} with {
+	encode "PhyIO"
 }
