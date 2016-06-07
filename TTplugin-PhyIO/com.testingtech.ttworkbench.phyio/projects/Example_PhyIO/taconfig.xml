@@ -11,6 +11,11 @@
       <parameter id="class" value="com.testingtech.ttcn.tci.codec.plugin.ValueStringCodecPluginProvider"/>
     </plugin>
   </codec>
+  <extfunc>
+    <plugin id="com.testingtech.ttcn.rt.tri.ttlibrary">
+      <parameter id="class" value="com.testingtech.ttcn.rt.tri.ttlibrary.extfct.TTlibraryExtFuncProvider"/>
+    </plugin>
+  </extfunc>
   <port>
     <plugin id="com.testingtech.tt3rt.phyio.PhyIORuntimePlugin">
       <parameter id="class" value="com.testingtech.tt3rt.phyio.phyioRuntimePlugin.PhyIOPort"/>

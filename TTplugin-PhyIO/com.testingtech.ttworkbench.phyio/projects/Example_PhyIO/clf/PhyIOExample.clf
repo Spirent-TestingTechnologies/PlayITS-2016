@@ -24,6 +24,9 @@
         <plain/>
       </presentation>
     </parameter>
+    <testcase Name="PingTest" Alias="" Module="PhyIOExample" Retries="0" Runs="1" ActionOnFail="continue" Selection="false" Status="stopped" Verdict="fail">
+      <description></description>
+    </testcase>
     <testcase Name="SetupTest1" Alias="" Module="PhyIOExample" Retries="0" Runs="1" ActionOnFail="continue" Selection="false" Status="stopped" Verdict="fail">
       <description></description>
     </testcase>
