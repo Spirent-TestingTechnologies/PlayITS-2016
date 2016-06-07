@@ -41,7 +41,7 @@ unsigned int readSpeed = 500; // How frequently are we going to read the serial 
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 #define cvf_ledpin 4
 
-#define PE_PRESENT 1
+//#define PE_PRESENT 1
 #define TRIGGER_PIN 12
 #define ECHO_PIN 11
 #define MAX_DISTANCE 100
