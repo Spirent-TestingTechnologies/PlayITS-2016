@@ -24,7 +24,7 @@
 #define READ 4
 #define R1 101 //Result
 
-#define DEBUG 1
+//#define DEBUG 1
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x) XSERIAL.print (x)
