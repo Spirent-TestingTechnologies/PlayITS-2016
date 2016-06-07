@@ -439,7 +439,8 @@ void PingEchoFunctionR1() {
   XSERIAL.print(pePoint.ID); XSERIAL.print(", ");
   XSERIAL.print(PE01);  XSERIAL.print(", ");
   XSERIAL.print(R1);  XSERIAL.print(", ");
-  XSERIAL.print(pePoint.ReadTimestamp);  XSERIAL.print(", ");
+  //TODO FIXME codec does not support the timestamp
+  // XSERIAL.print(pePoint.ReadTimestamp);  XSERIAL.print(", ");
   XSERIAL.println(pePoint.distance);
   XSERIAL.flush();
 }
