@@ -94,7 +94,7 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			type port PhyLED message {
 				//out
 				inout SwitchLED, BlinkLEDStart, BlinkLEDStop;
-				map param (DeviceID deviceID, SensorID sensorID);
+				map param (DeviceID deviceID, SensorID sensorID := SensorID_Configuration);
 			}
 		}
     
