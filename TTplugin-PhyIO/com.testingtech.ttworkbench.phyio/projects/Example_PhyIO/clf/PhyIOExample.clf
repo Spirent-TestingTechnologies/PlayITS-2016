@@ -6,15 +6,27 @@
       <description>taconfig.xml</description>
     </testadapter>
     <module Name="PhyIOExample" File="ttcn3build/PhyIOExample.jar" Package="generated_ttcn"/>
+    <parameter Name="TIMEOUT" Module="PhyIOExample" ModuleOfTypeDecl="">
+      <description></description>
+      <type>float</type>
+      <value><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>10.0</Values:value></Values:float>]]></value>
+      <default><![CDATA[<Values:float type="float" xmlns:Values="Values.xsd"><Values:value>10.0</Values:value></Values:float>]]></default>
+      <presentation>
+        <plain/>
+      </presentation>
+    </parameter>
     <parameter Name="px_rs232Configuration" Module="PhyIOExample" ModuleOfTypeDecl="RS232ConfigPortAux">
       <description></description>
       <type>RS232Config</type>
-      <value><![CDATA[<Values:record type="RS232Config" module="RS232ConfigPortAux" xmlns:Values="Values.xsd"><Values:universal_charstring type="universal_charstring" name="serialPortName"><Values:value>COM3</Values:value></Values:universal_charstring><Values:integer type="integer" name="baudRate"><Values:value>9600</Values:value></Values:integer><Values:integer type="integer" name="dataBits"><Values:value>8</Values:value></Values:integer><Values:integer type="integer" name="stopBits"><Values:value>1</Values:value></Values:integer><Values:enumerated type="Parity" module="RS232ConfigPortAux" name="parity"><Values:value>c_ParityNone</Values:value></Values:enumerated><Values:bitstring type="bitstring" name="flowControl"><Values:value>0000</Values:value></Values:bitstring><Values:boolean type="boolean" name="checkDSR"><Values:value>false</Values:value></Values:boolean></Values:record>]]></value>
+      <value><![CDATA[<Values:record type="RS232Config" module="RS232ConfigPortAux" xmlns:Values="Values.xsd"><Values:universal_charstring type="universal_charstring" name="serialPortName"><Values:value>COM9</Values:value></Values:universal_charstring><Values:integer type="integer" name="baudRate"><Values:value>9600</Values:value></Values:integer><Values:integer type="integer" name="dataBits"><Values:value>8</Values:value></Values:integer><Values:integer type="integer" name="stopBits"><Values:value>1</Values:value></Values:integer><Values:enumerated type="Parity" module="RS232ConfigPortAux" name="parity"><Values:value>c_ParityNone</Values:value></Values:enumerated><Values:bitstring type="bitstring" name="flowControl"><Values:value>0000</Values:value></Values:bitstring><Values:boolean type="boolean" name="checkDSR"><Values:value>false</Values:value></Values:boolean></Values:record>]]></value>
       <default><![CDATA[<Values:record type="RS232Config" module="RS232ConfigPortAux" xmlns:Values="Values.xsd"><Values:universal_charstring type="universal_charstring" name="serialPortName"><Values:value>COM3</Values:value></Values:universal_charstring><Values:integer type="integer" name="baudRate"><Values:value>115200</Values:value></Values:integer><Values:integer type="integer" name="dataBits"><Values:value>8</Values:value></Values:integer><Values:integer type="integer" name="stopBits"><Values:value>1</Values:value></Values:integer><Values:enumerated type="Parity" module="RS232ConfigPortAux" name="parity"><Values:value>c_ParityNone</Values:value></Values:enumerated><Values:bitstring type="bitstring" name="flowControl"><Values:value>0000</Values:value></Values:bitstring><Values:boolean type="boolean" name="checkDSR"><Values:value>false</Values:value></Values:boolean></Values:record>]]></default>
       <presentation>
         <plain/>
       </presentation>
     </parameter>
+    <testcase Name="PingTest" Alias="" Module="PhyIOExample" Retries="0" Runs="1" ActionOnFail="continue" Selection="false" Status="stopped" Verdict="fail">
+      <description></description>
+    </testcase>
     <testcase Name="SetupTest1" Alias="" Module="PhyIOExample" Retries="0" Runs="1" ActionOnFail="continue" Selection="false" Status="stopped" Verdict="fail">
       <description></description>
     </testcase>

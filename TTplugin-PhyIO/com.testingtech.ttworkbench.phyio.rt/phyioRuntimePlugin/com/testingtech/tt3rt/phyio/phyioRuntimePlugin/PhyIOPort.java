@@ -83,7 +83,7 @@ public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 				// ignore
 			}
 			// send NL
-			res = triSend(compPortId.getComponent(), tsiPortId, null, TriMessageImpl.valueOf(PhyIOCodec.str2bytes("READY\n")));
+			res = triSend(compPortId.getComponent(), tsiPortId, null, TriMessageImpl.valueOf(PhyIOCodec.str2bytes("0,0\n")));
 		}
 		return res;
 	}
@@ -200,8 +200,18 @@ public class PhyIOPort extends PhyIOAbstractPort implements PortPluginProvider {
 			return;
 		}
 		String[] elements = str.split(",");
-		int sensorId = Integer.parseInt(elements[0].trim());
-		int functionId = Integer.parseInt(elements[1].trim());
+		int sensorId;
+		try {
+			sensorId = Integer.parseInt(elements[0].trim());
+		} catch (NumberFormatException e) {
+			sensorId = -1;
+		}
+		int functionId;
+		try {
+			functionId = Integer.parseInt(elements[1].trim());
+		} catch (NumberFormatException e) {
+			functionId = -1;
+		}
 		PhyPort phyPortConfig = phyPorts.getOutgoingInfo(tsiPortId, componentId);
 		int deviceId = phyPortConfig.getDeviceID();
 		PhyPort phyPort = null;

@@ -67,7 +67,9 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			}
 
 			//** @desc Reads Sensor data and sends it's to the port each UpdateFrequency seconds
-			type float UpdateFrequency;
+			type float UpdateFrequency with {
+				encode "BASE"
+			}
 
 			// TODO Sync time on first map.
 			type port PhyConfig message {
@@ -221,6 +223,13 @@ module PhyIOAUX language "TTCN-3:2010 Real Time and Performance Testing" {
 			 * @member blue values between 0..255
 			 */
 			type record RGB {
+				Timestamp time,
+				integer absoluteRed,
+				integer absoluteGreen,
+				integer absoluteBlue,
+				integer absoluteClear,
+				integer colorTemperature,
+				integer lux,
 				unsignedbyte red,
 				unsignedbyte green,
 				unsignedbyte blue

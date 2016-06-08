@@ -28,17 +28,19 @@
  */
 module PhyIOExample {
 
+    import from TTlibrary all;
 	import from RS232ConfigPortAux all;
 
 	import from PhyIOAUX all;
+	modulepar float TIMEOUT := 10.0;
 	
-	const integer RED := 0;
-	const integer YELLOW := 1;
+	const integer GREEN := 0;
+	const integer BLUE := 1;
 	const integer A := 0;
 	const integer B := 1;
 	
-	const float LED_REFRESH_RATE := 1.0; // seconds
-	const float RGB_REFRESH_RATE := 1.0; // seconds
+	const UpdateFrequency LED_REFRESH_RATE := 1.0; // seconds
+	const UpdateFrequency RGB_REFRESH_RATE := 1.0; // seconds
 	
 	modulepar RS232Config px_rs232Configuration := {
 		serialPortName := "COM3",
@@ -50,14 +52,15 @@ module PhyIOExample {
 		checkDSR := false
 	};
 
-	type component me {
+	type component Configuration {
 		port PhyConfig config;
+	}
+	type component me extends Configuration {
 		port PhyLED leds[2];
 		port PhyRelay relays[2];
 		port PhyColorSensor rgbSensor;
 	}
-	type component Evaluation {
-		port PhyConfig config;
+	type component Evaluation extends Configuration {
 		port PhyEcho echoSensor;
 		port PhyMotor motor;
 		port PhyColorSensor rgbSensor;
@@ -66,14 +69,29 @@ module PhyIOExample {
 		port PhyLED leds[2];
 		port PhyRelay relays[2];
 	}
+	testcase PingTest() runs on Evaluation system PhyIO {
+		timer t;
+
+		map(self:config, system:config) param (px_rs232Configuration, DeviceID_1);
+		map(self:echoSensor, system:echoSensor) param (DeviceID_1, SensorID_8, LED_REFRESH_RATE);
+		
+		var default cfgUpdates := activate(configUpdates());
+
+		var Distance d := f_ReadDistance();
+		if (d > 0.0) {
+			setverdict(pass, sprintf1<float>("Received distance %f cm", d));
+		} else {
+			setverdict(fail, "No answer from distance sensor");
+		}
+	}
 
 	testcase SetupTest1() runs on me system PhyIO {
 		timer t;
 
 		map(self:config, system:config) param (px_rs232Configuration, DeviceID_1);
 		
-		map(self:leds[RED], system:leds[RED]) param (DeviceID_1, SensorID_1);
-		map(self:leds[YELLOW], system:leds[YELLOW]) param (DeviceID_1, SensorID_2);
+		map(self:leds[GREEN], system:leds[GREEN]) param (DeviceID_1, SensorID_1);
+		map(self:leds[BLUE], system:leds[BLUE]) param (DeviceID_1, SensorID_2);
 		map(self:relays[A], system:relays[A]) param (DeviceID_1, SensorID_5);
 		map(self:relays[B], system:relays[B]) param (DeviceID_1, SensorID_6);
 		
@@ -86,16 +104,16 @@ module PhyIOExample {
 
 		switchLamp(false);
 		t.start(1.0); t.timeout;
-		leds[RED].send(switchLED_OFF);
+		leds[GREEN].send(switchLED_OFF);
 		t.start(1.0); t.timeout;
-		leds[YELLOW].send(switchLED_ON);
+		leds[BLUE].send(switchLED_ON);
 		
 		eval.start(f_SetupTest1());
 		eval.done;
 		
 		if (getverdict() == pass) {
 			switchLamp(true);
-			t.start(5.0); t.timeout;
+			t.start(TIMEOUT); t.timeout;
 			switchLamp(false);
 		} else {
 			switchLamp(true);
@@ -108,57 +126,74 @@ module PhyIOExample {
 		}
 
 		t.start(1.0); t.timeout;
-		leds[RED].send(switchLED_ON);
+		leds[GREEN].send(switchLED_ON);
 		t.start(1.0); t.timeout;
-		leds[YELLOW].send(switchLED_OFF);
+		leds[BLUE].send(switchLED_OFF);
 		setverdict(pass);
 	}
 	testcase SetupTestLEDs() runs on me system PhyIO {
 		timer t;
 		map(self:config, system:config) param (px_rs232Configuration, DeviceID_1);
 		
-		map(self:leds[RED], system:leds[RED]) param (DeviceID_1, SensorID_1);
-		map(self:leds[YELLOW], system:leds[YELLOW]) param (DeviceID_1, SensorID_2);
+		map(self:leds[GREEN], system:leds[GREEN]) param (DeviceID_1, SensorID_1);
+		map(self:leds[BLUE], system:leds[BLUE]) param (DeviceID_1, SensorID_2);
 
-		leds[RED].send(switchLED_ON);
+		leds[GREEN].send(switchLED_ON);
 		
 		t.start(1.0); t.timeout;
 
-		leds[YELLOW].send(switchLED_OFF);
+		leds[BLUE].send(switchLED_OFF);
 		
 		t.start(1.0); t.timeout;
 
-		leds[RED].send(switchLED_OFF);
+		leds[GREEN].send(switchLED_OFF);
 		
 		t.start(1.0); t.timeout;
 
-		leds[YELLOW].send(switchLED_ON);
+		leds[BLUE].send(switchLED_ON);
 
 		t.start(1.0); t.timeout;
 
-		leds[RED].send(switchLED_ON);
+		leds[GREEN].send(switchLED_ON);
 		
 		t.start(1.0); t.timeout;
 
-		leds[YELLOW].send(switchLED_ON);
+		leds[BLUE].send(switchLED_ON);
 
 		t.start(2.0); t.timeout; // wait for arduino output
 		
+		leds[BLUE].send(switchLED_OFF);
+		
+		t.start(1.0); t.timeout;
+
+		leds[GREEN].send(switchLED_OFF);
+		
+		t.start(1.0); t.timeout;
+		
 		setverdict(pass);
 	}
+	
 	testcase SetupTestRGB() runs on me system PhyIO {
 		var RGB rgb;
 		timer t;
 
 		map(self:config, system:config) param (px_rs232Configuration, DeviceID_1);
 		
+		map(self:leds[BLUE], system:leds[BLUE]) param (DeviceID_1, SensorID_2);
 		map(self:rgbSensor, system:rgbSensor) param (DeviceID_1, SensorID_4, RGB_REFRESH_RATE);
 		
 		var default cfgUpdates := activate(configUpdates());
+
+		t.start(1.0); t.timeout;
+
+		leds[BLUE].send(switchLED_ON);
+		
+		t.start(3.0); t.timeout;
+
 		rgbSensor.send(ReadRGB:{});
-		t.start(5.0);
+		t.start(TIMEOUT);
 		alt {
-			[]rgbSensor.receive(RGB:{?, ?, ?}) -> value rgb {
+			[]rgbSensor.receive(RGB:{?, ?, ?, ?, ?, ?, ?, ?, ?, ?}) -> value rgb {
 				// TODO test color
 				log("Color detected ", rgb);
 				setverdict(pass);
@@ -167,6 +202,14 @@ module PhyIOExample {
 				setverdict(inconc);
 			}
 		}
+		
+		t.start(2.0); t.timeout;
+
+		leds[BLUE].send(switchLED_ON);
+
+		t.start(1.0); t.timeout;
+
+		leds[BLUE].send(switchLED_OFF);
 	}
 
 	function switchLamp(boolean switchOn) runs on me {
@@ -176,24 +219,56 @@ module PhyIOExample {
 		relays[B].send(RelaySwith:not(switchOn));
 		t.start; t.timeout;
 	}
+	
+	function f_ReadDistance(float p_waitTime := 10.0) runs on Evaluation system PhyIO return Distance {
+		var Distance distance := -1.0;
+		timer t := p_waitTime;
+		log("Reading distance");
+		echoSensor.send(ReadDistance:{});
+		echoSensor.send(ReadDistance:{});
+		//	PING < 30 cm start test
+		t.start;
+		alt {
+			[]echoSensor.receive(Distance:?) -> value distance {
+				log(sprintf1<float>("Received distance %f cm", distance));
+			}
+			[]t.timeout {
+				log("Distance sensor not responding");
+			}
+		}
+		return distance;
+	}
 
 	function f_SetupTest1() runs on Evaluation system PhyIO {
 		var RGB rgb;
 		timer t;
+		timer wait20seconds := 20.0;
+		
+		var Distance distance := 200.0;
+		wait20seconds.start;
+		while (distance > 30.0 and distance < 0.1) {
+			distance := f_ReadDistance(3.0);
+			if (not(wait20seconds.running)) {
+				setverdict(inconc, "Distance sensor not triggered.");
+				break;
+			}
+		}
+		
+		
+		t.start(2.0); t.timeout;
 		motor.send(Velocity:50);
-		t.start(3.0); t.timeout;
+		t.start(5.0); t.timeout;
 		motor.send(Velocity:0);
-		t.start(1.0); t.timeout;
+		t.start(8.0); t.timeout;
 		motor.send(Velocity:-50);
-		t.start(3.0); t.timeout;
+		t.start(5.0); t.timeout;
 		motor.send(Velocity:0);
-		t.start(3.0); t.timeout;
+		t.start(10.0); t.timeout;
 		
 		rgbSensor.send(ReadRGB:{});
-		t.start(5.0);
+		t.start(TIMEOUT);
 		alt {
-			[]rgbSensor.receive(RGB:{?, ?, ?}) -> value rgb {
-				// TODO test color
+			[]rgbSensor.receive(RGB:{?, ?, ?, ?, ?, ?, ?, ?, ?, ?}) -> value rgb {
 				log("Color detected ", rgb);
 				setverdict(pass);
 			}
@@ -203,10 +278,12 @@ module PhyIOExample {
 		}
 	}
 	
-	altstep configUpdates() runs on me {
+	altstep configUpdates() runs on Configuration {
 		[]config.receive {
 			repeat;
 		}
 	}
 
+} with {
+	encode "PhyIO"
 }

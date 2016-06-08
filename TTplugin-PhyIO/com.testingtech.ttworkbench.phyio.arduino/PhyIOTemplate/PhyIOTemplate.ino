@@ -1,4 +1,4 @@
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 #include <NewPing.h>
@@ -24,7 +24,7 @@
 #define READ 4
 #define R1 101 //Result
 
-#define DEBUG 1
+//#define DEBUG 1
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x) XSERIAL.print (x)
@@ -37,7 +37,7 @@
 unsigned long readTimer; // holds the next read time;
 unsigned int readSpeed = 500; // How frequently are we going to read the serial line
 
-//#define CVF_PRESENT 1
+#define CVF_PRESENT 1
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 #define cvf_ledpin 4
 
@@ -48,18 +48,18 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS3472
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
-//#define MOTOR_PRESENT 1
+#define MOTOR_PRESENT 1
 #define enablePin 5
 #define in1Pin 6
 #define in2Pin 7
 
-//#define LEDS_PRESENT 1
+#define LEDS_PRESENT 1
 //D8+A3 LED bicolor
 #define LED1PIN1  8 // HIGH = red
 #define LED1PIN2  A3 // HIGH = green
 #define LED2PIN   10 // blue
 
-//#define RELAYS_PRESENT 1
+#define RELAYS_PRESENT 1
 #define RELAY1PIN  A1
 #define RELAY2PIN  A2
 
@@ -70,15 +70,14 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and
 //#define LS_PRESENT 1
 #define LS1PIN A1
 
-//#ifdef BT_PRESENT
+#ifdef BT_PRESENT
 SoftwareSerial mySerial(BT_RX, BT_TX); // RX, TX
-//#endif
+#endif
 
 //#define IR_PRESENT 1
 #ifdef IR_PRESENT
 
 // IR LED DATA on D9 (PWM)
-
 IRsend irsend;
 #endif
 
@@ -440,15 +439,14 @@ void PingEchoFunctionR1() {
   XSERIAL.print(pePoint.ID); XSERIAL.print(", ");
   XSERIAL.print(PE01);  XSERIAL.print(", ");
   XSERIAL.print(R1);  XSERIAL.print(", ");
-  XSERIAL.print(pePoint.ReadTimestamp);  XSERIAL.print(", ");
+  //TODO FIXME codec does not support the timestamp
+  // XSERIAL.print(pePoint.ReadTimestamp);  XSERIAL.print(", ");
   XSERIAL.println(pePoint.distance);
   XSERIAL.flush();
 }
 
 
 // -------- LEDFunciton ------------
-#define LED1PIN  8
-#define LED2PIN  9
 struct LEDFunctionConfig
 {
   int ID; // The ID
@@ -466,7 +464,7 @@ struct LEDFunctionConfig
   }
 };
 
-LEDFunctionConfig LEDPoint1(1, LED1PIN);
+LEDFunctionConfig LEDPoint1(1, LED1PIN1);
 LEDFunctionConfig LEDPoint2(2, LED2PIN);
 
 void LEDFunction( int id, int command) {
