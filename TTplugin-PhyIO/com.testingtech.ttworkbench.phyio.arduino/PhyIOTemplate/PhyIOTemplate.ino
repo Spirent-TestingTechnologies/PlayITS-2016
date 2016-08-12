@@ -10,7 +10,7 @@
 
 #define XSERIAL Serial // mySerial // Serial // to switch between Bluetooth and USB XSERIAL connection for communication
 
-#define CV01   10
+#define CV01   10 //colourv
 #define PE01   20
 #define LED01  30
 #define REL01  40
@@ -24,7 +24,7 @@
 #define READ 4
 #define R1 101 //Result
 
-//#define DEBUG 1
+#define DEBUG 1
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x) XSERIAL.print (x)
