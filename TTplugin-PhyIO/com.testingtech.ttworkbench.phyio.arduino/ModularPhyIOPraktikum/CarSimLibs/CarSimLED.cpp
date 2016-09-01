@@ -19,8 +19,8 @@ LED::LED(int LEDIDs[], int LEDPins[], int BiLEDIDs[], int BiLEDPins1[], int BiLE
 		this->Dioden[i].initialize(LEDIDs[i], LEDPins[i], 0);
 	}
 	for(int i = 0; i < sizeof(BiLEDIDs); i++){
-		// solange die ID noch nicht im Bidirektionalem Bereich des Arrays sind
-		// springe in die erste Initialisierung, ansonsten in die zweite
+		// Im bidirektionalen Bereich des Arrays angekommen, also werden die LED jetzt 
+		// anders initialisiert
 		this->Dioden[i+a].initialize(BiLEDIDs[i], BiLEDPins1[i], BiLEDPins2[i]);
 	}
 			

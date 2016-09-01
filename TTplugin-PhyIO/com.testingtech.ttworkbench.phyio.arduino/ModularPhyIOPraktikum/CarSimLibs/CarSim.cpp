@@ -18,7 +18,9 @@ Car::Car()
 				#ifdef LED_Module
 					,
 				#endif
-				button(Button1ID, Button1Pin)
+				ButtonIDs({Switch1ID, Button1ID}),
+				ButtonPins({Switch1Pin, Button1Pin}),
+				button(ButtonIDs, ButtonPins)
 			#endif
 			
 			#ifdef Theft_Module
@@ -84,7 +86,7 @@ void Car::RFIDSetup(){
 #endif
 
 
-#ifdef Button_Module
+#ifdef Button_Module // -----------------------------------------------------
 void Car::ButtonFunction(int id, int command){
 	this->button.ButtonFunction(id, command);
 }
@@ -124,18 +126,10 @@ void Car::StripeFunction(int command){
 
 void Car::ProcessHandling(){
 	
-	#ifdef Button_Module
-		if(button.BUTTON_ENABLED){
-			// Add all buttons to be processed here
-			#ifdef Theft_Module
-				theft.Theft01.bt_changed = button.ButtonFunctionProcess(&button.Button1);
-				theft.Theft01.bt_time = millis(); // currently unused
-			#else
-				button.ButtonFunctionProcess(&button.Button1);
-			#endif
-		}
+	#ifdef Theft_Module
+		theft.Theft01.bt_changed = button.ButtonFunctionProcess(Switch1ID);
+		theft.Theft01.bt_time = millis(); // currently unused	
 	#endif
- 
 	
 	#ifdef RFID_Module
 		#ifdef RFID_PRESENT
@@ -168,6 +162,10 @@ void Car::ProcessHandling(){
 				}
 			}
 		}
+	#endif
+	
+	#ifdef Button_Module
+		button.ButtonProcessing();
 	#endif
 	
 	#ifdef LED_Module

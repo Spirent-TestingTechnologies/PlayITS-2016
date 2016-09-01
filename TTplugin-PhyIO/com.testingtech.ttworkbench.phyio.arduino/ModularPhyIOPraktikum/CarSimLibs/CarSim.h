@@ -58,6 +58,11 @@ class Car {
 			int BiLEDPins1[BiLedAmount];
 			int BiLEDPins2[BiLedAmount];
 		#endif
+			
+		#ifdef Button_Module
+			int ButtonIDs[ButtonAmount];
+			int ButtonPins[ButtonAmount];
+		#endif
 		
 		
 		//Module

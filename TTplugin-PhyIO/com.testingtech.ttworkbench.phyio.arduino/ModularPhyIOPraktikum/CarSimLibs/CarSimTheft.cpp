@@ -18,12 +18,12 @@ void Theft::TheftDetectionFunction(int id, int command){
 		case START:
 			rfid.RFIDFunctionSetup(); // Read and set rfid tag from serial
 			rfid.RFID_ENABLED = 1;
-			button.BUTTON_ENABLED = 1; // Enables button
+			//button.BUTTON_ENABLED = 1; // Enables button
 			this->THEFT_ENABLED = 1;
 			break;
 		case STOP:
 			this->THEFT_ENABLED = 0; // Disable Theft Mode
-			button.BUTTON_ENABLED = 0; // Disable Button
+			//button.BUTTON_ENABLED = 0; // Disable Button
 			led.LEDFunctionSet(1,0); // Turn off LED
 			rfid.RFID_ENABLED = 0;
 		  

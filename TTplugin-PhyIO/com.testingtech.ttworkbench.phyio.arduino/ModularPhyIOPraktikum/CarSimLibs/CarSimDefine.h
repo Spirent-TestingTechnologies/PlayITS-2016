@@ -15,7 +15,7 @@
 #define REL01  40 // Relay             
 #define MM01   50 // Motor             
 #define DR01   60 // Button/toggleswitch
-#define LS01   70 //
+#define LS01   70 // Light sensor (doesn't work reliably at this state)
 #define RF01   80 // RFID
 #define IR01   90 // Infrarotsender für die LED-Leiste
 
@@ -40,7 +40,7 @@
 // as it takes to much memory at once
 // always switch this option off, while working with all modules at the same time
 
-//#define DEBUG 1
+#define DEBUG 1
 
 
 //==========================================================================================
@@ -48,16 +48,16 @@
 
 // the following defines which modules will be included during the compilation
 // works great for easy testing on one module
-#define Button_Module 1
-//#define LED_Module 1				|
-//#define RFID_Module 1
+#define Button_Module 1				|
+#define LED_Module 1				|
+//#define RFID_Module 1 // there is no rfid reader in the PhyIO at the moment
 //#define Theft_Module 1 // button, led and rfid also have to be included for this module
-//#define PingEcho_Module 1			|
+#define PingEcho_Module 1			|
 //#define LighSensor_Module 1
-//#define ColorView_Module 1		|
-//#define Relay_Module 1
-//#define Motor_Module 1			|
-//#define Stripe_Module 1
+#define ColorView_Module 1		|
+//#define Relay_Module 1 // can not be used at the moment
+#define Motor_Module 1			|
+#define Stripe_Module 1
 
 
 //==========================================================================================
@@ -91,8 +91,15 @@
 
 
 // configurable defines for Button
-#define Button1Pin A0
-#define Button1ID 4
+
+#define ButtonAmount 2 //How many Buttons and Pins are there?
+
+#define Switch1Pin 15 // pin liegt auf A1, wird allerdings digital genutzt, daher 15
+// die analogen Pins sind für digitalen gebrauch doppelt belegt
+#define Switch1ID 1
+
+#define Button1Pin 16 
+#define Button1ID 2 // pin liegt auf A2 (analog zu A1)
 
 
 //==========================================================================================
@@ -166,9 +173,13 @@
 //==========================================================================================
 
 
+
+// currently there is no relay build into the Phy IO
+// there are still 2 open wires conected to A6 and A7
+// in case another Relay needs to be added 
 // configurable defines for Relay Functions
-#define RELAY1PIN  A1
-#define RELAY2PIN  A2
+#define RELAY1PIN  A6
+#define RELAY2PIN  A7
 
 
 //==========================================================================================

@@ -12,8 +12,11 @@ class Button  {
 			int ID;
 			int state;
 			int pin;
+			bool is_enabled;
 
-			ButtonConfig(){	}
+			ButtonConfig(){	
+				is_enabled = false;
+			}
 			
 			void initialize(int cID, int buttonPin){
 				ID = cID;
@@ -22,27 +25,24 @@ class Button  {
 			}
 		};
 		
+		int button_index(int id);
 		
-		long randNumber;		
+		long randNumber;	
+		int ButtonCount;	
 		
 	public:
-		// folgendes währe ein Ansatz für die 
-		// Gleichzeitige Nutzung mehrer Buttons:
-		// ButtonConfig * Buttons;
 		
-		// allerdings wird nur einer genutzt, daher:
-		ButtonConfig Button1;
-		
-		
-		int BUTTON_ENABLED;
+		ButtonConfig * Buttons;
 		
 		// Konstruktor für mehrere Buttons:
 		// Button(int pins[], int ids[]);
 		// Konstruktor für einen Button:
-		Button(int id, int pin);
+		Button(int ButtonIDs[], int ButtonPins[]);
 		
 		void ButtonFunction(int id, int command);
-		int ButtonFunctionProcess(struct ButtonConfig *bt);
+		bool ButtonFunctionCheck(int id);
+		int ButtonFunctionProcess(int id); // for one Button at a time
+		void ButtonProcessing(); // for all buttons
 		
 
 };

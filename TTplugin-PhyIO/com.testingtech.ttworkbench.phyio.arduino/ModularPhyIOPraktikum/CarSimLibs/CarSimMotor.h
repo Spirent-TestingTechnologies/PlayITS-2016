@@ -19,13 +19,14 @@ class Motor {
 			}
 		};
 		
-		MotorFunctionConfig mPoint;
+		MotorFunctionConfig motor;
 
 	public:
 	
 		Motor();
-		void MotorFunction( int id, int command);
+		void MotorFunction(int id, int command);
 		void MotorFunctionSet();
+		void MotorFunctionBreak();
 
 };
 
