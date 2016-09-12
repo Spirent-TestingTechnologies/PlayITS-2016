@@ -3,10 +3,20 @@
 
 #define MAX_PARAM 5
 
-#define XSERIAL Serial // mySerial // Serial // to switch between Bluetooth and USB XSERIAL connection for communication
+//#define XSERIAL Serial // mySerial // Serial // to switch between Bluetooth and USB XSERIAL connection for communication
+
+ 
+#include <PhyIOCommunication.h>
+
+#define Bluetooth 1
+
+#define rxPin 3
+#define txPin 2
+
+extern Communication XSERIAL;
 
 
-//==========================================================================================
+//========================================================================================
 
 
 #define CV01   10 // Colour View      
@@ -30,8 +40,21 @@
 #define READ 4
 #define R1 101
 
+//========================================================================================
 
-//==========================================================================================
+// These Defines set the values used in the Autonomus-Mode
+
+#define maxHeight 50
+#define minSpeed 40
+#define maxSpeed 99
+
+#define idleTime1 1 // in min
+#define idleTime2 3 // in min
+#define waitTime 8 // in sec
+#define endingTime 5 // in sec
+
+
+//========================================================================================
 
 
 // the following line declares if there will be debug lines
@@ -40,10 +63,10 @@
 // as it takes to much memory at once
 // always switch this option off, while working with all modules at the same time
 
-#define DEBUG 1
+//#define XDEBUG 1
 
 
-//==========================================================================================
+//========================================================================================
 
 
 // the following defines which modules will be included during the compilation
@@ -60,7 +83,7 @@
 #define Stripe_Module 1
 
 
-//==========================================================================================
+//========================================================================================
 
 
 //Enable/Disable for Simulation of those Modules
@@ -74,20 +97,22 @@
 
 
 
-//==========================================================================================
+//========================================================================================
 
 
 // The implementation of the debugging line
-#ifdef DEBUG
+#ifdef XDEBUG
 #define DEBUG_PRINT(x) XSERIAL.print (x)
+#define DEBUG_PRINTF(x,y) XSERIAL.print (x,y)
 #define DEBUG_PRINTLN(x) XSERIAL.println (x)
 #else
 #define DEBUG_PRINT(x)
+#define DEBUG_PRINTF(x,y)
 #define DEBUG_PRINTLN(x)
 #endif
 
 
-//==========================================================================================
+//========================================================================================
 
 
 // configurable defines for Button
@@ -102,7 +127,7 @@
 #define Button1ID 2 // pin liegt auf A2 (analog zu A1)
 
 
-//==========================================================================================
+//========================================================================================
 
 
 // configurable defines for LED
@@ -120,7 +145,7 @@
 	// von den bereits genutzten normalen LED ID
 
 
-//==========================================================================================
+//========================================================================================
 
 
 // configurable defines for echo ping
@@ -129,10 +154,10 @@
 #define MAX_DISTANCE 300
 #define PE_UNIT 1
 #define PE_TIME_BETWEEN_SAMPLES 200 //Ping Frequency
-#define PE_POINT_MEDIAN_ITERATIONS  1 //how many iterations used for median
+#define PE_POINT_MEDIAN_ITERATIONS  7 //how many iterations used for median
 
 
-//==========================================================================================
+//========================================================================================
 
 
 // configurable defines for RFID
@@ -140,28 +165,28 @@
 #define RFID_RST_PIN 9
 
 
-//==========================================================================================
+//========================================================================================
 
 
 // configurable defines for Theft-Detection
 #define Theft1ID 6
 
 
-//==========================================================================================
+//========================================================================================
 
 
 // configurable defines for LightSensor
 #define LS1PIN A1
 
 
-//==========================================================================================
+//========================================================================================
 
 
 // configurable defines for Colour View
 #define cvf_ledpin 4
 
 
-//==========================================================================================
+//========================================================================================
 
 
 // configurable defines for Motor Function
@@ -170,8 +195,7 @@
 #define in2Pin 7
 
 
-//==========================================================================================
-
+//========================================================================================
 
 
 // currently there is no relay build into the Phy IO
@@ -180,37 +204,6 @@
 // configurable defines for Relay Functions
 #define RELAY1PIN  A6
 #define RELAY2PIN  A7
-
-
-//==========================================================================================
-
-
-/*
-// 32 bit NEC IR remote control
-// für das Schreiben eines Moduls für die Remote, wird folgender
-// Import benötigt
-//#include <IRremote.h>
-
-//#define IR_PRESENT 1
-#ifdef IR_PRESENT
-// IR LED DATA on D9 (PWM)
-IRsend irsend;
-#endif
-
-#define IR_ON 0xF7C03F
-#define IR_OFF 0xF740BF
-#define IR_RED 0xF720DF
-#define IR_GREEN 0xF7A05F
-#define IR_BLUE 0xF7609F
-#define IR_WHITE 0xF7E01F
-#define IR_FADE 0xF7C837
-#define IR_SMOOTH 0xF7E817
-#define IR_STROBE 0xF7D02F
-#define IR_FLASH 0xF7D02F
-*/
-
-
-//==========================================================================================
 
 
 #endif

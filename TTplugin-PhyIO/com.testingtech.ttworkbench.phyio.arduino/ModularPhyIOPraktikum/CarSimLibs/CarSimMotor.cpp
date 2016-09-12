@@ -15,7 +15,7 @@ void Motor::MotorFunction(int id, int command) {
 
 	switch (command) {
 		case SET:
-			MotorFunctionSet();
+			MotorFunctionSet(XSERIAL.parseInt());
 			break;
 			
 		case STOP:
@@ -27,29 +27,29 @@ void Motor::MotorFunction(int id, int command) {
 	}
 }	
 
-void Motor::MotorFunctionSet() {
+void Motor::MotorFunctionSet(int vel) {
 	DEBUG_PRINTLN("#In the MotorFunctionSetup");
 
 	//ID, MM01, SET, <velocity:uint16>
 	//Configures the Motor Function
 
-	motor.velocity = XSERIAL.parseInt();
+	motor.velocity = vel;
 	DEBUG_PRINT("#parameters are ");
 	DEBUG_PRINT(" velocity = ");
 	DEBUG_PRINTLN(motor.velocity);
 
-	int  vel = (abs(motor.velocity) % 100) * 2.55;
+	int  rot = (abs(motor.velocity) % 100) * 2.55;
 	int reverse = motor.velocity > 0 ? 1 : 0;
 
 	#ifdef MOTOR_PRESENT
-		analogWrite(enablePin, vel);
+		analogWrite(enablePin, rot);
 		digitalWrite(in1Pin, ! reverse);
 		digitalWrite(in2Pin, reverse);
 	
 	#endif
 		
 	DEBUG_PRINT("#Rotating with a velocity of ");
-	DEBUG_PRINTLN(vel);
+	DEBUG_PRINTLN(rot);
 	DEBUG_PRINT("#Into the direction of ");
 	DEBUG_PRINTLN(reverse);
 }

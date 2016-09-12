@@ -86,11 +86,6 @@ bool Button::ButtonFunctionCheck(int id){
 	#endif
 		
 	bt.state = current_state;
-		
-	XSERIAL.print(bt.ID); XSERIAL.print(",");
-	XSERIAL.print(DR01); XSERIAL.print(",");
-	XSERIAL.print(R1); XSERIAL.print(",");
-	XSERIAL.println(bt.state);
 	
 	return bt.state;
 			
@@ -124,7 +119,6 @@ int Button::ButtonFunctionProcess(int id){
 		XSERIAL.print(R1); XSERIAL.print(",");
 		XSERIAL.println(bt.state);
 
-		XSERIAL.flush();
 		return 1;
 	}
 	return 0;

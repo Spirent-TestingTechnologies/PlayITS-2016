@@ -10,7 +10,7 @@ LEDRemote::LEDRemote()
 void LEDRemote::sending(long command){
 	for (int i = 0; i < 3; i++) {
 		irsend.sendNEC(command, 32);
-		delay(20);
+		delay(30);
 	}
 }
 

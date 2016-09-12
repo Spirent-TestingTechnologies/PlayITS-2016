@@ -60,7 +60,9 @@ class LED {
 		LEDFunctionConfig * Dioden;
 		
 		int dioden_index(int id);
-		
+
+		void LEDToggling(LED::LEDFunctionConfig *led);
+		void LEDSwitch(LED::LEDFunctionConfig *led, int state);
 	  
 	public:
 	
@@ -70,8 +72,6 @@ class LED {
 		void LEDFunctionSet(int id, int state);
 		void LEDFunctionBlink(int id, float on_time, int mode);
 		void LEDFunctionStop(int id);
-		void LEDToggling(LED::LEDFunctionConfig *led);
-		void LEDSwitch(LED::LEDFunctionConfig *led, int state);
 		void LEDshouldBlink();
     
 };

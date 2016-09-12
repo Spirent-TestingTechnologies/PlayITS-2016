@@ -102,7 +102,7 @@ int RFID::RFIDFunctionProcess(int id){
     }
     
     XSERIAL.println("");
-    XSERIAL.flush();
+    //XSERIAL.flush();
 
     if(rfid_tag[0] != 0 && rfid_tag[1] != 0 && rfid_tag[2] != 0 && rfid_tag[3] != 0){
 		for(int i = 0; i < 4; i++){

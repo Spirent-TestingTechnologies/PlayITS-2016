@@ -25,7 +25,7 @@ class Motor {
 	
 		Motor();
 		void MotorFunction(int id, int command);
-		void MotorFunctionSet();
+		void MotorFunctionSet(int vel);
 		void MotorFunctionBreak();
 
 };

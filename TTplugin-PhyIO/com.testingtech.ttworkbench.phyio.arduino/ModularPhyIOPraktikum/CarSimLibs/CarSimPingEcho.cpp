@@ -81,7 +81,7 @@ void PingEcho::PingEchoFunctionRead2() {
 		break;
 	}
 
-	PingEchoFunctionR1();
+	//PingEchoFunctionR1();
 }
 
 void PingEcho::PingEchoFunctionR1() {
@@ -92,8 +92,11 @@ void PingEcho::PingEchoFunctionR1() {
 	XSERIAL.print(R1);  XSERIAL.print(", ");
 	XSERIAL.print(this->pePoint.ReadTimestamp);  XSERIAL.print(", ");
 	XSERIAL.println(this->pePoint.distance);
-	XSERIAL.flush();
 	
+}
+
+int PingEcho::PingEchoReturnDistance(){
+	return this->pePoint.distance;
 }
 
 void PingEcho::computeTimer(){

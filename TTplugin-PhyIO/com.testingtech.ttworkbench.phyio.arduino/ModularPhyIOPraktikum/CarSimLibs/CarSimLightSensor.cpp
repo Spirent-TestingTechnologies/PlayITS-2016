@@ -41,7 +41,6 @@ void LightSensor::LightFunctionPrint(int id,int value,unsigned long time){
     XSERIAL.print(R1);  XSERIAL.print(", ");
     XSERIAL.print(value);  XSERIAL.print(", ");
     XSERIAL.println(time);
-    XSERIAL.flush();
 }
 
 void LightSensor::LightFunctionPrint2(int id,float value,unsigned long time){
@@ -51,7 +50,6 @@ void LightSensor::LightFunctionPrint2(int id,float value,unsigned long time){
     XSERIAL.print(R1);  XSERIAL.print(", ");
     XSERIAL.print(value);  XSERIAL.print(", ");
     XSERIAL.println(time);
-    XSERIAL.flush();
 }
 
 void LightSensor::LightFunctionStart(int id,int lightValue,int lightDiff){

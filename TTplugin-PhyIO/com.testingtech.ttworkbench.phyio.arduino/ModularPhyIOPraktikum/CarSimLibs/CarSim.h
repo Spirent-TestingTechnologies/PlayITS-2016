@@ -67,47 +67,50 @@ class Car {
 		
 		//Module
 		
+
+		
+	public:
+		
 		#ifdef Button_Module
 			Button button;
 		#endif
-		
+
 		#ifdef LED_Module
 			LED led;
 		#endif
-		
+
 		#ifdef RFID_Module
 			RFID rfid;
 		#endif
-		
+
 		#ifdef Theft_Module
 			Theft theft;
 		#endif
-		
+
 		#ifdef PingEcho_Module
 			PingEcho echo;
 		#endif
-		
+
 		#ifdef LighSensor_Module
 			LightSensor ls;
 		#endif
-		
+
 		#ifdef ColorView_Module
 			ColorView cv;
 		#endif
-		
+
 		#ifdef Relay_Module
 			Relay relay;
 		#endif
-		
+
 		#ifdef Motor_Module
 			Motor motor;
 		#endif
-		
+
 		#ifdef Stripe_Module
 			LEDRemote remote;
 		#endif
-		
-	public:
+	
 	
 		Car();
 		//Modulfunktionalitäten
@@ -147,6 +150,9 @@ class Car {
 		
 		//Quasi-Multithreading
 		void ProcessHandling();
+		//resets everything (erst einmal nur für phyIO ausgelegt; muss ergänzt werden,
+		// wenn weitere Module hizugefügt werden)
+		void reset();
 		
 };
 

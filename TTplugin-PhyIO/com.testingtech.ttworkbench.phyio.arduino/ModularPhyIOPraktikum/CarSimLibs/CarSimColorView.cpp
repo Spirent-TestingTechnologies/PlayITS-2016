@@ -108,8 +108,6 @@ void ColorView::ColorViewFunctionRead() {
 	cvfPoint.red256 = rf;
 	cvfPoint.green256 = gf;
 	cvfPoint.blue256 = bf;
-
-	ColorViewFunctionR1();
 }
 
 void ColorView::ColorViewFunctionR1() {
@@ -127,13 +125,27 @@ void ColorView::ColorViewFunctionR1() {
 	XSERIAL.print(cvfPoint.red256);  XSERIAL.print(", ");
 	XSERIAL.print(cvfPoint.green256);  XSERIAL.print(", ");
 	XSERIAL.println(cvfPoint.blue256);
-	XSERIAL.flush();
+}
+
+void ColorView::ColorViewFunctionR2() {
+	// ID, CV01,R1,<timestamp:unit16>,<r:unit16>, <g:unit16>, <b:unit16>, <c:unit16>, <colorTemp:unit16>, <lux:unit16>
+	XSERIAL.print(cvfPoint.red256);  XSERIAL.print(", ");
+	XSERIAL.print(cvfPoint.green256);  XSERIAL.print(", ");
+	XSERIAL.println(cvfPoint.blue256);
 }
 
 void ColorView::ColorViewScheduling() {
 	if(cvfPoint.scheduled == true &&
 	  (millis() - cvfPoint.ReadTimestamp >= cvfPoint.TimeBetweenSamples)){
 		  ColorViewFunctionRead();
+		  ColorViewFunctionR1();
 	} 
 	
+}
+
+bool ColorView::ColorViewDecide() {
+	if(cvfPoint.red256 > 110){
+		return false;
+	}
+	return true;
 }

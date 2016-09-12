@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include "CarSimDefine.h"
 
-Class Help {
+class Help {
 	
 	private:
 		
@@ -13,6 +13,7 @@ Class Help {
 		
 		bool is_helpRequest();
 		void Print_Help();
+		
 };
 
 #endif
