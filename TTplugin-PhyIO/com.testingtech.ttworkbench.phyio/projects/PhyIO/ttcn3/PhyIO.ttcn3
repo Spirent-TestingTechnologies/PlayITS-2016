@@ -1,0 +1,59 @@
+module PhyIO {
+	
+	external function test(charstring s) return boolean;
+	
+	external function SerialConnect(charstring PortName, integer Baudrate);
+	
+	//external function SerialSend(integer id, integer moduleID, integer Mode);
+	external function SerialSend(charstring Message);
+	
+	external function SerialRecieve() return charstring;
+	
+	external function SerialparseInt() return integer;
+	external function SerialparseFloat() return float;
+	
+	type component Test{}
+	
+	// configuration for the SerialPort connection
+	type record SerialConfig {
+		charstring PortName,
+		integer BaudRate
+		
+	}
+	
+	// set the default values and anable the interaction in the testcase window
+	modulepar SerialConfig Connection := {
+		//PortName := "/dev/cu.HC-05-DevB",
+		PortName := "/dev/cu.wchusbserialfa140",
+		BaudRate := 9600
+	}
+	
+	
+	
+	// just a short test for checking if the external functions are all ready to use
+	testcase ExternalFunctionTest() runs on Test system Test{
+		var integer testzahl := 9;
+		
+		log("teste die externe Function", Connection.BaudRate);
+		if(test("bla")){
+			
+			setverdict(pass, "alles schnieke");
+		} else {
+			setverdict(fail, "nicht gut");
+		}
+			
+	}
+		
+	testcase ConnectionSend() runs on Test system Test{
+		timer t;
+		
+		SerialConnect(Connection.PortName, Connection.BaudRate);
+		
+		t.start(2.5); t.timeout;
+		
+		SerialSend("1, 30, 1, 1");
+		
+		setverdict(pass, "alles schnieke");
+	}
+	
+}
