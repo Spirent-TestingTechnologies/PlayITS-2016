@@ -61,7 +61,7 @@ class PingEcho {
 		void PingEchoFunctionStop2();
 		void pintEchoSensorFix();
 		void PingEchoFunctionRead2();
-		
+		void PingEchoFunctionReadPrint();
 		void PingEchoFunctionR1();
 		void computeTimer();
 		int PingEchoReturnDistance();

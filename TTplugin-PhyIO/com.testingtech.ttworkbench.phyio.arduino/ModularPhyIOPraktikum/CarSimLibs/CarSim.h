@@ -150,9 +150,6 @@ class Car {
 		
 		//Quasi-Multithreading
 		void ProcessHandling();
-		//resets everything (erst einmal nur für phyIO ausgelegt; muss ergänzt werden,
-		// wenn weitere Module hizugefügt werden)
-		void reset();
 		
 };
 

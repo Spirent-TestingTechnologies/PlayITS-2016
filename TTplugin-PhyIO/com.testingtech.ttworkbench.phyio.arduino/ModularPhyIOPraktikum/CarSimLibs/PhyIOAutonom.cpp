@@ -14,10 +14,7 @@ void Autonom::start(){
 	update_time(); 
 	time_check = false;
 	
-	// check if there is an object within reach of the ping echo distance
-	c->echo.PingEchoFunctionStart2();
 	while(distance > maxHeight && is_autonom()){
-		c->echo.PingEchoFunctionRead2();
 		distance = c->echo.PingEchoReturnDistance();
 		
 		// If there didn't happen anything for a certain amount of time, then
@@ -33,8 +30,7 @@ void Autonom::start(){
 		if ((millis() - current_time)/60000.0 > idleTime2){
 			distance = random(maxHeight);
 		}
-	}
-	c->echo.PingEchoFunctionStop2();	
+	}	
 	
 
 	// break and set everything back, if the PhyIO is no longer in autonomus mode
@@ -69,23 +65,17 @@ void Autonom::start(){
 	// either through hand motion or through waiting
 	distance = 100;
 	update_time();
-	c->echo.PingEchoFunctionStart2();
 	
 	while((distance > maxHeight) && ((millis() - current_time)/1000.0 < waitTime) && is_autonom()){
-		c->echo.PingEchoFunctionRead2();
 		distance = c->echo.PingEchoReturnDistance();
 		delay(10);
-	}
-	c->echo.PingEchoFunctionStop2();
-	
-	
+	}	
 	
 	// break
 	// while waiting, turn on the blue led and set the stripe to a distinct colour (max 1 sec)
 	c->led.LEDFunctionSet(2, 0);
 	c->remote.StripeFunctionColour(8);
 	c->led.LEDFunctionSet(1, 1);
-	c->echo.PingEchoFunctionStop2();
 	c->motor.MotorFunctionBreak();
 	
 
@@ -157,7 +147,6 @@ void Autonom::reset(){
 		c->led.LEDFunctionSet(2, 0);
 		c->button.ButtonFunction(1, 3);
 		c->button.ButtonFunction(2, 3);
-		c->echo.PingEchoFunctionStop2();
 		c->motor.MotorFunctionBreak();
 		c->remote.StripeFunctionOn();
 		c->remote.StripeFunctionColour(16);

@@ -25,7 +25,7 @@ void PingEcho::PingEchoFunction2( int id, int command) {
 			PingEchoFunctionStop2();
 			break;
 		case READ:
-			PingEchoFunctionRead2();
+			PingEchoFunctionReadPrint();
 			break;
 		default:
 			break;
@@ -80,8 +80,6 @@ void PingEcho::PingEchoFunctionRead2() {
 			#endif
 		break;
 	}
-
-	//PingEchoFunctionR1();
 }
 
 void PingEcho::PingEchoFunctionR1() {
@@ -90,12 +88,20 @@ void PingEcho::PingEchoFunctionR1() {
 	XSERIAL.print(this->pePoint.ID); XSERIAL.print(", ");
 	XSERIAL.print(PE02);  XSERIAL.print(", ");
 	XSERIAL.print(R1);  XSERIAL.print(", ");
-	XSERIAL.print(this->pePoint.ReadTimestamp);  XSERIAL.print(", ");
+	// if the timestamp is ever needed again this is the code line one has to use
+	//XSERIAL.print(this->pePoint.ReadTimestamp);  XSERIAL.print(", ");
 	XSERIAL.println(this->pePoint.distance);
 	
 }
 
+void PingEcho::PingEchoFunctionReadPrint(){
+	PingEchoFunctionRead2();
+	PingEchoFunctionR1();
+}
+
+
 int PingEcho::PingEchoReturnDistance(){
+	PingEchoFunctionRead2();
 	return this->pePoint.distance;
 }
 
@@ -103,7 +109,6 @@ void PingEcho::computeTimer(){
 //  if ( this->pePoint.enabled && millis() >= (this->pePoint.TimeBetweenSamples + this->pePoint.ReadTimestamp){
 //    PingEchoFunctionRead();
 //  }
-
 	if (pe_enabled && millis() >= peTimer){
 		peTimer += PE_TIME_BETWEEN_SAMPLES;
 		PingEchoFunctionRead2();

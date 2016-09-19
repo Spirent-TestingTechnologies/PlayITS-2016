@@ -35,7 +35,7 @@ void ColorView::ColorViewFunction( int id, int command) {
 			cvfPoint.scheduled = false;
 			break;
 		case READ:
-			ColorViewFunctionRead();
+			ColorViewFunctionReadPrint();
 			break;
 		default:
 			break;
@@ -112,25 +112,30 @@ void ColorView::ColorViewFunctionRead() {
 
 void ColorView::ColorViewFunctionR1() {
 	// ID, CV01,R1,<timestamp:unit16>,<r:unit16>, <g:unit16>, <b:unit16>, <c:unit16>, <colorTemp:unit16>, <lux:unit16>
-	XSERIAL.print(cvfPoint.ID); XSERIAL.print(", ");
-	XSERIAL.print(CV01);  XSERIAL.print(", ");
-	XSERIAL.print(R1);  XSERIAL.print(", ");
-	XSERIAL.print(cvfPoint.ReadTimestamp);  XSERIAL.print(", ");
-	XSERIAL.print(cvfPoint.red);  XSERIAL.print(", ");
-	XSERIAL.print(cvfPoint.green);  XSERIAL.print(", ");
-	XSERIAL.print(cvfPoint.blue);  XSERIAL.print(", ");
-	XSERIAL.print(cvfPoint.clear);  XSERIAL.print(", ");
-	XSERIAL.print(cvfPoint.colorTemp);  XSERIAL.print(", ");
-	XSERIAL.print(cvfPoint.lux);  XSERIAL.print(", ");
-	XSERIAL.print(cvfPoint.red256);  XSERIAL.print(", ");
-	XSERIAL.print(cvfPoint.green256);  XSERIAL.print(", ");
+	XSERIAL.print(cvfPoint.ID); XSERIAL.print(",");
+	XSERIAL.print(CV01);  XSERIAL.print(",");
+	XSERIAL.print(R1);  XSERIAL.print(",");
+	XSERIAL.print(cvfPoint.ReadTimestamp);  XSERIAL.print(",");
+	XSERIAL.print(cvfPoint.red);  XSERIAL.print(",");
+	XSERIAL.print(cvfPoint.green);  XSERIAL.print(",");
+	XSERIAL.print(cvfPoint.blue);  XSERIAL.print(",");
+	XSERIAL.print(cvfPoint.clear);  XSERIAL.print(",");
+	XSERIAL.print(cvfPoint.colorTemp);  XSERIAL.print(",");
+	XSERIAL.print(cvfPoint.lux);  XSERIAL.print(",");
+	XSERIAL.print(cvfPoint.red256);  XSERIAL.print(",");
+	XSERIAL.print(cvfPoint.green256);  XSERIAL.print(",");
 	XSERIAL.println(cvfPoint.blue256);
+}
+
+void ColorView::ColorViewFunctionReadPrint(){
+	ColorViewFunctionRead();
+	ColorViewFunctionR1();
 }
 
 void ColorView::ColorViewFunctionR2() {
 	// ID, CV01,R1,<timestamp:unit16>,<r:unit16>, <g:unit16>, <b:unit16>, <c:unit16>, <colorTemp:unit16>, <lux:unit16>
-	XSERIAL.print(cvfPoint.red256);  XSERIAL.print(", ");
-	XSERIAL.print(cvfPoint.green256);  XSERIAL.print(", ");
+	XSERIAL.print(cvfPoint.red256);  XSERIAL.print(",");
+	XSERIAL.print(cvfPoint.green256);  XSERIAL.print(",");
 	XSERIAL.println(cvfPoint.blue256);
 }
 
@@ -139,8 +144,7 @@ void ColorView::ColorViewScheduling() {
 	  (millis() - cvfPoint.ReadTimestamp >= cvfPoint.TimeBetweenSamples)){
 		  ColorViewFunctionRead();
 		  ColorViewFunctionR1();
-	} 
-	
+	}
 }
 
 bool ColorView::ColorViewDecide() {
