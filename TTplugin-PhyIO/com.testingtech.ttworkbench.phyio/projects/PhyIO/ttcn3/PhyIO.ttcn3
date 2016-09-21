@@ -1,16 +1,6 @@
 module PhyIO {
 	
-	external function test(charstring s) return boolean;
-	
-	external function SerialConnect(charstring PortName, integer Baudrate);
-	
-	//external function SerialSend(integer id, integer moduleID, integer Mode);
-	external function SerialSend(charstring Message);
-	
-	external function SerialRecieve() return charstring;
-	
-	external function SerialparseInt() return integer;
-	external function SerialparseFloat() return float;
+	external function Serial(charstring modus, charstring command) return charstring;
 	
 	type component Test{}
 	
@@ -18,42 +8,136 @@ module PhyIO {
 	type record SerialConfig {
 		charstring PortName,
 		integer BaudRate
-		
 	}
 	
-	// set the default values and anable the interaction in the testcase window
+	// set the default values and enable the interaction in the testcase window
 	modulepar SerialConfig Connection := {
-		//PortName := "/dev/cu.HC-05-DevB",
-		PortName := "/dev/cu.wchusbserialfa140",
+		PortName := "/dev/cu.HC-05-DevB",         //Bluetooth
+//		PortName := "/dev/cu.wchusbserialfa140",  //USB
 		BaudRate := 9600
 	}
 	
-	
-	
-	// just a short test for checking if the external functions are all ready to use
-	testcase ExternalFunctionTest() runs on Test system Test{
-		var integer testzahl := 9;
 		
-		log("teste die externe Function", Connection.BaudRate);
-		if(test("bla")){
-			
-			setverdict(pass, "alles schnieke");
-		} else {
-			setverdict(fail, "nicht gut");
-		}
-			
-	}
-		
-	testcase ConnectionSend() runs on Test system Test{
+	testcase LEDTest() runs on Test system Test{
 		timer t;
+
+		log("Start communication");
+		Serial("CONNECT", Connection.PortName & ", " & int2str(Connection.BaudRate));
 		
-		SerialConnect(Connection.PortName, Connection.BaudRate);
+		t.start(4.0); t.timeout; // Kleiner Delay für Arduinoreaktion
 		
-		t.start(2.5); t.timeout;
+		log("Turn on blue LED");
+		Serial("SEND", "1, 30, 1, 1");
+		t.start(1.5); t.timeout;   // <- minimaler Abstand zum senden der Befehle
+								   // damit sicher gesetellt werden kann, dass die 
+								   // auch richtig interpretiert werden
+		log("Turn off blue LED");						   
+		Serial("SEND", "1, 30, 3");
+		t.start(1.2); t.timeout;
 		
-		SerialSend("1, 30, 1, 1");
+		log("Turn on bi-diractional LED in green mode");
+		Serial("SEND", "2, 30, 1, 1");
+		t.start(1.2); t.timeout;
+				
+		log("Turn on bi-diractional LED in red mode");
+		Serial("SEND", "2, 30, 1, 2");
+		t.start(1.2); t.timeout;
+				
+		log("Turn off bi-diractional LED");
+		Serial("SEND", "2, 30, 3");
+		t.start(1.2); t.timeout;
 		
-		setverdict(pass, "alles schnieke");
+		log("Let the bi-diractional LED blink in green mode with a frequency of 3Hz");
+		Serial("SEND", "2, 30, 2, 1, 3");
+		t.start(5.0); t.timeout;
+		
+		log("Let the blue LED blink with a frequency of 0.5Hz");
+		Serial("SEND", "1, 30, 2, 1, 0.5");
+		t.start(5.0); t.timeout;
+		
+		log("Let the bi-diractional LED blink in green mode with a frequency of 4Hz");
+		Serial("SEND", "2, 30, 2, 2, 4");
+		t.start(5.0); t.timeout;
+		
+		log("Let the blue LED blink with a frequency of 2Hz");
+		Serial("SEND", "1, 30, 2, 1, 2");
+		t.start(5.0); t.timeout;
+		
+		log("Let the bi-diractional LED blink between both colours with a frequency of 5Hz");
+		Serial("SEND", "2, 30, 2, 3, 5");
+		t.start(5.0); t.timeout;
+		
+		log("Turn off blue LED");	
+		Serial("SEND", "1, 30, 3");    // Mache die erste LED aus
+		t.start(1.1); t.timeout;
+		
+		log("Turn off bi-diractional LED");
+		Serial("SEND", "2, 30, 3");    // Mache die zweite LED aus
+		
+		log("Stop Connection to Serial Port");
+		Serial("STOP", "");
+		
+		setverdict(pass, "LEDs are running as planned");
 	}
 	
+	
+	testcase MotorTest() runs on Test system Test{
+		timer t;
+
+		log("Start communication");
+		Serial("CONNECT", Connection.PortName & ", " & int2str(Connection.BaudRate));
+		
+		t.start(4.0); t.timeout; // Kleiner Delay für Arduinoreaktion
+		
+		log("Turn on Motor with a speed of 40");
+		Serial("SEND", "1, 50, 1, 40");
+		t.start(5.0); t.timeout; 
+		
+		log("Hit the breaks");
+		Serial("SEND", "1, 50, 3");
+		t.start(5.0); t.timeout; 
+		
+		log("Turn on Motor with a speed of -70");
+		Serial("SEND", "1, 50, 1, -70");
+		t.start(5.0); t.timeout; 
+		
+		log("Hit the breaks");
+		Serial("SEND", "1, 50, 3");
+		t.start(5.0); t.timeout; 
+		
+		log("Stop Connection to Serial Port");
+		Serial("STOP", "");
+
+		setverdict(pass, "Motor is running as planned");
+	}
+			
+
+	testcase LEDStripTest() runs on Test system Test{
+		timer t;
+
+		log("Start communication");
+		Serial("CONNECT", Connection.PortName & ", " & int2str(Connection.BaudRate));
+
+		t.start(4.0); t.timeout; // Kleiner Delay für Arduinoreaktion
+
+		
+		log("Turn on LED Strip");
+		Serial("SEND", "1, 90, 1, 1");
+		t.start(2.0); t.timeout; 
+		
+		for (var integer i:=0; i <= 16; i:=i + 1) {
+			Serial("SEND", "1, 90, 1, 1, " & int2str(i));
+			t.start(1.5); t.timeout; 
+		}
+		
+		log("Turn off LED Strip");
+		Serial("SEND", "1, 90, 3");
+		log("Stop Connection to Serial Port");
+		Serial("STOP", "");
+
+		setverdict(pass, "LED Strip is functioning as planned");
+		
+	}
+
+
 }

@@ -47,10 +47,15 @@ public class Serial {
 	 * 28800, 38400, 57600, or 115200
 	 * @throws PortAllreadyInUseException 
 	 */
-	public Serial(String portName, int baud_rate) throws PortAllreadyInUseException {
+	public Serial(String portName, int baud_rate) {
 		//preferred constructor
 		setPortByName(portName);
-		begin(baud_rate);
+		try {
+			begin(baud_rate);
+		} catch (PortAllreadyInUseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 
@@ -107,7 +112,7 @@ public class Serial {
 	
 	/**
 	 * Closes the current connection (if there is any) and switches to 
-	 * the given port with the given baud rate and starts the communication
+	 * the given port with the given baud rate
 	 * 
 	 * @param portName Name of the Port as diyplayed by the system
 	 * or as it is found in the Arduino IDE
@@ -170,9 +175,7 @@ public class Serial {
 	 */
 	public boolean available(){
 		return comPort.bytesAvailable() != 0;
-	}
-	
-	
+	}	
 	
 	/**
 	 * Reads characters from the serial buffer into a string
@@ -180,8 +183,6 @@ public class Serial {
 	 * @return A string read from the serial buffer
 	 */
 	public String readString(){
-		
-		comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
 		String out="";
 		Scanner in = new Scanner(comPort.getInputStream());
 		try
@@ -201,7 +202,6 @@ public class Serial {
 	 * @return A string read from the serial buffer
 	 */
 	public String readString(int limit){
-		comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
 		String out="";
 		int count=0;
 		Scanner in = new Scanner(comPort.getInputStream());
@@ -232,7 +232,6 @@ public class Serial {
 	
 	public void write(String s){
 		//writes the entire string at once.
-		comPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
 		try{Thread.sleep(5);} catch(Exception e){}
 		PrintWriter pout = new PrintWriter(comPort.getOutputStream());
 		pout.print(s);
@@ -241,7 +240,6 @@ public class Serial {
 	
 	public void write(String s,int noOfChars, int delay){
 		//writes the entire string at once.
-		comPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
 		try{Thread.sleep(5);} catch(Exception e){}
 		PrintWriter pout = new PrintWriter(comPort.getOutputStream());
 		for(int i=0;i<s.length();i+=noOfChars){
@@ -257,7 +255,6 @@ public class Serial {
 	
 	public void write(char c){
 		//writes the entire string at once.
-		comPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
 		try{Thread.sleep(5);} catch(Exception e){}
 		PrintWriter pout = new PrintWriter(comPort.getOutputStream());pout.write(c);
 		pout.flush();
@@ -265,7 +262,6 @@ public class Serial {
 	
 	public void write(char c, int delay){
 		//writes the entire string at once.
-		comPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
 		try{Thread.sleep(5);} catch(Exception e){}
 		PrintWriter pout = new PrintWriter(comPort.getOutputStream());pout.write(c);
 		pout.flush();

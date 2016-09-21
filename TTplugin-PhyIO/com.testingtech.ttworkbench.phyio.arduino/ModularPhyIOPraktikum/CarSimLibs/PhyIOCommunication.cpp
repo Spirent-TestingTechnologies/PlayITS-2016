@@ -42,6 +42,13 @@ char Communication::read(){
 	return SoftSerial.read();
 }
 
+String Communication::readString(){
+	if(Serial.available() > 0){
+		return Serial.readString();
+	}
+	return SoftSerial.readString();
+}
+
 
 void Communication::print(int i){
 	Serial.print(i);

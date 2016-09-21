@@ -19,6 +19,7 @@ class Communication {
 		char peek();
 		bool find(char c);
 		char read();
+		String readString();
 		
 		
 		void print(int i);
