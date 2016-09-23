@@ -1,0 +1,24 @@
+module PhyIOConfig {
+	
+	// configuration for the SerialPort connection
+	type record SerialConfig {
+		universal charstring PortName,
+		integer BaudRate
+	}
+	
+	type port PhyIOport message {
+		out SerialMessage;
+		in charstring; // mit komma andere Typen akzeptieren
+		
+		map param(SerialConfig connection);
+	}
+	
+	type record SerialMessage {
+		integer deviceID,
+		integer moduleID,
+		Params params
+	}
+			
+	type record of integer Params;
+	
+}

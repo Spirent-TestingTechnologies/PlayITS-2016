@@ -1,7 +1,7 @@
 eclipse.preferences.version=1
 environment.append=true
 environment.variables=
-tt3-plugins-path=//PROJECT_NAME//tt3plugins
+tt3-plugins-path=//PROJECT_NAME//tt3plugins;//PROJECT_NAME//tt3plugins/SerialPortPlugin
 ttcn3.continue_on_fail=false
 ttcn3.gen_debug_code_record_init=false
 ttcn3.generate_mlf=false

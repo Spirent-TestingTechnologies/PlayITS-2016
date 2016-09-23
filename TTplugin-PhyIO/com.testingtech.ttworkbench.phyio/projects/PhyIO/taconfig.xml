@@ -1,8 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testadapter>
+  <codec encode="Serial">
+    <plugin id="SerialPortPlugin">
+      <parameter id="class" value="SerialPortPlugin.SerialCodec"/>
+    </plugin>
+    <parameter id="default" value="true"/>
+  </codec>
   <extfunc>
     <plugin id="Default-ID">
       <parameter id="class" value="ExternFunctionProvider.PhyIOCommunication"/>
     </plugin>
   </extfunc>
+  <port>
+    <plugin id="SerialPortPlugin">
+      <parameter id="class" value="SerialPortPlugin.SerialPortPluginProvider"/>
+    </plugin>
+    <parameter id="taParams">
+      <parameter id="PortName">
+        <value>
+          <Values:charstring xmlns:Values="Values.xsd" type="charstring">
+            <Values:value>/dev/cu.HC-05-DevB</Values:value>
+          </Values:charstring>
+        </value>
+      </parameter>
+      <parameter id="BaudRate">
+        <value>
+          <Values:integer xmlns:Values="Values.xsd" type="integer">
+            <Values:value>9600</Values:value>
+          </Values:integer>
+        </value>
+      </parameter>
+    </parameter>
+    <parameter id="default" value="true"/>
+    <parameter id="portType"/>
+    <parameter id="portType" value="PhyIOConfig.PhyIOport"/>
+  </port>
 </testadapter>

@@ -26,7 +26,7 @@ public class Serial {
 	/**
 	 * Initializes the Class and sets the name,
 	 * but does not open the connection
-	 * @param portName Name of the Port as diyplayed by the system
+	 * @param portName Name of the Port as displayed by the system
 	 * or as it is found in the Arduino IDE
 	 */
 	public Serial(String portName) {
@@ -38,10 +38,10 @@ public class Serial {
 	 * Initializes the Class and starts the connection to the given
 	 * port name with the set baud rate
 	 * 
-	 * @param portName Name of the Port as diyplayed by the system
+	 * @param portName Name of the Port as displayed by the system
 	 * or as it is found in the Arduino IDE
 	 * 
-	 * @param baud_rate Speed of the connection, standart most 
+	 * @param baud_rate Speed of the connection, standard most 
 	 * of the time is 9600, but all of the following are possible
 	 * 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 
 	 * 28800, 38400, 57600, or 115200
@@ -53,7 +53,6 @@ public class Serial {
 		try {
 			begin(baud_rate);
 		} catch (PortAllreadyInUseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -64,11 +63,11 @@ public class Serial {
 	
 	/**
 	 * Starts the connection to the port
-	 * @param baud_rate Speed of the connection, standart most 
+	 * @param baud_rate Speed of the connection, standard most 
 	 * of the time is 9600, but all of the following are possible
 	 * 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 
 	 * 28800, 38400, 57600, or 115200
-	 * @return true if the connection is succesfull, false if not
+	 * @return true if the connection is successful, false if not
 	 * @throws PortAllreadyInUseException 
 	 */
 	public boolean begin(int baud_rate) throws PortAllreadyInUseException{
@@ -102,7 +101,7 @@ public class Serial {
 	 * Sets the Port to the given Port. 
 	 * Close the connection with 'closeConnection()' if there is 
 	 * an open connection.
-	 * @param portName Name of the Port as diyplayed by the system
+	 * @param portName Name of the Port as displayed by the system
 	 * or as it is found in the Arduino IDE
 	 */
 	public void setPortByName(String portName){
@@ -114,10 +113,10 @@ public class Serial {
 	 * Closes the current connection (if there is any) and switches to 
 	 * the given port with the given baud rate
 	 * 
-	 * @param portName Name of the Port as diyplayed by the system
+	 * @param portName Name of the Port as displayed by the system
 	 * or as it is found in the Arduino IDE
 	 * 
-	 * @param baud_rate Speed of the connection, standart most 
+	 * @param baud_rate Speed of the connection, standard most 
 	 * of the time is 9600, but all of the following are possible
 	 * 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 
 	 * 28800, 38400, 57600, or 115200
@@ -230,6 +229,11 @@ public class Serial {
 		return readString();
 	}
 	
+	
+	/**
+	 * Writes a String to the serial port connection that is currently active
+	 * @param s the String which will be send to the serial port
+	 */
 	public void write(String s){
 		//writes the entire string at once.
 		try{Thread.sleep(5);} catch(Exception e){}
@@ -238,38 +242,20 @@ public class Serial {
 		pout.flush();
 	}
 	
-	public void write(String s,int noOfChars, int delay){
-		//writes the entire string at once.
-		try{Thread.sleep(5);} catch(Exception e){}
-		PrintWriter pout = new PrintWriter(comPort.getOutputStream());
-		for(int i=0;i<s.length();i+=noOfChars){
-			pout.write(s.substring(i,i+noOfChars));
-			pout.flush();
-			System.out.println(s.substring(i,i+noOfChars));
-			try{Thread.sleep(delay);}catch(Exception e){}
-		}
-		pout.write(noOfChars);
-		pout.flush();
-		
-	}
-	
+	/**
+	 * Writes a Char to the serial port connection that is currently active
+	 * @param c the Char which will be send to the serial port
+	 */
 	public void write(char c){
 		//writes the entire string at once.
 		try{Thread.sleep(5);} catch(Exception e){}
-		PrintWriter pout = new PrintWriter(comPort.getOutputStream());pout.write(c);
+		PrintWriter pout = new PrintWriter(comPort.getOutputStream());
+		pout.write(c);
 		pout.flush();
 	}
 	
-	public void write(char c, int delay){
-		//writes the entire string at once.
-		try{Thread.sleep(5);} catch(Exception e){}
-		PrintWriter pout = new PrintWriter(comPort.getOutputStream());pout.write(c);
-		pout.flush();
-		try{Thread.sleep(delay);}catch(Exception e){}
-	}
 
-
-	//TODO parse Int und andere parse geschichten und mal gucken warum ein Leerzeichen ein Umbruch ausl�st
 	
+	//TODO parse Int, parse float, readUntil
 	
 }
