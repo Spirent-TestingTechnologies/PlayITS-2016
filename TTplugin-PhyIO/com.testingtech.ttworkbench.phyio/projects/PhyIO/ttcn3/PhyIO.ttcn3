@@ -1,11 +1,10 @@
 module PhyIO {
 	
-	import from PhyIOTemplate {template m_sendSerial;}
+	import from PhyIOTemplate all;
 
-	import from PhyIOConfig {
-		type PhyIOport;
-		type SerialConfig;
-	}
+	import from PhyIOConfig all;
+	
+	import from PhyIOConstants all;
 
 	external function Serial(charstring modus, charstring command) return charstring;
 	
@@ -20,72 +19,66 @@ module PhyIO {
 		BaudRate := 9600
 	}
 	
+// --------------------------------- simple send test cases ---------------------------------
 		
 	testcase LEDTest() runs on Test system Test{
-		map (mtc:serialPort, system:serialPort) param (Connection);
 		timer t;
-		
-		serialPort.send("bla");
+		log("Connect to Port");
+		map (mtc:serialPort, system:serialPort) param (Connection);
+			
 
-//		t.start(4.0); t.timeout;
-//		log("Start communication");
-//		serialPort.send(m_sendSerial(1, 30, {1, 1}));
-//		Serial("CONNECT", Connection.PortName & ", " & int2str(Connection.BaudRate));
-		
-		/*
-		t.start(4.0); t.timeout; // Kleiner Delay für Arduinoreaktion
 		
 		log("Turn on blue LED");
-		Serial("SEND", "1, 30, 1, 1");
-		t.start(1.5); t.timeout;   // <- minimaler Abstand zum senden der Befehle
-								   // damit sicher gesetellt werden kann, dass die 
-								   // auch richtig interpretiert werden
+		serialPort.send(m_sendSerial(SubDevice1, LED01, SET, {1}));
+		t.start(2.0); t.timeout;   // <- small Delay, that ensures, 
+								   // that everything will be send
+								   // and it isn't too fast while switching
 		log("Turn off blue LED");						   
-		Serial("SEND", "1, 30, 3");
-		t.start(1.2); t.timeout;
+		serialPort.send(m_sendSerial(SubDevice1, LED01, STOP, {}));
+		t.start(2.0); t.timeout;
 		
 		log("Turn on bi-diractional LED in green mode");
-		Serial("SEND", "2, 30, 1, 1");
-		t.start(1.2); t.timeout;
+		serialPort.send(m_sendSerial(SubDevice2, LED01, SET, {1}));
+		t.start(2.0); t.timeout;
 				
 		log("Turn on bi-diractional LED in red mode");
-		Serial("SEND", "2, 30, 1, 2");
-		t.start(1.2); t.timeout;
+		serialPort.send(m_sendSerial(SubDevice2, LED01, SET, {2}));
+		t.start(2.0); t.timeout;
 				
 		log("Turn off bi-diractional LED");
-		Serial("SEND", "2, 30, 3");
-		t.start(1.2); t.timeout;
+		serialPort.send(m_sendSerial(SubDevice2, LED01, STOP, {}));
+		t.start(2.0); t.timeout;
 		
 		log("Let the bi-diractional LED blink in green mode with a frequency of 3Hz");
-		Serial("SEND", "2, 30, 2, 1, 3");
+		serialPort.send(m_sendSerial(SubDevice2, LED01, BLINK, {1, 3}));
 		t.start(5.0); t.timeout;
 		
-		log("Let the blue LED blink with a frequency of 0.5Hz");
-		Serial("SEND", "1, 30, 2, 1, 0.5");
+		log("Let the blue LED blink with a frequency of 1Hz");
+		serialPort.send(m_sendSerial(SubDevice1, LED01, BLINK, {1, 1}));
 		t.start(5.0); t.timeout;
 		
 		log("Let the bi-diractional LED blink in green mode with a frequency of 4Hz");
-		Serial("SEND", "2, 30, 2, 2, 4");
+		serialPort.send(m_sendSerial(SubDevice2, LED01, BLINK, {2, 4}));
 		t.start(5.0); t.timeout;
 		
 		log("Let the blue LED blink with a frequency of 2Hz");
-		Serial("SEND", "1, 30, 2, 1, 2");
+		serialPort.send(m_sendSerial(SubDevice1, LED01, BLINK, {1, 2}));
 		t.start(5.0); t.timeout;
 		
 		log("Let the bi-diractional LED blink between both colours with a frequency of 5Hz");
-		Serial("SEND", "2, 30, 2, 3, 5");
+		serialPort.send(m_sendSerial(SubDevice2, LED01, BLINK, {3, 5}));
 		t.start(5.0); t.timeout;
 		
 		log("Turn off blue LED");	
-		Serial("SEND", "1, 30, 3");    // Mache die erste LED aus
+		serialPort.send(m_sendSerial(SubDevice1, LED01, STOP, {}));
 		t.start(1.1); t.timeout;
 		
 		log("Turn off bi-diractional LED");
-		Serial("SEND", "2, 30, 3");    // Mache die zweite LED aus
+		serialPort.send(m_sendSerial(SubDevice2, LED01, STOP, {}));
 		
-		log("Stop Connection to Serial Port");
-		Serial("STOP", "");
-		*/
+		
+		log("Disconnect from Port");
+		unmap (mtc:serialPort, system:serialPort);
 		
 		setverdict(pass, "LEDs are running as planned");
 	}
@@ -93,30 +86,28 @@ module PhyIO {
 	
 	testcase MotorTest() runs on Test system Test{
 		timer t;
-
-		log("Start communication");
-		Serial("CONNECT", Connection.PortName & ", " & int2str(Connection.BaudRate));
-		
-		t.start(4.0); t.timeout; // Kleiner Delay für Arduinoreaktion
+		log("Connect to Port");
+		map (mtc:serialPort, system:serialPort) param (Connection);
 		
 		log("Turn on Motor with a speed of 40");
-		Serial("SEND", "1, 50, 1, 40");
+		serialPort.send(m_sendSerial(SubDevice1, MM01, SET, {40}));
 		t.start(5.0); t.timeout; 
 		
 		log("Hit the breaks");
-		Serial("SEND", "1, 50, 3");
+		serialPort.send(m_sendSerial(SubDevice1, MM01, STOP, {}));
 		t.start(5.0); t.timeout; 
 		
 		log("Turn on Motor with a speed of -70");
-		Serial("SEND", "1, 50, 1, -70");
+		serialPort.send(m_sendSerial(SubDevice1, MM01, SET, {-70}));
 		t.start(5.0); t.timeout; 
 		
 		log("Hit the breaks");
-		Serial("SEND", "1, 50, 3");
+		serialPort.send(m_sendSerial(SubDevice1, MM01, STOP, {}));
 		t.start(5.0); t.timeout; 
 		
-		log("Stop Connection to Serial Port");
-		Serial("STOP", "");
+
+		log("Disconnect from Port");
+		unmap (mtc:serialPort, system:serialPort);
 
 		setverdict(pass, "Motor is running as planned");
 	}
@@ -124,38 +115,84 @@ module PhyIO {
 
 	testcase LEDStripTest() runs on Test system Test{
 		timer t;
-
-		log("Start communication");
-		Serial("CONNECT", Connection.PortName & ", " & int2str(Connection.BaudRate));
-
-		t.start(4.0); t.timeout; // Kleiner Delay für Arduinoreaktion
+		log("Connect to Port");
+		map (mtc:serialPort, system:serialPort) param (Connection);
 
 		
 		log("Turn on LED Strip");
-		Serial("SEND", "1, 90, 1, 1");
+		serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {}));
 		t.start(2.0); t.timeout; 
 		
-		for (var integer i:=0; i <= 16; i:=i + 1) {
-			log("Change to Colour" & int2str(i));
-			Serial("SEND", "1, 90, 1, 1, " & int2str(i));
-			t.start(1.5); t.timeout; 
+		for (var integer i := 1; i <= 16; i := i + 1) {
+			log("Change to Colour " & int2str(i));
+			serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {COLOUR, i}));
+			t.start(2.0); t.timeout; 
 		}
 		
-		log("Entering 'Fade'-Mode");
-		Serial("SEND", "1, 90, 1, 2");
-		t.start(5.0); t.timeout; 
+		log("Entering 'Strobe'-Mode");
+		serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {STROBE}));
+		t.start(10.0); t.timeout; 
 		
+		log("Entering 'Flash'-Mode");
+		serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {FLASH}));
+		t.start(10.0); t.timeout; 
+		
+		log("Entering 'Fade'-Mode");
+		serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {FADE}));
+		t.start(10.0); t.timeout; 
+		
+		log("Entering 'Smooth'-Mode");
+		serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {SMOOTH}));
+		t.start(10.0); t.timeout;
+		
+		log("Set the LED strip back to white");
+		serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {COLOUR, 16}));
+		t.start(1.5); t.timeout;
 		
 		log("Turn off LED Strip");
-		Serial("SEND", "1, 90, 3");
-		log("Stop Connection to Serial Port");
-		Serial("STOP", "");
+		serialPort.send(m_sendSerial(SubDevice1, IR01, STOP, {}));
+
+		log("Disconnect from Port");
+		unmap (mtc:serialPort, system:serialPort);
 
 		setverdict(pass, "LED Strip is functioning as planned");
-		
 	}
 
 
+//	------------------------------- simple recieve test cases --------------------------------
+	testcase Recieve() runs on Test system Test{
+		timer t;
+		var RGB rgb;
+		log("Connect to Port");
+		map (mtc:serialPort, system:serialPort) param (Connection);
+	
+		
+		t.start(8.0);
+		alt {
+			[]serialPort.receive {
+				setverdict(pass);
+			}
+			
+			[]serialPort.receive(RGB:{?, ?, ?, ?, ?, ?, ?, ?, ?, ?}) -> value rgb {
+				log("Color detected ", rgb);
+				setverdict(pass);
+			}
+			[]t.timeout {
+				setverdict(inconc);
+			}
+		}
+
+
+		log("Disconnect from Port");
+		unmap (mtc:serialPort, system:serialPort);
+
+		setverdict(pass, "Recieve is functioning as planned");
+	}
+	
+	
+//	-------------------------------------- functions ------------------------------------------ 
+
+ 
 } with {
 	encode "Serial"
 }

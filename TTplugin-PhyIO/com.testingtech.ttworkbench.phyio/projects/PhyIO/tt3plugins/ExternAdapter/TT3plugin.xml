@@ -3,7 +3,7 @@
 <plugin id="Default-ID" name="Default-Name" provider-name="Default-Provider" version="Default-Version">
   <runtime>
     <library name="../../build"/>
-    <library name="ExternalLibs/jSerialComm-1.3.11.jar"/>
+    <library name="../../lib/jSerialComm-1.3.11.jar"/>
   </runtime>
   <dependency/>
   <extension point="com.testingtech.ttcn.extension.ExternalFunctionsProvider">

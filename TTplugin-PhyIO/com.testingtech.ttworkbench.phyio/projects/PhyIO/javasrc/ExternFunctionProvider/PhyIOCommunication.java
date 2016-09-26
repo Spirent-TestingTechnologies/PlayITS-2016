@@ -13,10 +13,6 @@ public class PhyIOCommunication extends AnnotationsExternalFunctionPlugin {
 	
 	Serial serial = new Serial();
 	
-	// Aufgrund des Kompilierens der TT-Workbench, kann man keine Richtige Klasse nutzen
-	// und muss daher anscheinend alles geschickt in eine einzele Funktion als eine 
-	// Art Subklasse schreieben, bei der man der Überfunktion angibt, was gemacht werden soll
-	
 	@ExternalFunction(name = "Serial", module = "PhyIO")
 	public String Serial(String mode, String command) throws NoSuchModeException{
 		

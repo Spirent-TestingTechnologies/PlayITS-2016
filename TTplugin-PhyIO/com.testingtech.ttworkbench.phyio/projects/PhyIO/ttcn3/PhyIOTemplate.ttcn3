@@ -4,9 +4,10 @@ module PhyIOTemplate {
 	import from PhyIOConfig all;
 	
 	group sending {
-		template SerialMessage m_sendSerial(integer p_deviceID, integer p_moduleID, Params p_params) := {
+		template SerialMessage m_sendSerial(integer p_deviceID, integer p_moduleID, integer p_functionID, Params p_params) := {
 			deviceID := p_deviceID,
 		    moduleID := p_moduleID,
+		    functionID := p_functionID,
 			params := p_params
 		}
 		

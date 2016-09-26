@@ -8,7 +8,7 @@ module PhyIOConfig {
 	
 	type port PhyIOport message {
 		out SerialMessage;
-		in charstring; // mit komma andere Typen akzeptieren
+		in charstring, RGB; // mit komma andere Typen akzeptieren
 		
 		map param(SerialConfig connection);
 	}
@@ -16,9 +16,26 @@ module PhyIOConfig {
 	type record SerialMessage {
 		integer deviceID,
 		integer moduleID,
+		integer functionID,
 		Params params
 	}
 			
 	type record of integer Params;
+	
+	
+	type record RGB {
+		integer time,
+		integer absoluteRed,
+		integer absoluteGreen,
+		integer absoluteBlue,
+		integer absoluteClear,
+		integer colorTemperature,
+		integer lux,
+		integer red,
+		integer green,
+		integer blue
+	} with {
+		variant "RGB,RESULT"
+	}
 	
 }

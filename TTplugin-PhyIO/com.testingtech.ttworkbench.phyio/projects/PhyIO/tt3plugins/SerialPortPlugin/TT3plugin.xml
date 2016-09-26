@@ -2,8 +2,8 @@
 <!DOCTYPE plugin PUBLIC "-//TESTING TECH//DTD TT3plugin//2.0" "TT3plugin.dtd"> 
 <plugin id="SerialPortPlugin" name="Serial Port" provider-name="Default-Provider" version="Default-Version">
   <runtime>
-    <library name="../../../build"/>
-    <native arch="macosx-x86_64" path="../../../javasrc"/>
+    <library name="../../lib/jSerialComm-1.3.11.jar"/>
+    <library name="../../build"/>
   </runtime>
   <dependency/>
   <extension point="com.testingtech.ttcn.tri.extension.PortPluginProvider">
