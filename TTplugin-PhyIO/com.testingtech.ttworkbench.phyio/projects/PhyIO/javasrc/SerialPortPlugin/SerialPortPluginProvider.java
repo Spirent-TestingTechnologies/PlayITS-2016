@@ -119,16 +119,16 @@ public class SerialPortPluginProvider extends AbstractMsgBasedSA implements
 		try {
 			serial.switchPort(PortName, BaudRate);  // try to connect
 		} catch (PortAllreadyInUseException e) {
-			
 			e.printStackTrace();
 			TriStatus status = TriStatusImpl.OK;
 			status.setStatus(-1);
 			return status; // if connection fails, then print the stacktrace and return an error status
 		}
+		try {Thread.sleep(2500);} catch (InterruptedException e) {} // wait, so that the device can set itself up
 		
-		try {Thread.sleep(3500);} catch (InterruptedException e) {} // wait, so that the device can set itself up
-		serial.write("0"); // <- is send, so that the PhyIo knows, that is communicated with
 		startReceiverThread(compPortId, tsiPortId);
+		
+		try {Thread.sleep(500);} catch (InterruptedException e) {} // wait a bit, for the thread
 		
 		return TriStatusImpl.OK; // return ok status
 	}
@@ -155,7 +155,7 @@ public class SerialPortPluginProvider extends AbstractMsgBasedSA implements
 
 	
 	/**
-	 * Sends all incoming Date to enqueueMsg, so it can be handled by "receive"
+	 * Sends all incoming data to enqueueMsg, so it can be handled by "receive"
 	 */
 	private void startReceiverThread(final TriPortId compPortId, final TriPortId tsiPortId){
 		
@@ -163,8 +163,10 @@ public class SerialPortPluginProvider extends AbstractMsgBasedSA implements
 			public void run() {
 				
 				String message;
+				serial.clean();
 				
 				while(isRecieverThreadRunning){
+					// as long as nothing is available, wait a little
 					while(!serial.available()){
 						try {Thread.sleep(10);} catch (InterruptedException e) {e.printStackTrace();}
 						// has to check inside this loop, or else this thread would run forever, 
@@ -178,13 +180,16 @@ public class SerialPortPluginProvider extends AbstractMsgBasedSA implements
 						
 						message = serial.readString();
 						
-						TriMessage rcvMessage = TriMessageImpl.valueOf(message.getBytes(Charset.forName("UTF-8")));
-
+						// convert the received string to a message
+						TriMessage rcvMessage = TriMessageImpl.valueOf(message.getBytes(Charset.forName("UTF-8")));	
+						// forward the message
 						triEnqueueMsg( tsiPortId, null, compPortId.getComponent(), rcvMessage );
+						
 					}
 				}
 			}
 		};
+		
 		isRecieverThreadRunning = true;
 		recieverThread.start();
 	}

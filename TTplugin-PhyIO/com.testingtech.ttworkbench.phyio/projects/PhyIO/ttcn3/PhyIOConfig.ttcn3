@@ -6,36 +6,33 @@ module PhyIOConfig {
 		integer BaudRate
 	}
 	
+	// configuration for usage o the Port
 	type port PhyIOport message {
 		out SerialMessage;
-		in charstring, RGB; // mit komma andere Typen akzeptieren
+		in charstring, integer, Distance, RGB;
 		
 		map param(SerialConfig connection);
 	}
 	
+	// this is the format for sending to the PhyIO
 	type record SerialMessage {
 		integer deviceID,
 		integer moduleID,
 		integer functionID,
 		Params params
 	}
-			
+	
+	// for the  parameters in the message
 	type record of integer Params;
 	
-	
+	// the Type that is recieved, when using the colour-view-module
 	type record RGB {
-		integer time,
-		integer absoluteRed,
-		integer absoluteGreen,
-		integer absoluteBlue,
-		integer absoluteClear,
-		integer colorTemperature,
-		integer lux,
 		integer red,
 		integer green,
 		integer blue
-	} with {
-		variant "RGB,RESULT"
 	}
-	
+
+	type record Distance {
+		integer distance
+	}
 }

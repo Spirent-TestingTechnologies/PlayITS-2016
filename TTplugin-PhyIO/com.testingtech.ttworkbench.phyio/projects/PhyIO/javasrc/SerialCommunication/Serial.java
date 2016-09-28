@@ -254,8 +254,14 @@ public class Serial {
 		pout.flush();
 	}
 	
-
-	
-	//TODO parse Int, parse float, readUntil
+	/**
+	 * Deletes all the currently saved Bytes on the input site of the connection.
+	 * Everything the connected device has been send will be deleted.
+	 * This is useful for bluetooth connections, as those kind of connections save
+	 * Data that has been transmitted, even before the program has been started.
+	 */
+	public void clean() {
+		readString();
+	}
 	
 }

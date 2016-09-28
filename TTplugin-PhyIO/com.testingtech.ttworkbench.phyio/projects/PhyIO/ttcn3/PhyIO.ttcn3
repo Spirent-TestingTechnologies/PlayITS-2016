@@ -14,14 +14,14 @@ module PhyIO {
 	
 	// set the default values and enable the interaction in the testcase window
 	modulepar SerialConfig Connection := {
-		PortName := "/dev/cu.HC-05-DevB",         //Bluetooth
-//		PortName := "/dev/cu.wchusbserialfa140",  //USB
+//		PortName := "/dev/cu.HC-05-DevB",         //Bluetooth
+		PortName := "/dev/cu.wchusbserialfa140",  //USB
 		BaudRate := 9600
 	}
 	
 // --------------------------------- simple send test cases ---------------------------------
 		
-	testcase LEDTest() runs on Test system Test{
+	testcase t_LEDTest() runs on Test system Test{
 		timer t;
 		log("Connect to Port");
 		map (mtc:serialPort, system:serialPort) param (Connection);
@@ -84,7 +84,7 @@ module PhyIO {
 	}
 	
 	
-	testcase MotorTest() runs on Test system Test{
+	testcase t_MotorTest() runs on Test system Test{
 		timer t;
 		log("Connect to Port");
 		map (mtc:serialPort, system:serialPort) param (Connection);
@@ -106,14 +106,14 @@ module PhyIO {
 		t.start(5.0); t.timeout; 
 		
 
-		log("Disconnect from Port");
+		log("Disconnecting from Port");
 		unmap (mtc:serialPort, system:serialPort);
 
 		setverdict(pass, "Motor is running as planned");
 	}
 			
 
-	testcase LEDStripTest() runs on Test system Test{
+	testcase t_LEDStripTest() runs on Test system Test{
 		timer t;
 		log("Connect to Port");
 		map (mtc:serialPort, system:serialPort) param (Connection);
@@ -152,7 +152,7 @@ module PhyIO {
 		log("Turn off LED Strip");
 		serialPort.send(m_sendSerial(SubDevice1, IR01, STOP, {}));
 
-		log("Disconnect from Port");
+		log("Disconnecting from Port");
 		unmap (mtc:serialPort, system:serialPort);
 
 		setverdict(pass, "LED Strip is functioning as planned");
@@ -160,39 +160,275 @@ module PhyIO {
 
 
 //	------------------------------- simple recieve test cases --------------------------------
-	testcase Recieve() runs on Test system Test{
+
+	testcase t_ColorViewTest() runs on Test system Test{
 		timer t;
 		var RGB rgb;
+		var integer red;
+		var integer green;
+		var integer blue;
+		var charstring reason;
 		log("Connect to Port");
 		map (mtc:serialPort, system:serialPort) param (Connection);
 	
+		serialPort.send(m_sendSerial(SubDevice1, CV01, READ, {}));
 		
-		t.start(8.0);
+		t.start(5.0);
 		alt {
-			[]serialPort.receive {
-				setverdict(pass);
-			}
-			
-			[]serialPort.receive(RGB:{?, ?, ?, ?, ?, ?, ?, ?, ?, ?}) -> value rgb {
-				log("Color detected ", rgb);
-				setverdict(pass);
+			[]serialPort.receive(RGB:{?, ?, ?}) -> value rgb {
+				red := rgb.red;
+				green := rgb.green;
+				blue := rgb.blue;
+				reason := "Color detected " & "red : " & int2str(red) & " | green : " & int2str(green) & " | blue : " & int2str(blue);
+				setverdict(pass, reason);
 			}
 			[]t.timeout {
-				setverdict(inconc);
+				setverdict(inconc, "There was no incomming data");
 			}
 		}
-
-
-		log("Disconnect from Port");
+		
+		log("Disconnecting from Port");
 		unmap (mtc:serialPort, system:serialPort);
+	}
 
-		setverdict(pass, "Recieve is functioning as planned");
+	
+	testcase t_PingEchoTest() runs on Test system Test{
+		timer t;
+		var Distance distance;
+		var integer dis;
+		var charstring reason;
+		
+		log("Connect to Port");
+		map (mtc:serialPort, system:serialPort) param (Connection);
+
+		serialPort.send(m_sendSerial(SubDevice1, PE02, READ, {}));
+	
+		t.start(5.0);
+		alt {
+			[]serialPort.receive(Distance:{?}) -> value distance {
+				dis := distance.distance;
+				reason := "Distance measured : " & int2str(dis) & "cm";
+				setverdict(pass, reason);
+			}
+			[]t.timeout {
+				setverdict(inconc, "There was no incomming data");
+			}
+		}
+	
+		log("Disconnecting from Port");
+		unmap (mtc:serialPort, system:serialPort);
 	}
 	
 	
-//	-------------------------------------- functions ------------------------------------------ 
+//	--------------------------------- multy module testcases ----------------------------------
 
- 
+	testcase t_quickCompleteCheckup() runs on Test system Test{
+		timer t;
+		// variables for the distance sensor
+		var Distance distance;
+		var integer dis;
+		
+		// variables for the colourview sensor
+		var RGB rgb;
+		var integer red;
+		var integer green;
+		var integer blue;
+		
+		var charstring reason;
+		
+		log("Connect to Port");
+		map (mtc:serialPort, system:serialPort) param (Connection);
+		
+		// test the LEDs
+		log("Turn on blue LED");
+		serialPort.send(m_sendSerial(SubDevice1, LED01, SET, {1}));
+		t.start(2.0); t.timeout;   
+		
+		log("Turn off blue LED");						   
+		serialPort.send(m_sendSerial(SubDevice1, LED01, STOP, {}));
+		t.start(2.0); t.timeout;
+
+		log("Turn on bi-diractional LED in green mode");
+		serialPort.send(m_sendSerial(SubDevice2, LED01, SET, {1}));
+		t.start(2.0); t.timeout;
+		
+		log("Turn on bi-diractional LED in red mode");
+		serialPort.send(m_sendSerial(SubDevice2, LED01, SET, {2}));
+		t.start(2.0); t.timeout;
+		
+		log("Turn off bi-diractional LED");
+		serialPort.send(m_sendSerial(SubDevice2, LED01, STOP, {}));
+		t.start(2.0); t.timeout;
+		
+		
+		// testing the LED strip
+		log("Turn on LED Strip");
+		serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {}));
+		t.start(4.0); t.timeout;
+		serialPort.send(m_sendSerial(SubDevice1, IR01, STOP, {}));
+		t.start(2.0); t.timeout; 
+		
+		
+		// testing the motor
+		log("Turn on Motor with a speed of 40");
+		serialPort.send(m_sendSerial(SubDevice1, MM01, SET, {40}));
+		t.start(5.0); t.timeout;
+		log("Hit the breaks");
+		serialPort.send(m_sendSerial(SubDevice1, MM01, STOP, {}));
+		t.start(5.0); t.timeout;
+		
+		
+		// testing the colour view sensor
+		serialPort.send(m_sendSerial(SubDevice1, CV01, READ, {}));
+		t.start(5.0);
+		alt {
+			[]serialPort.receive(RGB:{?, ?, ?}) -> value rgb {
+				red := rgb.red;
+				green := rgb.green;
+				blue := rgb.blue;
+				reason := "Color detected " & "red : " & int2str(red) & " | green : " & int2str(green) & " | blue : " & int2str(blue);
+				setverdict(pass, reason);
+			}
+			[]t.timeout {
+				setverdict(inconc, "There was no incomming data for the colour view sensor");
+			}
+		}
+		
+		
+		// testing the distance sensor
+		serialPort.send(m_sendSerial(SubDevice1, PE02, READ, {}));
+		t.start(5.0);
+		alt {
+			[]serialPort.receive(Distance:{?}) -> value distance {
+				dis := distance.distance;
+				reason := "Distance measured : " & int2str(dis) & "cm";
+				setverdict(pass, reason);
+			}
+			[]t.timeout {
+				setverdict(inconc, "There was no incomming data for the distance sensor");
+			}
+		}
+		
+		log("Disconnecting from Port");
+		unmap (mtc:serialPort, system:serialPort);
+	}
+	
+	testcase t_RunDown() runs on Test system Test{
+    	timer t;
+    
+    	log("Connect to Port");
+    	map (mtc:serialPort, system:serialPort) param (Connection);
+	
+	
+		log("Turn on LED Strip");
+		serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {}));
+		t.start(2.0); t.timeout;
+	
+	
+		f_checkDistance(40);
+		
+		
+		serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {STROBE}));
+		t.start(3.0); t.timeout;
+		
+		log("Turn on Motor");
+		serialPort.send(m_sendSerial(SubDevice1, MM01, SET, {60}));
+		t.start(5.0); t.timeout;
+		
+		
+		f_checkDistance(40);
+
+
+		log("Hit the breaks");
+		serialPort.send(m_sendSerial(SubDevice1, MM01, STOP, {}));
+		t.start(9.0); t.timeout; 
+	
+		
+		if(f_checkColour()){
+			log("Turn on LED green");
+			serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {COLOUR, 6}));
+			t.start(7.0); t.timeout;
+		} else {
+			log("Turn on LED red");
+			serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {COLOUR, 1}));
+			t.start(7.0); t.timeout;
+		}
+	
+		serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {COLOUR, 16}));
+		t.start(2.0); t.timeout;
+	
+		serialPort.send(m_sendSerial(SubDevice1, IR01, STOP, {}));
+		t.start(2.0); t.timeout;
+	
+		log("Disconnecting from Port");
+		unmap (mtc:serialPort, system:serialPort);
+		
+		setverdict(pass, "Everything is running as planned");
+	}
+	
+
+//	----------------------------------- Functions ------------------------------------
+
+	/**
+	 * Blocks until the given height is bigger than the measured height
+	 * @desc 
+	 * @param maxHeight the height that has to be measured
+	 * @verdict 
+	 */
+	function f_checkDistance(integer maxHeight) runs on Test system Test{
+		timer t;
+		var Distance distance;
+		var integer dis := 100;
+		log("start the distance measuring");
+		
+		while(dis >= maxHeight){	
+			serialPort.send(m_sendSerial(SubDevice1, PE02, READ, {}));
+			t.start(2.0);
+			alt {
+				[]serialPort.receive(Distance:{?}) -> value distance{
+					dis := distance.distance;
+				}
+				[]t.timeout {}
+			}		
+			t.start(1.5); t.timeout;
+		}
+	}
+	
+	/**
+	 * Checks if the detected Colour is the valid one
+	 * @desc 
+	 * @return true: if the detected colour is the one on the backsite of the white
+	 * false: if it is on the backsite of the red colour
+	 * @verdict 
+	 */
+	function f_checkColour() runs on Test system Test return boolean{
+		timer t;
+		// variables for the colourview sensor
+        var RGB rgb;
+        var integer red;
+        var integer green;
+        var integer blue;
+		
+		serialPort.send(m_sendSerial(SubDevice1, CV01, READ, {}));
+		
+		t.start(5.0);
+		alt {
+			[]serialPort.receive(RGB:{?, ?, ?}) -> value rgb{
+				red := rgb.red;
+			}
+			[]t.timeout {
+				setverdict(inconc, "There was no incomming data");
+			}
+		}
+				
+		if(red > 110){
+			return false;
+		}
+		return true;
+			
+	}
+
+
 } with {
 	encode "Serial"
 }
