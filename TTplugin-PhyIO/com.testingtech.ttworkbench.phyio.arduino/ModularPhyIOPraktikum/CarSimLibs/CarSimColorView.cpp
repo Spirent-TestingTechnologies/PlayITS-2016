@@ -29,10 +29,10 @@ void ColorView::ColorViewFunction( int id, int command) {
 			ColorViewFunctionSetup();
 			break;
 		case START:
-			cvfPoint.scheduled = true;
+			ColorViewFunctionStart();
 			break;
 		case STOP:
-			cvfPoint.scheduled = false;
+			ColorViewFunctionStop();
 			break;
 		case READ:
 			ColorViewFunctionReadPrint();
@@ -42,6 +42,15 @@ void ColorView::ColorViewFunction( int id, int command) {
 	}
   // Read parameters
 }
+
+void ColorView::ColorViewFunctionStart(){
+	cvfPoint.scheduled = true;
+}
+
+void ColorView::ColorViewFunctionStop(){
+	cvfPoint.scheduled = false;
+}
+
 
 void ColorView::ColorViewFunctionSetup() {
 	DEBUG_PRINTLN("#In the ColorViewFunctionSetup");
@@ -129,18 +138,23 @@ void ColorView::ColorViewFunctionR1() {
 
 void ColorView::ColorViewFunctionReadPrint(){
 	ColorViewFunctionRead();
-	ColorViewFunctionR1();
+	ColorViewFunctionR2();
 }
 
 void ColorView::ColorViewFunctionR2() {
 	// ID, CV01,R1,<timestamp:unit16>,<r:unit16>, <g:unit16>, <b:unit16>, <c:unit16>, <colorTemp:unit16>, <lux:unit16>
-	XSERIAL.print(cvfPoint.red256);  XSERIAL.print(",");
-	XSERIAL.print(cvfPoint.green256);  XSERIAL.print(",");
-	XSERIAL.println(cvfPoint.blue256);
+	// XSERIAL.print(cvfPoint.red256);  XSERIAL.print(",");
+	// XSERIAL.print(cvfPoint.green256);  XSERIAL.print(",");
+	// XSERIAL.println(cvfPoint.blue256);
+	String output;
+	output  = String(cvfPoint.red256) + ",";
+	output += String(cvfPoint.green256) + ",";
+	output += String(cvfPoint.blue256);
+	XSERIAL.println(output);
 }
 
 void ColorView::ColorViewScheduling() {
-	if(cvfPoint.scheduled == true &&
+	if(cvfPoint.scheduled &&
 	  (millis() - cvfPoint.ReadTimestamp >= cvfPoint.TimeBetweenSamples)){
 		  ColorViewFunctionRead();
 		  ColorViewFunctionR1();

@@ -22,25 +22,16 @@ void Button::ButtonFunction(int id, int command){
 	DEBUG_PRINT("#In ButtonFunction with function ");
 	DEBUG_PRINTLN(command);
 	
-	int i = button_index(id);
-	
 	DEBUG_PRINT("# ID: "); DEBUG_PRINT(id); DEBUG_PRINT(", gehört zum Index ");
 	DEBUG_PRINTLN(i);
 	
 	
 	switch(command){
 		case START:
-			DEBUG_PRINT("# Currently enabled? ");
-			DEBUG_PRINT(this->Buttons[i].is_enabled);
-			
-			this->Buttons[i].is_enabled = true;
-			
-			DEBUG_PRINT(" after? ");
-			DEBUG_PRINT(this->Buttons[i].is_enabled);
-			
+			ButtonFunctionStart(id);
 			break;
 		case STOP:
-			this->Buttons[button_index(id)].is_enabled = false;
+			ButtonFunctionStop(id);
 			break;
 		case READ:
 			ButtonFunctionCheck(id);
@@ -49,6 +40,16 @@ void Button::ButtonFunction(int id, int command){
 			break;
 	}
 }
+
+void Button::ButtonFunctionStart(int id){
+	this->Buttons[button_index(id)].is_enabled = true;
+}
+
+void Button::ButtonFunctionStop(int id){
+	this->Buttons[button_index(id)].is_enabled = false;
+}
+
+
 
 int Button::button_index(int id){
 	// gibt den den korrespondierenden Platz zur ID in dem Array der Buttons wieder

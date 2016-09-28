@@ -5,7 +5,6 @@ PingEcho::PingEcho() : sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE){
 	
 	this->pe_enabled = false;
 	this->peTimer = 0;
-		
 	this->pePoint.initialize();	
 	
 }
@@ -37,14 +36,14 @@ void PingEcho::PingEchoFunctionStart2(){
 	#ifdef DEBUG
 		DEBUG_PRINTLN("#Started constanst distance measuring.");
 	#endif
-		pe_enabled = true;
+		pePoint.enabled = true;
 }
 
 void PingEcho::PingEchoFunctionStop2(){
 	#ifdef DEBUG
 		DEBUG_PRINTLN("#Stopped constanst distance measuring.");
 	#endif
-		pe_enabled = false;
+		pePoint.enabled = false;
 }
 
 void PingEcho::pintEchoSensorFix(){
@@ -96,7 +95,7 @@ void PingEcho::PingEchoFunctionR1() {
 
 void PingEcho::PingEchoFunctionReadPrint(){
 	PingEchoFunctionRead2();
-	PingEchoFunctionR1();
+	XSERIAL.println(this->pePoint.distance);
 }
 
 
@@ -109,8 +108,9 @@ void PingEcho::computeTimer(){
 //  if ( this->pePoint.enabled && millis() >= (this->pePoint.TimeBetweenSamples + this->pePoint.ReadTimestamp){
 //    PingEchoFunctionRead();
 //  }
-	if (pe_enabled && millis() >= peTimer){
-		peTimer += PE_TIME_BETWEEN_SAMPLES;
-		PingEchoFunctionRead2();
+	if(pePoint.enabled && 
+	  (millis() - pePoint.ReadTimestamp >= pePoint.TimeBetweenSamples)){
+		pePoint.ReadTimestamp = millis();
+		PingEchoFunctionReadPrint();
 	}
 }

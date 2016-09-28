@@ -49,9 +49,9 @@ class ColorView {
 		void ColorViewFunctionR1();	
 		void ColorViewFunctionR2();
 		void ColorViewScheduling();
+		void ColorViewFunctionStop();
+		void ColorViewFunctionStart();
 		bool ColorViewDecide();
-				
-	
 };
 
 

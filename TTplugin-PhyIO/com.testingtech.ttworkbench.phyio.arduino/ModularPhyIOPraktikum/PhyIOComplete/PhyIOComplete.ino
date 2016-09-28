@@ -2,7 +2,7 @@
 #include <PhyIOAutonom.h>
 
 unsigned long readTimer; // holds the next read time;
-unsigned int readSpeed = 500; // How frequently are we going to read the serial line
+unsigned int readSpeed = 100; // How frequently are we going to read the serial line
   
   
 //Initialisierung des Moduls
@@ -43,10 +43,27 @@ void loop(){
 		a.start();
 		just_switched = true;
 	}
+	
+	
 	if(!a.is_autonom() && just_switched){
-		establishContact();  // send a byte to establish contact until receiver responds
+		XSERIAL.println("Entering Input Mode. Welcome!");
+		
+		#ifdef establishContact
+			establishContact();  // send a byte to establish contact until receiver responds
+		#endif
+		
+		car.echo.PingEchoFunctionStop2();
+		car.cv.ColorViewFunctionStop();
+		
+		// following has to be changed depending on how many Buttons are installed
+		car.button.ButtonFunctionStop(1);
+		car.button.ButtonFunctionStop(2);
+		
+		
 		just_switched = false;
 	}
+	
+	
 	if(!a.is_autonom() && !just_switched){
 		
 		if (millis() >= readTimer) {
@@ -160,22 +177,25 @@ void loop(){
 }
 
 // ----------------- GENERAL CONFIG ----------------
-void establishContact() {
-	long unsigned time_check = millis();
-	while (XSERIAL.available() <= 0) {
+
+#ifdef establishContact
+	void establishContact() {
+		long unsigned time_check = millis();
+		while (XSERIAL.available() <= 0) {
 		
-		XSERIAL.print("0,0,0,");   // send an initial string
-		XSERIAL.println(millis());
-		// activly wait istead of delay
-		time_check = millis();
-		while((millis() - time_check)/1000.0 < 1){
-			// break, if the PhyIO is switching to autonomus mode
-			if(a.is_autonom()){
-				return;
+			XSERIAL.print("0,0,0,");   // send an initial string
+			XSERIAL.println(millis());
+			// activly wait istead of delay
+			time_check = millis();
+			while((millis() - time_check)/1000.0 < 1){
+				// break, if the PhyIO is switching to autonomus mode
+				if(a.is_autonom()){
+					return;
+				}
 			}
 		}
 	}
-}
+#endif
 
 void processCleanUp () {
 	// If we are here rest ist rubbish

@@ -40,6 +40,8 @@ class Button  {
 		Button(int ButtonIDs[], int ButtonPins[]);
 		
 		void ButtonFunction(int id, int command);
+		void ButtonFunctionStart(int id);
+		void ButtonFunctionStop(int id);
 		bool ButtonFunctionCheck(int id);
 		int ButtonFunctionProcess(int id); // for one Button at a time
 		void ButtonProcessing(); // for all buttons

@@ -13,6 +13,7 @@
 #define rxPin 3
 #define txPin 2
 
+// this is a declaration to make the Buetoothcommunication work
 extern Communication XSERIAL;
 
 
@@ -53,6 +54,16 @@ extern Communication XSERIAL;
 #define waitTime 8 // in sec
 #define endingTime 5 // in sec
 
+//========================================================================================
+
+// this define will decide wheter the function "establishContact()" is executed when
+// starting the input-mode of the PhyIO or if it shouldn't be used
+// 		- the establishContact() function is the one that prints "0,0,0,time" into the
+//		  serial connection
+// currently there is no reaon to use this, therefore it is deactivated
+// the testcases don't need the time to work correctly
+
+//#define establishContact 1
 
 //========================================================================================
 
