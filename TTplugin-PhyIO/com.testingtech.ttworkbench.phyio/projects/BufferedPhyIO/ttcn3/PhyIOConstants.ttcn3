@@ -1,0 +1,33 @@
+module PhyIOConstants {
+	
+	const integer CV01  :=  10; // Colour View      
+	const integer PE01  :=  20; // Echo Distance     									 | <- dicontinued rather use PE02
+	const integer LED01 :=  30; // LED               
+	const integer REL01 :=  40; // Relay            									 | <- not build into the PhyIO
+	const integer MM01  :=  50; // Motor             
+	const integer DR01  :=  60; // Button/toggleswitch
+	const integer LS01  :=  70; // Light sensor (doesn't work reliably at this state)    | <- not build into the PhyIO
+	const integer RF01  :=  80; // RFID													 | <- not build into the PhyIO
+	const integer IR01  :=  90; // Infrarotsender für die LED-Leiste
+
+	const integer PE02  :=  21; // Echo Distance 
+	const integer TD01  :=  85; // Theft Detection (combination of button, rfid and led) | <- not build into the PhyIO
+
+	const integer SETUP := 1;
+	const integer SET   := 1;
+	const integer START := 2;
+	const integer BLINK := 2; 
+	const integer STOP  := 3;
+	const integer READ  := 4;
+	const integer R1    := 101;
+	
+	// constants for the LED-Strip
+	const integer COLOUR := 1;
+	const integer STROBE := 2;
+	const integer FLASH  := 3;
+	const integer FADE   := 4;
+	const integer SMOOTH := 5;
+	
+	const integer SubDevice1 := 1;
+	const integer SubDevice2 := 2;
+}

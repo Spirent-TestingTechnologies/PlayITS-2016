@@ -1,4 +1,4 @@
-
+package SerialCommunication;
 
 public class NoPortInUseException extends Exception {
 

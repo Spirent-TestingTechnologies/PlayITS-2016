@@ -1,3 +1,4 @@
+package SerialCommunication;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
@@ -59,7 +60,6 @@ public class Serial implements SerialConnection {
 // ------------------------ Setup for the Serial Port below -------------------------
 	
 	
-
 	@Override
 	public boolean begin(int baud_rate) throws PortAllreadyInUseException{
 		setBaudRate(baud_rate);
@@ -72,7 +72,6 @@ public class Serial implements SerialConnection {
 				+ "close that connection first before opening it here");
 		
 	}
-	
 
 	@Override
 	public void closeConnection() throws NoPortInUseException {
@@ -84,7 +83,6 @@ public class Serial implements SerialConnection {
 		
 	}
 	
-
 	@Override
 	public void setPortByName(String portName){
 		this.portName = portName;
@@ -94,13 +92,12 @@ public class Serial implements SerialConnection {
 	@Override
 	public void switchPort(String portName, int baud_rate) throws PortAllreadyInUseException{
 		try{  // try is for the case, that there is no connection
-			comPort.closePort();
-		} catch(NullPointerException n) {}
+			closeConnection();
+		} catch(NoPortInUseException n) {}
 		
 		setPortByName(portName);
 		begin(baud_rate);
 	}
-	
 	
 	private void setBaudRate(int baud_rate){
 		// helper function to set the baud rate
@@ -108,7 +105,6 @@ public class Serial implements SerialConnection {
 		comPort.setBaudRate(this.baud_rate);
 	}
 	
-
 	@Override
 	public String getPortName(){
 		return portName;
@@ -121,6 +117,7 @@ public class Serial implements SerialConnection {
 	
 	
 // --------------------- Interaction with the Serial Port below ----------------------
+	
 	
 	@Override
 	public int countAvailable(){
@@ -187,7 +184,6 @@ public class Serial implements SerialConnection {
 		pout.flush();
 	}
 	
-
 	@Override
 	public void clean() {
 		readString();

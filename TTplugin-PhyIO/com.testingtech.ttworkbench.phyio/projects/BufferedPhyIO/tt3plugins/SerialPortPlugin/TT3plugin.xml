@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE plugin PUBLIC "-//TESTING TECH//DTD TT3plugin//2.0" "TT3plugin.dtd"> 
+<plugin id="SerialPortPlugin" name="Serial Port" provider-name="Default-Provider" version="Default-Version">
+  <runtime>
+    <library name="../../lib/jSerialComm-1.3.11.jar"/>
+    <library name="../../build"/>
+  </runtime>
+  <dependency/>
+  <extension point="com.testingtech.ttcn.tri.extension.PortPluginProvider">
+    <parameter id="name" value="Serial Port Plugin"/>
+    <parameter id="class" value="SerialPortPlugin.SerialPortPluginProvider"/>
+    <parameter id="taParams">
+      <parameter id="taParamDeclaration">
+        <parameter id="name" value="PortName"/>
+        <parameter id="type" value="charstring"/>
+        <parameter id="default"/>
+        <parameter id="description"/>
+      </parameter>
+      <parameter id="taParamDeclaration">
+        <parameter id="name" value="BaudRate"/>
+        <parameter id="type" value="integer"/>
+        <parameter id="default">
+          <value>
+            <Values:integer xmlns:Values="Values.xsd" type="integer">
+              <Values:value>0</Values:value>
+            </Values:integer>
+          </value>
+        </parameter>
+        <parameter id="description"/>
+      </parameter>
+    </parameter>
+  </extension>
+  <extension point="com.testingtech.ttcn.extension.CodecProvider">
+    <parameter id="name" value="Serial Codec"/>
+    <parameter id="encoding" value="Serial"/>
+    <parameter id="class" value="SerialPortPlugin.SerialCodec"/>
+  </extension>
+</plugin>
