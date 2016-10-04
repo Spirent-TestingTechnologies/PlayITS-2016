@@ -16,6 +16,15 @@
 // this is a declaration to make the Buetoothcommunication work
 extern Communication XSERIAL;
 
+//========================================================================================
+
+// the next defines will decide if there are start and stop strings at the end 
+// and start of each message. These strings will decide how a send message will
+// look like and help to ensure a more stable communication over bluetooth
+
+#define SAFETYSTRINGS 1
+#define STARTSTRING "?"
+#define ENDSTRING "!"
 
 //========================================================================================
 

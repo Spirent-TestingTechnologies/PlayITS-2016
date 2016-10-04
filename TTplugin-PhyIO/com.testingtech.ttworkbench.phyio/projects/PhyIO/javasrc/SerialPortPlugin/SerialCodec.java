@@ -24,7 +24,7 @@ public class SerialCodec extends AbstractCodecPlugin implements CodecProvider {
 	public Value decode(TriMessage message, Type decodingHypothesis) {
 		String received = msg2str(message);
 		
-		System.out.print("decode : receiving the following message -> " + received);
+		System.out.println("decode : receiving the following message -> " + received);
 		// checks for debugging lines
 		if (received.startsWith("#"))  
 			return null;

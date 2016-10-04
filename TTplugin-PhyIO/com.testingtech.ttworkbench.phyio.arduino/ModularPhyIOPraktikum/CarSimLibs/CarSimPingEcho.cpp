@@ -83,19 +83,36 @@ void PingEcho::PingEchoFunctionRead2() {
 
 void PingEcho::PingEchoFunctionR1() {
 	
+	#ifdef SAFETYSTRINGS
+		XSERIAL.print(STARTSTRING);
+	#endif
+	
 	// ID, PE01,R1,<timestamp:unit16>,<distance:uint16>
 	XSERIAL.print(this->pePoint.ID); XSERIAL.print(", ");
 	XSERIAL.print(PE02);  XSERIAL.print(", ");
 	XSERIAL.print(R1);  XSERIAL.print(", ");
 	// if the timestamp is ever needed again this is the code line one has to use
 	//XSERIAL.print(this->pePoint.ReadTimestamp);  XSERIAL.print(", ");
-	XSERIAL.println(this->pePoint.distance);
 	
+	
+	#ifdef SAFETYSTRINGS
+		XSERIAL.print(this->pePoint.distance);
+		XSERIAL.println(ENDSTRING);
+	#else
+		XSERIAL.println(this->pePoint.distance);
+	#endif
 }
 
 void PingEcho::PingEchoFunctionReadPrint(){
 	PingEchoFunctionRead2();
-	XSERIAL.println(this->pePoint.distance);
+	
+	#ifdef SAFETYSTRINGS
+		XSERIAL.print(STARTSTRING);
+		XSERIAL.print(this->pePoint.distance);
+		XSERIAL.println(ENDSTRING);
+	#else
+		XSERIAL.println(this->pePoint.distance);
+	#endif
 }
 
 

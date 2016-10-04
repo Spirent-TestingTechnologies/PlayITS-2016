@@ -12,10 +12,9 @@ import org.etsi.ttcn.tri.TriPortIdList;
 import org.etsi.ttcn.tri.TriStatus;
 import org.etsi.ttcn.tri.TriTestCaseId;
 
+import SerialCommunication.BufferedSerial;
 import SerialCommunication.NoPortInUseException;
 import SerialCommunication.PortAllreadyInUseException;
-import SerialCommunication.Serial;
-
 import com.testingtech.ttcn.tri.AbstractMsgBasedSA;
 import com.testingtech.ttcn.tri.ISAPlugin;
 import com.testingtech.ttcn.tri.TriMessageImpl;
@@ -26,7 +25,7 @@ import com.testingtech.ttcn.tri.extension.PortPluginProvider;
 public class SerialPortPluginProvider extends AbstractMsgBasedSA implements
 		PortPluginProvider {
 
-	Serial serial = new Serial();
+	BufferedSerial serial = new BufferedSerial();
 	public Thread recieverThread;
 	private boolean isRecieverThreadRunning;
 	
@@ -178,7 +177,7 @@ public class SerialPortPluginProvider extends AbstractMsgBasedSA implements
 					// has to check before reading, so this thread isn't providing empty data
 					if(isRecieverThreadRunning){
 						
-						message = serial.readString();
+						message = serial.receive("?", "!");
 						
 						// convert the received string to a message
 						TriMessage rcvMessage = TriMessageImpl.valueOf(message.getBytes(Charset.forName("UTF-8")));	

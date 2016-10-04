@@ -1,4 +1,5 @@
 package SerialCommunication;
+
 import com.fazecast.jSerialComm.SerialPort;
 
 public class BufferedSerial implements SerialConnection {
@@ -69,7 +70,11 @@ public class BufferedSerial implements SerialConnection {
 		try {
 			listeningThreadIsRunning = false;
 			listeningThread.join();
-		} catch (InterruptedException | NullPointerException n) {}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (NullPointerException n) {
+		  // do nothing here, as it just indicates, that there was no thread started yet
+		}
 		serial.closeConnection();
 	}
 
@@ -95,10 +100,6 @@ public class BufferedSerial implements SerialConnection {
 		return serial.getSerialPort();
 	}
 
-
-// --------------------- Interaction with the Serial Port below ----------------------
-	
-	
 	@Override
 	public int countAvailable() {
 		return buffer.length();
@@ -156,6 +157,7 @@ public class BufferedSerial implements SerialConnection {
 	}
 
 	
+	
 	/**
 	 * Reads the next Character from the serial input and returns it as a String.
 	 * <p>
@@ -177,6 +179,7 @@ public class BufferedSerial implements SerialConnection {
 		}
 		return message;		
 	}
+	
 	
 	/**
 	 * Reads until a certain string is found in the buffer and returns the string that has been
@@ -218,8 +221,9 @@ public class BufferedSerial implements SerialConnection {
 	 * Exidental cutting of the messages on the sending site leads to incomplete messages on
 	 * the receiving site and this method tries to avoid such things
 	 * <p>
-	 * <ul><b>Note: <ul>It can happen that messages will be disgarded and lost, if they are incomplete and a 
-	 * new message with the start string arrives. </b></ul></ul>
+	 * <ul><b>Note: <ul><li>It can happen that messages will be disgarded and lost, if they are incomplete and a 
+	 * new message with the start string arrives.</li>
+	 * <li>This method blocks until it recieves a message with the given start and end strings</li> </b></ul></ul>
 	 * @param begin The String the expected message will start with
 	 * @param end The String the expected message will end with
 	 * @return A recieved String that had the given beginning and end. <br>
@@ -262,6 +266,7 @@ public class BufferedSerial implements SerialConnection {
 		}
 		return readChar();
 	}
+	
 	
 	/**
 	 * Starts a thread, that reads everything that gets into connection and saves it

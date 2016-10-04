@@ -121,6 +121,10 @@ void ColorView::ColorViewFunctionRead() {
 
 void ColorView::ColorViewFunctionR1() {
 	// ID, CV01,R1,<timestamp:unit16>,<r:unit16>, <g:unit16>, <b:unit16>, <c:unit16>, <colorTemp:unit16>, <lux:unit16>
+	#ifdef SAFETYSTRINGS
+		XSERIAL.print(STARTSTRING);
+	#endif
+		
 	XSERIAL.print(cvfPoint.ID); XSERIAL.print(",");
 	XSERIAL.print(CV01);  XSERIAL.print(",");
 	XSERIAL.print(R1);  XSERIAL.print(",");
@@ -133,7 +137,14 @@ void ColorView::ColorViewFunctionR1() {
 	XSERIAL.print(cvfPoint.lux);  XSERIAL.print(",");
 	XSERIAL.print(cvfPoint.red256);  XSERIAL.print(",");
 	XSERIAL.print(cvfPoint.green256);  XSERIAL.print(",");
-	XSERIAL.println(cvfPoint.blue256);
+	
+	
+	#ifdef SAFETYSTRINGS
+		XSERIAL.print(cvfPoint.blue256);
+		XSERIAL.println(ENDSTRING);
+	#else
+		XSERIAL.println(cvfPoint.blue256);
+	#endif
 }
 
 void ColorView::ColorViewFunctionReadPrint(){
@@ -147,9 +158,19 @@ void ColorView::ColorViewFunctionR2() {
 	// XSERIAL.print(cvfPoint.green256);  XSERIAL.print(",");
 	// XSERIAL.println(cvfPoint.blue256);
 	String output;
-	output  = String(cvfPoint.red256) + ",";
+	#ifdef SAFETYSTRINGS
+		output  = STARTSTRING + String(cvfPoint.red256) + ",";
+	#else
+		output  = String(cvfPoint.red256) + ",";
+	#endif
+	
 	output += String(cvfPoint.green256) + ",";
 	output += String(cvfPoint.blue256);
+	
+	#ifdef SAFETYSTRINGS
+		output += ENDSTRING;
+	#endif
+		
 	XSERIAL.println(output);
 }
 

@@ -1,4 +1,5 @@
 package SerialCommunication;
+
 import com.fazecast.jSerialComm.SerialPort;
 
 public interface SerialConnection {

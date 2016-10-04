@@ -34,7 +34,7 @@ void Button::ButtonFunction(int id, int command){
 			ButtonFunctionStop(id);
 			break;
 		case READ:
-			ButtonFunctionCheck(id);
+			ButtonFunctionRead(id);
 			break;
 		default:
 			break;
@@ -115,10 +115,22 @@ int Button::ButtonFunctionProcess(int id){
 	if(bt.state != current_state){
 		bt.state = current_state;
 		//ID, DR01, R1, <pushed>
+		
+		#ifdef SAFETYSTRINGS
+			XSERIAL.print(STARTSTRING);
+		#endif
+		
 		XSERIAL.print(bt.ID); XSERIAL.print(",");
 		XSERIAL.print(DR01); XSERIAL.print(",");
 		XSERIAL.print(R1); XSERIAL.print(",");
-		XSERIAL.println(bt.state);
+		
+		
+		#ifdef SAFETYSTRINGS
+			XSERIAL.print(bt.state);
+			XSERIAL.println(ENDSTRING);
+		#else
+			XSERIAL.println(bt.state);
+		#endif
 
 		return 1;
 	}
@@ -139,4 +151,16 @@ void Button::ButtonProcessing(){
 		DEBUG_PRINTLN(this->Buttons[i].is_enabled);
 		*/
 	}
+}
+
+void Button::ButtonFunctionRead(int id){
+	ButtonFunctionCheck(id);
+	
+	#ifdef SAFETYSTRINGS
+		XSERIAL.print(STARTSTRING);
+		XSERIAL.print(this->Buttons[button_index(id)].state);
+		XSERIAL.println(ENDSTRING);
+	#else
+		XSERIAL.println(this->Buttons[button_index(id)].state);
+	#endif
 }

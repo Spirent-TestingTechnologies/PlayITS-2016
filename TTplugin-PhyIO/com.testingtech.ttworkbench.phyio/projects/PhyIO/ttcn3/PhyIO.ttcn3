@@ -14,8 +14,8 @@ module PhyIO {
 	
 	// set the default values and enable the interaction in the testcase window
 	modulepar SerialConfig Connection := {
-//		PortName := "/dev/cu.HC-05-DevB",         //Bluetooth
-		PortName := "/dev/cu.wchusbserialfa140",  //USB
+		PortName := "/dev/cu.HC-05-DevB",         //Bluetooth
+//		PortName := "/dev/cu.wchusbserialfa140",  //USB
 		BaudRate := 9600
 	}
 	
