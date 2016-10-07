@@ -5,6 +5,8 @@ module PhyIO {
 	import from PhyIOConfig all;
 	
 	import from PhyIOConstants all;
+	
+	import from TTlibrary all;
 
 	external function Serial(charstring modus, charstring command) return charstring;
 	
@@ -346,11 +348,13 @@ module PhyIO {
 		
 		if(f_checkColour()){
 			log("Turn on LED green");
-			serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {COLOUR, 6}));
+//			serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {COLOUR, 6}));
+			serialPort.send(m_setColor(SubDevice1, 6));
 			t.start(7.0); t.timeout;
 		} else {
 			log("Turn on LED red");
-			serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {COLOUR, 1}));
+			//serialPort.send(m_sendSerial(SubDevice1, IR01, SET, {COLOUR, 1}));
+			serialPort.send(m_setColor(SubDevice1, 1));
 			t.start(7.0); t.timeout;
 		}
 	
@@ -380,6 +384,7 @@ module PhyIO {
 		var Distance distance;
 		var integer dis := 100;
 		log("start the distance measuring");
+		action(sprintf1<integer>("Please put your hand over the measurement unit at a maximum distance of %d cm.", maxHeight));
 		
 		while(dis >= maxHeight){	
 			serialPort.send(m_sendSerial(SubDevice1, PE02, READ, {}));

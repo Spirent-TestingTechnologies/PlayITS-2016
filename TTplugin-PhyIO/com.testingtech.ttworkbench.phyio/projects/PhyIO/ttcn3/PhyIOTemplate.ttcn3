@@ -1,6 +1,8 @@
 module PhyIOTemplate {
 	
 	
+	import from PhyIOConstants all;
+
 	import from PhyIOConfig all;
 	
 	group sending {
@@ -10,6 +12,8 @@ module PhyIOTemplate {
 		    functionID := p_functionID,
 			params := p_params
 		}
+		
+		template ColorMessage m_setColor(integer p_deviceID, integer p_color) := m_sendSerial(p_deviceID, IR01, SET, {COLOUR, p_color});
 		
 	}
 	

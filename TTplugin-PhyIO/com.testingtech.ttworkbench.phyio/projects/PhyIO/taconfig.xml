@@ -6,6 +6,20 @@
     </plugin>
     <parameter id="default" value="true"/>
   </codec>
+  <extfunc>
+    <plugin id="com.testingtech.ttcn.rt.tri.ttlibrary">
+      <parameter id="class" value="com.testingtech.ttcn.rt.tri.ttlibrary.extfct.TTlibraryExtFuncProvider"/>
+    </plugin>
+    <parameter id="taParams">
+      <parameter id="CLEAR_VARIABLE_STORAGE_ON_TC_START">
+        <value>
+          <Values:boolean xmlns:Values="Values.xsd" type="boolean">
+            <Values:value>false</Values:value>
+          </Values:boolean>
+        </value>
+      </parameter>
+    </parameter>
+  </extfunc>
   <port>
     <plugin id="SerialPortPlugin">
       <parameter id="class" value="SerialPortPlugin.SerialPortPluginProvider"/>
@@ -14,7 +28,7 @@
       <parameter id="PortName">
         <value>
           <Values:charstring xmlns:Values="Values.xsd" type="charstring">
-            <Values:value>/dev/cu.HC-05-DevB</Values:value>
+            <Values:value>/dev/cu.wchusbserialfa140</Values:value>
           </Values:charstring>
         </value>
       </parameter>

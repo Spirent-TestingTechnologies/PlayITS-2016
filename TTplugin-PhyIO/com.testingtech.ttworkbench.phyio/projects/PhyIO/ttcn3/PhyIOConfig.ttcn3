@@ -8,7 +8,7 @@ module PhyIOConfig {
 	
 	// configuration for usage o the Port
 	type port PhyIOport message {
-		out SerialMessage;
+		out SerialMessage, ColorMessage;
 		in charstring, integer, Distance, RGB;
 		
 		map param(SerialConfig connection);
@@ -21,6 +21,7 @@ module PhyIOConfig {
 		integer functionID,
 		Params params
 	}
+			type SerialMessage ColorMessage;
 	
 	// for the  parameters in the message
 	type record of integer Params;

@@ -119,9 +119,7 @@ public class SerialPortPluginProvider extends AbstractMsgBasedSA implements
 			serial.switchPort(PortName, BaudRate);  // try to connect
 		} catch (PortAllreadyInUseException e) {
 			e.printStackTrace();
-			TriStatus status = TriStatusImpl.OK;
-			status.setStatus(-1);
-			return status; // if connection fails, then print the stacktrace and return an error status
+			return new TriStatusImpl(e);
 		}
 		try {Thread.sleep(2500);} catch (InterruptedException e) {} // wait, so that the device can set itself up
 		
