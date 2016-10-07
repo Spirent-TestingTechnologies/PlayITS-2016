@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="build/serialPortPlugin" path="serialPortPlugin"/>
+	<classpathentry kind="con" path="com.testingtech.ttworkbench.core.TTWB_LIBRARY"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="tt3plugins/serialPortPlugin/lib/jSerialComm-1.3.11.jar"/>
+	<classpathentry kind="output" path="build/default"/>
+</classpath>
