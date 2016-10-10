@@ -1,0 +1,78 @@
+[
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo180.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo180.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo120.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo120.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo280.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo280.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/textlogo.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/textlogo.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo220.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo220.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo300.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo300.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo020.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo020.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo320.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo320.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo040.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo040.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo080.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo080.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo340.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo340.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo060.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo060.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo000.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo000.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo240.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo240.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo140.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo140.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo100.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo100.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo200.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo200.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo260.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo260.png"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/drawable-xxhdpi/logo160.png",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/drawable-xxhdpi/logo160.png"
+    }
+]

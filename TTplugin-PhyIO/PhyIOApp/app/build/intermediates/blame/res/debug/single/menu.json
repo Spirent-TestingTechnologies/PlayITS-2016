@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/menu/menu_test_runner.xml",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/menu/menu_test_runner.xml"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/menu/menu_project_selector.xml",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/menu/menu_project_selector.xml"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/menu/menu_test_selector.xml",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/menu/menu_test_selector.xml"
+    },
+    {
+        "merged": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/build/intermediates/res/merged/debug/menu/menu_main.xml",
+        "source": "/Users/julienstengel/repos/PlayITS-2016/TTplugin-PhyIO/PhyIOApp/app/src/main/res/menu/menu_main.xml"
+    }
+]
