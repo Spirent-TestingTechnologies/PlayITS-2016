@@ -214,20 +214,20 @@ public class BufferedSerial implements SerialConnection {
 	
 	/**
 	 * Reads everything out of the serial port that starts and ends with a certain String. 
-	 * This makes sure, that everything of a specific message type is recieved and nothing else.
+	 * This makes sure, that everything of a specific message type is received and nothing else.
 	 * <p>
 	 * This is especially good for bluetooth and similar connection types, as those kind of connections
 	 * tend to sometimes send messages cut into peaces and not as one complete chunk.
-	 * Exidental cutting of the messages on the sending site leads to incomplete messages on
+	 * Accidental cutting of the messages on the sending site leads to incomplete messages on
 	 * the receiving site and this method tries to avoid such things
 	 * <p>
-	 * <ul><b>Note: <ul><li>It can happen that messages will be disgarded and lost, if they are incomplete and a 
+	 * <ul><b>Note: <ul><li>It can happen that messages will be discarded and lost, if they are incomplete and a 
 	 * new message with the start string arrives.</li>
-	 * <li>This method blocks until it recieves a message with the given start and end strings</li> </b></ul></ul>
+	 * <li>This method blocks until it receives a message with the given start and end strings</li> </b></ul></ul>
 	 * @param begin The String the expected message will start with
 	 * @param end The String the expected message will end with
-	 * @return A recieved String that had the given beginning and end. <br>
-	 * Those Strings are cutted from the returned String
+	 * @return A received String that had the given beginning and end. <br>
+	 * Those Strings are cut from the returned String
 	 */
 	public String receive(String begin, String end){
 		String message = "";

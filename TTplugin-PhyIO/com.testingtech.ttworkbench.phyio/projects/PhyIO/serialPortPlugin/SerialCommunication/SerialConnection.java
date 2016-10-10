@@ -9,7 +9,7 @@ public interface SerialConnection {
 	 * <p>
 	 * <b>Note: </b><ul><li>only one connection can be open at a time.
 	 * <li> If there is already a connection to a port that one has to be closed first
-	 * <li> If there is need to switch to another port while a programm is running, see: 
+	 * <li> If there is need to switch to another port while a program is running, see: 
 	 * <p><code>switchPort(String portName, int baud_rate)</code>
 	 * 
 	 * </ul>
@@ -19,7 +19,7 @@ public interface SerialConnection {
 	 * 28800, 38400, 57600, or 115200
 	 * @return true if the connection is successful, false if not
 	 * @throws PortAllreadyInUseException If the Port of choice is already in use 
-	 * by another programm or thread and therefor blocked
+	 * by another program or thread and therefore blocked
 	 */
 	boolean begin(int baud_rate) throws PortAllreadyInUseException;
 

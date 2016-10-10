@@ -12,8 +12,32 @@ module PhyIOTemplate {
 		    functionID := p_functionID,
 			params := p_params
 		}
+
+		// all the messages for the LEDStrip
+		template SetLEDStripColorMessage m_setStripColor(integer p_color) := m_sendSerial(SubDevice1, IR01, SET, {COLOUR, p_color});
+		template SetLEDStripModeMessage m_setStripMode(integer p_mode) := m_sendSerial(SubDevice1, IR01, SET, {p_mode});
+		template StartLEDStripMessage m_turnOnLEDStrip := m_sendSerial(SubDevice1, IR01, SET, {});
+		template StopLEDStripMessage m_turnOffLEDStrip := m_sendSerial(SubDevice1, IR01, STOP, {});
 		
-		template ColorMessage m_setColor(integer p_deviceID, integer p_color) := m_sendSerial(p_deviceID, IR01, SET, {COLOUR, p_color});
+		// all the messages for the LEDs
+		template SetLEDMessage m_setLED(integer p_subdevice, integer p_mode) := m_sendSerial(p_subdevice, LED01, SET, {p_mode});
+		template BlinkLEDMessage m_letLEDBlink(integer p_subdevice, integer p_mode, integer p_frequency) := m_sendSerial(p_subdevice, LED01, BLINK, {p_mode, p_frequency});
+		template StopLEDMessage m_stopLED(integer p_subdevice) := m_sendSerial(p_subdevice, LED01, STOP, {});
+		
+		// all the messages for the Motor
+		template SetMotorSpeedMessage m_setMotor(integer p_speed) := m_sendSerial(SubDevice1, MM01, SET, {p_speed});
+		template StopMotorMessage m_stopMotor := m_sendSerial(SubDevice1, MM01, STOP, {});
+		
+		// all the messages for the Distance Measurement Unit
+		template ReadDistanceMessage m_readDistance := m_sendSerial(SubDevice1, PE02, READ, {});
+		
+		// all the messages for the Color Read Unit
+		template ReadColorMessage m_readColor := m_sendSerial(SubDevice1, CV01, READ, {});
+		
+		// all the messages for the buttons
+		// currently there is no need for button communication and if there is, only the push button (ID 2) is usefull
+		// as the other is used internally by the PhyIO to switch between modes
+		template ReadButtonMessage m_readButton := m_sendSerial(SubDevice2, DR01, READ, {});
 		
 	}
 	

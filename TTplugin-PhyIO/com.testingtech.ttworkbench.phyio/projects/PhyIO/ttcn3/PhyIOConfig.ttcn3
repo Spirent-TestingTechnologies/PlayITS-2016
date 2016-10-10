@@ -8,7 +8,19 @@ module PhyIOConfig {
 	
 	// configuration for usage o the Port
 	type port PhyIOport message {
-		out SerialMessage, ColorMessage;
+		out SerialMessage, 
+		SetLEDStripColorMessage,
+		SetLEDStripModeMessage,
+		StartLEDStripMessage,
+		StopLEDStripMessage,
+		SetLEDMessage,
+		StopLEDMessage,
+		BlinkLEDMessage,  
+		SetMotorSpeedMessage, 
+		StopMotorMessage, 
+		ReadDistanceMessage, 
+		ReadColorMessage, 
+		ReadButtonMessage;
 		in charstring, integer, Distance, RGB;
 		
 		map param(SerialConfig connection);
@@ -21,7 +33,21 @@ module PhyIOConfig {
 		integer functionID,
 		Params params
 	}
-			type SerialMessage ColorMessage;
+			
+	// these messages are jst varients of SerialMessage type
+	type SerialMessage SetLEDStripColorMessage;
+	type SerialMessage SetLEDStripModeMessage;
+	type SerialMessage StartLEDStripMessage;
+	type SerialMessage StopLEDStripMessage;
+	type SerialMessage SetLEDMessage;
+	type SerialMessage BlinkLEDMessage;
+	type SerialMessage StopLEDMessage;
+	type SerialMessage SetMotorSpeedMessage;
+	type SerialMessage StopMotorMessage;
+	type SerialMessage ReadDistanceMessage;
+	type SerialMessage ReadColorMessage;
+	type SerialMessage ReadButtonMessage;
+	
 	
 	// for the  parameters in the message
 	type record of integer Params;
