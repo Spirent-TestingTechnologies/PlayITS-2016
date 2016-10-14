@@ -43,7 +43,7 @@
         jumboMode="true"
         optimize="true"
         revision="23.0.1"
-        sha1="5f8645e37d7fe30f9345fb80fdead4d6d9690248">
+        sha1="39cf226ccc929e4ca7a2961a8036548e7823c347">
         <dex dex="/Users/julienstengel/apps/com.testingtech.ttworkbench.phyio.app/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_eb521083710eceaf59ce88f4e4f4200016e9f0e8/classes.dex" />
     </item>
     <item
@@ -133,17 +133,8 @@
         jumboMode="true"
         optimize="true"
         revision="23.0.1"
-        sha1="a5c922809acff87f3fa8a8bdbef7ffabdd7813d2">
+        sha1="a194cc85351907c4b8d5f73daf14cc93e952d569">
         <dex dex="/Users/julienstengel/apps/com.testingtech.ttworkbench.phyio.app/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_1a9efe8df53aa9a40ea9a8263683bca8730971cf/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/julienstengel/apps/com.testingtech.ttworkbench.phyio.app/app/libs/protobuf-socket-rpc-2.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.1"
-        sha1="daaf0b3ed067955cc304f593340ca64b8fc523ac">
-        <dex dex="/Users/julienstengel/apps/com.testingtech.ttworkbench.phyio.app/app/build/intermediates/transforms/dex/debug/folders/1000/2/protobuf-socket-rpc-2.0_47f67af738302af9f860ecc3cc0fad776588e5aa/classes.dex" />
     </item>
 
 </items>

@@ -33,12 +33,12 @@ android {
 }
 
 dependencies {
-    provided fileTree(dir: 'libs', include: ['*.jar'])
+    provided fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/TTmanServerAPI.jar')
     compile files('libs/TTlogging.jar')
     compile files('libs/TTtools.jar')
     compile files('libs/slf4j-api-1.7.7.jar')
-    compile files('libs/protobuf-socket-rpc-2.0.jar')
+    provided files('libs/protobuf-socket-rpc-2.0.jar')
     compile files('libs/protobuf-java-2.4.1.jar')
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'

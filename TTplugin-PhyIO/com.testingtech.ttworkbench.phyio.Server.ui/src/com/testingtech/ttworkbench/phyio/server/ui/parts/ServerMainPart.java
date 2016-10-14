@@ -73,9 +73,13 @@ public class ServerMainPart {
 				
 							
 		    	try {
-		    		//starts the server if your operating system is windows, change parameters when using linux
-					ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
-				} catch (IOException e1) {
+		    		//starts the server if your operating system is windows
+					//ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
+					// linux & mac
+//					ttmanProcess= (new ProcessBuilder(serverPath + "TTmanServer.sh","--data",workspacePath)).start();
+					// default for easier testing
+					ttmanProcess= (new ProcessBuilder("/Applications/TTworkbenchProfessional22/TTmanServer.sh", "--data" ,"/Users/julienstengel/workspace")).start();
+		    	} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 						    	
