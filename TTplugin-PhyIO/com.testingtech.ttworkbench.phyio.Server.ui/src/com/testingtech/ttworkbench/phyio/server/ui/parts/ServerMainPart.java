@@ -71,14 +71,28 @@ public class ServerMainPart {
 		    	String workspacePath = textWorkspacePath.getText();
 		    	System.out.println("start server ...");
 				
-							
+		    	
+		    	if(serverPath.endsWith("/")){
+		    		serverPath = serverPath.substring(0, serverPath.length()-1);
+		    	}
+		    	
+		    	
+		    	String osName = System.getProperty("os.name");
+		    				
 		    	try {
-		    		//starts the server if your operating system is windows
-					//ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath,"--data",workspacePath)).start();
-					// linux & mac
-//					ttmanProcess= (new ProcessBuilder(serverPath + "TTmanServer.sh","--data",workspacePath)).start();
-					// default for easier testing
-					ttmanProcess= (new ProcessBuilder("/Applications/TTworkbenchProfessional22/TTmanServer.sh", "--data" ,"/Users/julienstengel/workspace")).start();
+		    		if(System.getProperty("user.home").equalsIgnoreCase("/Users/julienstengel")){
+		    			// default for easier testing can be deleted after internship
+						ttmanProcess= (new ProcessBuilder("/Applications/TTworkbenchProfessional22/TTmanServer.sh", "--data" ,"/Users/julienstengel/workspace")).start();
+		    		}
+		    		else if(osName.contains("Windows")){
+		    			//starts the server if your operating system is windows
+		    			ttmanProcess= (new ProcessBuilder( "cmd","/c","start", "cmd.exe","/k",serverPath + "/TTmanServer.bat","--data",workspacePath)).start();
+					}
+		    		else if(osName.contains("Mac OS X") || osName.contains("Linux")){
+		    			// linux & mac
+						ttmanProcess= (new ProcessBuilder(serverPath + "/TTmanServer.sh","--data",workspacePath)).start();
+					}
+		    		
 		    	} catch (IOException e1) {
 					e1.printStackTrace();
 				}
